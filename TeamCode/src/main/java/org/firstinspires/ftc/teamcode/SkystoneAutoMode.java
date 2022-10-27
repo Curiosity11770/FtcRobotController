@@ -24,7 +24,7 @@ public class SkystoneAutoMode extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
             @Override
             public void onError(int errorCode)
