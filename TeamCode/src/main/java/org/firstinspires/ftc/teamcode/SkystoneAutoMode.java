@@ -35,6 +35,22 @@ public class SkystoneAutoMode extends LinearOpMode {
             }
         });
 
+        waitForStart();
+        switch(detector.getLocation()){
+            case LEFT:
+                //
+                break;
+            case RIGHT:
+                //
+                break;
+            case NOT_FOUND:
+                //
+                break;
+
+
+        }
+        phoneCam.stopStreaming();
+
 
     }
 }
