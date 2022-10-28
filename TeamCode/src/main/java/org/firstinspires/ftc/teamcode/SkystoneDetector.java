@@ -33,10 +33,23 @@ public class SkystoneDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-        Scalar lowHSV = new Scalar(23, 50, 70);
-        Scalar highHSV = new Scalar(32, 255, 255);
+
+
+        Scalar lowHSVGreen = new Scalar(40, 50, 70);
+        Scalar highHSVGreen = new Scalar(80, 255, 255);
+
+
+        Scalar lowHSVYellow = new Scalar(20, 50, 70);
+        Scalar highHSVYellow = new Scalar(37, 255, 255);
+
+        Scalar lowHSVBlue = new Scalar(100, 50, 70);
+        Scalar highHSVBlue = new Scalar(130, 255, 255);
+
+        Scalar lowHSVRed = new Scalar(0, 50, 70);
+        Scalar highHSVRed = new Scalar(15, 255, 255);
+
         //hue, saturation, value
-        Core.inRange(mat, lowHSV, highHSV, mat);
+        Core.inRange(mat, lowHSVRed, highHSVRed, mat);
         Mat left = mat.submat(LEFT_ROI);
         Mat right = mat.submat(RIGHT_ROI);
 
@@ -50,7 +63,7 @@ public class SkystoneDetector extends OpenCvPipeline {
         telemetry.addData("right raw value", (int) Core.sumElems(right).val[0]);
         telemetry.addData("left percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("right percentage", Math.round(rightValue * 100) + "%");
-
+        telemetry.addData("HELLO", "GOODBYE");
         boolean stoneLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean stoneRight = rightValue > PERCENT_COLOR_THRESHOLD;
 
@@ -63,6 +76,7 @@ public class SkystoneDetector extends OpenCvPipeline {
         } else {
             location = Location.LEFT;
             telemetry.addData("skystone location", "left");
+            telemetry.addData("test", "hello");
         }
         telemetry.update();
 
