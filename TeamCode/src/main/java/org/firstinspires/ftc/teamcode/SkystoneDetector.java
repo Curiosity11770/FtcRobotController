@@ -15,15 +15,23 @@ public class SkystoneDetector extends OpenCvPipeline {
     public enum Location {
         LEFT,
         RIGHT,
+        MIDDLE,
         NOT_FOUND
     }
     private Location location;
+    /*
     static final Rect LEFT_ROI = new Rect(
             new Point(60, 35),
             new Point(120, 75));
     static final Rect RIGHT_ROI = new Rect(
             new Point(140, 35),
             new Point(200, 75));
+
+     */
+    static final Rect MIDDLE_ROI = new Rect(
+            new Point(60, 35),
+            new Point(200, 75));
+
     static double PERCENT_COLOR_THRESHOLD = 0.4; //ie 40%
 
     public SkystoneDetector(Telemetry t){
@@ -50,23 +58,43 @@ public class SkystoneDetector extends OpenCvPipeline {
 
         //hue, saturation, value
         Core.inRange(mat, lowHSVRed, highHSVRed, mat);
+        /*
         Mat left = mat.submat(LEFT_ROI);
         Mat right = mat.submat(RIGHT_ROI);
 
+         */
+        Mat middle = mat.submat(MIDDLE_ROI);
+/*
         double leftValue = Core.sumElems(left).val[0] / LEFT_ROI.area() / 255;
         double rightValue = Core.sumElems(right).val[0] / RIGHT_ROI.area() / 255;
 
+
+ */
+        double middleValue = Core.sumElems(middle).val[0] / MIDDLE_ROI.area() / 255;
+/*
         left.release();
         right.release();
 
+
+ */
+        middle.release();
+
+        /*
         telemetry.addData("left raw value", (int) Core.sumElems(left).val[0]);
         telemetry.addData("right raw value", (int) Core.sumElems(right).val[0]);
         telemetry.addData("left percentage", Math.round(leftValue * 100) + "%");
         telemetry.addData("right percentage", Math.round(rightValue * 100) + "%");
+        */
+
         telemetry.addData("HELLO", "GOODBYE");
+        /*
         boolean stoneLeft = leftValue > PERCENT_COLOR_THRESHOLD;
         boolean stoneRight = rightValue > PERCENT_COLOR_THRESHOLD;
 
+
+         */
+        boolean stoneMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
+/*
         if (stoneLeft && stoneRight) {
             location = Location.NOT_FOUND;
             telemetry.addData("skystone location", "not found");
@@ -78,6 +106,11 @@ public class SkystoneDetector extends OpenCvPipeline {
             telemetry.addData("skystone location", "left");
             telemetry.addData("test", "hello");
         }
+*/
+        if(stoneMiddle){
+            location = Location.MIDDLE;
+            telemetry.addData("skystone location", "middle");
+        }
         telemetry.update();
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
@@ -85,8 +118,14 @@ public class SkystoneDetector extends OpenCvPipeline {
         Scalar colorStone = new Scalar(255, 0, 0); //red
         Scalar colorSkystone = new Scalar(0, 255, 0); //green
 
+        Scalar colorMiddle = new Scalar(255, 255, 0);
+/*
         Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT ? colorSkystone : colorStone);
         Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT ? colorSkystone : colorStone);
+
+
+ */
+        Imgproc.rectangle(mat, MIDDLE_ROI, colorMiddle);
 
         return mat;
     }
