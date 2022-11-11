@@ -23,7 +23,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -61,11 +65,56 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     //havent sensed any tags yet
     AprilTagDetection tagOfInterest = null;
 
+    //motor stuff
+    private DcMotor frontLeft = null;
+    private DcMotor frontRight = null;
+    private DcMotor backLeft = null;
+    private DcMotor backRight = null;
+
+    private DcMotor verticalLeft = null;
+    private DcMotor horizontal = null;
+
+    //state/control stuff
+    private ElapsedTime runtime = new ElapsedTime();
+    public State stateRunning;
+
+    private enum State {
+        SCAN,
+        FORWARDONE,
+        FORWARDTWO,
+        FORWARDTHREE,
+        STOP;
+    }
+
     @Override
     public void runOpMode()
     {
+
+        //motor stuff
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        verticalLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        horizontal = hardwareMap.get(DcMotor.class, "backLeft");
+
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //reset encoders
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -86,6 +135,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         telemetry.setMsTransmissionInterval(50);
 
+        setStateRunning(State.SCAN);
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -155,6 +205,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
          */
 
         /* Update the telemetry */
+
         if(tagOfInterest != null)
         {
             telemetry.addLine("Tag snapshot:\n");
@@ -167,14 +218,17 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             telemetry.update();
         }
 
-    if(tagOfInterest == null || tagOfInterest.id == LEFT){
-        //trajectory
-    }else if(tagOfInterest.id == MIDDLE){
-        //trajectory
-    }
-    else{
-        //trajectory (RIGHT)
-    }
+        if(tagOfInterest.id == LEFT){
+            telemetry.addData("In forward one", "right now");
+            telemetry.update();
+        }else if(tagOfInterest.id == MIDDLE){
+            telemetry.addData("In forward two", "right now");
+            telemetry.update();
+        }
+        else{
+            telemetry.addData("In forward three", "right now");
+            telemetry.update();
+        }
 
         //DELETE THIS LATER
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
@@ -190,5 +244,41 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    private void driveForwards(double motorPower, double distance){
+        resetEncoders();
+        double countspercm = 500; //NEED TO DEFINE
+        double counts = distance*countspercm;
+
+        while(opModeIsActive() && verticalLeft.getCurrentPosition() < counts){
+            backLeft.setPower(motorPower);
+            backRight.setPower(motorPower);
+            frontLeft.setPower(motorPower);
+            frontRight.setPower(motorPower);
+
+            telemetry.addData("Motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.update();
+        }
+        driveStop();
+    }
+
+    private void driveStop(){
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+    }
+
+    private void resetEncoders(){
+        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    }
+
+    private void setStateRunning(State state){
+        //reset encoders
+        stateRunning = state;
+        runtime.reset();
     }
 }
