@@ -21,29 +21,42 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+@Autonomous
+public class Meet0Auto extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
+    static final double countspercm = 19.3566666;
+
+    Orientation angles;
+    Acceleration gravity;
+
+    BNO055IMU imu;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -90,6 +103,20 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     public void runOpMode()
     {
 
+        //IMU
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
         //motor stuff
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -97,18 +124,18 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         verticalLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        horizontal = hardwareMap.get(DcMotor.class, "backLeft");
+        horizontal = hardwareMap.get(DcMotor.class, "backRight");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        //frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        //backLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //reset encoders
@@ -216,18 +243,36 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
+            driveForwards(0.7, 66);
         }
 
         if(tagOfInterest.id == LEFT){
+            driveForwards(0.7, 10);
+            turn90CCW(0.6);
+            driveForwards(0.6, 66);
+            //resetAngle();
+            //turn90CW(0.6);
+            //turnCW(0.6, 270);
+            resetIMUCW();
+            driveForwards(0.6, 60);
             telemetry.addData("In forward one", "right now");
             telemetry.update();
         }else if(tagOfInterest.id == MIDDLE){
+            driveForwards(0.6, 66);
             telemetry.addData("In forward two", "right now");
             telemetry.update();
         }
         else{
+            driveForwards(0.7, 6);
+            turn90CW(0.5);
+            driveForwards(0.6, 66);
+            //resetAngle();
+            //turn90CW(0.6);
+            resetIMUCCW();
+            driveForwards(0.6, 60);
             telemetry.addData("In forward three", "right now");
             telemetry.update();
+
         }
 
         //DELETE THIS LATER
@@ -248,7 +293,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
     private void driveForwards(double motorPower, double distance){
         resetEncoders();
-        double countspercm = 500; //NEED TO DEFINE
         double counts = distance*countspercm;
 
         while(opModeIsActive() && verticalLeft.getCurrentPosition() < counts){
@@ -261,6 +305,100 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             telemetry.update();
         }
         driveStop();
+    }
+
+    private void driveBackwards(double motorPower, double distance){
+        resetEncoders();
+        double counts = distance*countspercm;
+
+        while(opModeIsActive() && verticalLeft.getCurrentPosition() < counts){
+            backLeft.setPower(-motorPower);
+            backRight.setPower(-motorPower);
+            frontLeft.setPower(-motorPower);
+            frontRight.setPower(-motorPower);
+
+            telemetry.addData("Motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.update();
+        }
+        driveStop();
+    }
+
+    private void turnCW(double motorPower, double degrees){
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        while(degrees > Math.abs(angles.firstAngle)) {
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            backLeft.setPower(motorPower);
+            backRight.setPower(-motorPower);
+            frontLeft.setPower(motorPower);
+            frontRight.setPower(-motorPower);
+
+            telemetry.addData("imu: ", angles.firstAngle);
+            telemetry.addData("motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.update();
+        }
+        driveStop();
+    }
+
+    private void turn90CW(double motorPower){
+        turnCW(motorPower, 60);
+    }
+
+    private void turn90CCW(double motorPower){
+        turnCCW(motorPower, 60);
+    }
+
+    private void turnCCW(double motorPower, double degrees){
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        while(degrees > Math.abs(angles.firstAngle)) {
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            backLeft.setPower(-motorPower);
+            backRight.setPower(motorPower);
+            frontLeft.setPower(-motorPower);
+            frontRight.setPower(motorPower);
+
+            telemetry.addData("imu: ", angles.firstAngle);
+            telemetry.addData("motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.update();
+        }
+        driveStop();
+    }
+
+    private void resetIMUCW(){
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        while(Math.abs(angles.firstAngle) > 1){
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            backLeft.setPower(0.3);
+            frontLeft.setPower(0.3);
+            backRight.setPower(-0.3);
+            frontRight.setPower(-0.3);
+        }
+        driveStop();
+    }
+
+    private void resetIMUCCW(){
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        while(Math.abs(angles.firstAngle) > 1){
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            backLeft.setPower(-0.3);
+            frontLeft.setPower(-0.3);
+            backRight.setPower(0.3);
+            frontRight.setPower(0.3);
+        }
+        driveStop();
+    }
+
+    private void wait(double time){
+        resetRuntime();
+        driveStop();
+        while(opModeIsActive() && runtime.seconds() < time){
+
+        }
     }
 
     private void driveStop(){
