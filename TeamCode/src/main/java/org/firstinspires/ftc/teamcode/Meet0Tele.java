@@ -27,12 +27,19 @@ public class Meet0Tele extends LinearOpMode {
     private DcMotor verticalLeft = null;
     private DcMotor horizontal = null;
 
+    private DcMotor getLiftLeft;
+    private DcMotor getLiftRight;
+    private DcMotor getPivot;
+
     private DcMotor liftLeft = null;
     private DcMotor liftRight = null;
 
     private DcMotor pivot = null;
 
     private CRServo intake = null;
+
+    private int liftTarget;
+    private int pivotTarget;
 
     private double drivePower;
 
@@ -57,6 +64,11 @@ public class Meet0Tele extends LinearOpMode {
 
         intake = hardwareMap.get(CRServo.class, "intakeServo");
 
+        getLiftLeft = hardwareMap.get(DcMotor.class, "leftSlides");
+        getLiftRight = hardwareMap.get(DcMotor.class, "rightSlides");
+
+        getPivot = hardwareMap.get(DcMotor.class, "pivot");
+
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -75,6 +87,9 @@ public class Meet0Tele extends LinearOpMode {
         pivot.setDirection(DcMotor.Direction.REVERSE);
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        resetLiftEncoders();
+        resetPivotEncoders();
+
         waitForStart();
         runtime.reset();
 
@@ -88,7 +103,9 @@ public class Meet0Tele extends LinearOpMode {
 
             //boolean intakeIn = false;
 
-            telemetry.addData("ticks", verticalLeft.getCurrentPosition());
+            telemetry.addData("LR ticks", getLiftRight.getCurrentPosition());
+            telemetry.addData("LL ticks", getLiftLeft.getCurrentPosition());
+            telemetry.addData("P ticks", getPivot.getCurrentPosition());
             telemetry.update();
 
             //do we want it to be set up this way? we can also do
@@ -146,5 +163,77 @@ public class Meet0Tele extends LinearOpMode {
                 intake.setPower(0);
             }
         }
+    }
+
+    private void pivotPosition(double motorPower, String side){
+        if(side.equals("LEFT")){     //LEFT
+            pivotTarget = 0;
+
+        } else if (side.equals("RIGHT")){    //RIGHT
+            pivotTarget = 10;
+        } else if (side.equals("CENTER")){    //CENTER
+            pivotTarget = 20;
+        }
+
+        pivot.setTargetPosition(pivotTarget);
+
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorPower = 0.1;
+        pivot.setPower(motorPower);
+
+        if(opModeIsActive() && pivot.isBusy()){
+            telemetry.addData("pivot", getPivot.getCurrentPosition());
+            telemetry.addData("Target", pivotTarget);
+            telemetry.update();
+        }
+
+        pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    private void liftPosition(double motorPower, String height){
+        if(height.equals("GROUND")){     //GROUND
+            liftTarget = 0;
+
+        } else if (height.equals("LOW")){    //LOW
+            liftTarget = 10;
+        } else if (height.equals("HIGH")){    //MIDDLE
+            liftTarget = 20;
+        } else {                    //HIGH
+            liftTarget = 30;
+        }
+
+        liftLeft.setTargetPosition(liftTarget);
+        liftRight.setTargetPosition(liftTarget);
+
+        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorPower = 0.1;
+        liftLeft.setPower(motorPower);
+        liftRight.setPower(motorPower);
+
+        if(opModeIsActive() && liftLeft.isBusy()){
+            telemetry.addData("Right", getLiftRight.getCurrentPosition());
+            telemetry.addData("left", getLiftLeft.getCurrentPosition());
+            telemetry.addData("Target", liftTarget);
+            telemetry.update();
+        }
+
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    private void resetLiftEncoders(){
+        getLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        getLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        getLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        getLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    private void resetPivotEncoders(){
+        getPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        getPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
