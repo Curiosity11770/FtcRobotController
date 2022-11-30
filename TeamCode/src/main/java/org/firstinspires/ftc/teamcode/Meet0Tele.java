@@ -137,21 +137,28 @@ public class Meet0Tele extends LinearOpMode {
                 backRight.setPower(0);
             }
 
-            if(gamepad2.left_stick_y > 0.2){
+            if(gamepad2.right_stick_y > 0.2){
                 liftLeft.setPower(liftPower);
                 liftRight.setPower(liftPower);
-            } else if(gamepad2.left_stick_y < -0.2){
+            } else if(gamepad2.right_stick_y < -0.2){
                 liftLeft.setPower(-liftPower);
                 liftRight.setPower(-liftPower);
-            } else {
+            } /* else if(gamepad2.y){ liftPosition(0.1, "GROUND"); }
+            else if(gamepad2.x){ liftPosition(0.1, "LOW")}
+            else if(gamepad2.b){ liftPosition(0.1, "MIDDLE")}
+            else if(gamepad2.a){ liftPosition(0.1, "HIGH")}*/
+            else {
                 liftLeft.setPower(0);
                 liftRight.setPower(0);
             }
-            if(gamepad2.right_stick_x > 0.2){
+            if(gamepad2.left_stick_x > 0.2){
                 pivot.setPower(pivotPower);
-            } else if(gamepad2.right_stick_x < -0.2){
+            } else if(gamepad2.left_stick_x < -0.2){
                 pivot.setPower(-pivotPower);
-            } else {
+            } /* else if (gamepad2.DpadLeft) { pivotPosition(0.1, "LEFT")}
+            else if(gamepad2.DpadUp) { pivotPosition(0.1, "CENTER")}
+            else if(gamepad2.DpadRight) { pivotPosition(0.1, "RIGHT")}*/
+            else {
                 pivot.setPower(0);
             }
 
@@ -197,7 +204,7 @@ public class Meet0Tele extends LinearOpMode {
 
         } else if (height.equals("LOW")){    //LOW
             liftTarget = 10;
-        } else if (height.equals("HIGH")){    //MIDDLE
+        } else if (height.equals("MIDDLE")){    //MIDDLE
             liftTarget = 20;
         } else {                    //HIGH
             liftTarget = 30;
