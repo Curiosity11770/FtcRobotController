@@ -27,9 +27,6 @@ public class Meet0Tele extends LinearOpMode {
     private DcMotor verticalLeft = null;
     private DcMotor horizontal = null;
 
-    private DcMotor getLiftLeft;
-    private DcMotor getLiftRight;
-    private DcMotor getPivot;
 
     private DcMotor liftLeft = null;
     private DcMotor liftRight = null;
@@ -40,6 +37,8 @@ public class Meet0Tele extends LinearOpMode {
 
     private int liftTarget;
     private int pivotTarget;
+
+    private String height = "GROUND";
 
     private double drivePower;
 
@@ -64,10 +63,6 @@ public class Meet0Tele extends LinearOpMode {
 
         intake = hardwareMap.get(CRServo.class, "intakeServo");
 
-        getLiftLeft = hardwareMap.get(DcMotor.class, "leftSlides");
-        getLiftRight = hardwareMap.get(DcMotor.class, "rightSlides");
-
-        getPivot = hardwareMap.get(DcMotor.class, "pivot");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -95,18 +90,18 @@ public class Meet0Tele extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            double rightDrivePower = 0.2;
-            double leftDrivePower = 0.2;
+            double rightDrivePower = 0.5;
+            double leftDrivePower = 0.5;
             double liftPower = 0.5;
-            double pivotPower = 0.2;
+            double pivotPower = 0.4;
             double intakePower = 0.5;
 
             //boolean intakeIn = false;
 
-            telemetry.addData("LR ticks", getLiftRight.getCurrentPosition());
-            telemetry.addData("LL ticks", getLiftLeft.getCurrentPosition());
-            telemetry.addData("P ticks", getPivot.getCurrentPosition());
-            telemetry.update();
+            telemetry.addData("LR ticks", liftRight.getCurrentPosition());
+            telemetry.addData("LL ticks", liftLeft.getCurrentPosition());
+            telemetry.addData("P ticks", pivot.getCurrentPosition());
+           // telemetry.update();
 
             //do we want it to be set up this way? we can also do
             //frontLeft.setPower(-gamepad1.left_stick_y);
@@ -137,30 +132,40 @@ public class Meet0Tele extends LinearOpMode {
                 backRight.setPower(0);
             }
 
-            if(gamepad2.right_stick_y > 0.2){
+            if(gamepad2.right_stick_y > 0.2 && Math.abs(liftLeft.getCurrentPosition()) < 3000 && Math.abs(liftRight.getCurrentPosition()) < 3000){
                 liftLeft.setPower(liftPower);
                 liftRight.setPower(liftPower);
             } else if(gamepad2.right_stick_y < -0.2){
                 liftLeft.setPower(-liftPower);
                 liftRight.setPower(-liftPower);
-            } /* else if(gamepad2.y){ liftPosition(0.1, "GROUND"); }
-            else if(gamepad2.x){ liftPosition(0.1, "LOW")}
-            else if(gamepad2.b){ liftPosition(0.1, "MIDDLE")}
-            else if(gamepad2.a){ liftPosition(0.1, "HIGH")}*/
-            else {
-                liftLeft.setPower(0);
-                liftRight.setPower(0);
             }
-            if(gamepad2.left_stick_x > 0.2){
-                pivot.setPower(pivotPower);
-            } else if(gamepad2.left_stick_x < -0.2){
-                pivot.setPower(-pivotPower);
-            } /* else if (gamepad2.DpadLeft) { pivotPosition(0.1, "LEFT")}
+            else
+            {
+                liftLeft.setPower(0.0);
+                liftRight.setPower(0.0);
+            }
+            /*
+             if(gamepad2.y) { height = "GROUND"; }
+            else if(gamepad2.x){ height = "LOW"; }
+            else if(gamepad2.b){ height = "MIDDLE"; }
+            else if(gamepad2.a){ height = "HIGH"; }
+
+            liftPosition(0.3, height);
+            */
+
+            //if(pivot.getCurrentPosition() < 100){
+               // pivot.setPower(0);
+            //} else {
+                if (gamepad2.left_stick_x > 0.2) {
+                    pivot.setPower(pivotPower);
+                } else if (gamepad2.left_stick_x < -0.2) {
+                    pivot.setPower(-pivotPower);
+                } /* else if (gamepad2.DpadLeft) { pivotPosition(0.1, "LEFT")}
             else if(gamepad2.DpadUp) { pivotPosition(0.1, "CENTER")}
             else if(gamepad2.DpadRight) { pivotPosition(0.1, "RIGHT")}*/
-            else {
-                pivot.setPower(0);
-            }
+                else {
+                    pivot.setPower(0);
+                }
 
             if(gamepad2.right_bumper) {
                 intake.setPower(intakePower);
@@ -190,7 +195,7 @@ public class Meet0Tele extends LinearOpMode {
         pivot.setPower(motorPower);
 
         if(opModeIsActive() && pivot.isBusy()){
-            telemetry.addData("pivot", getPivot.getCurrentPosition());
+            telemetry.addData("pivot", pivot.getCurrentPosition());
             telemetry.addData("Target", pivotTarget);
             telemetry.update();
         }
@@ -203,44 +208,46 @@ public class Meet0Tele extends LinearOpMode {
             liftTarget = 0;
 
         } else if (height.equals("LOW")){    //LOW
-            liftTarget = 10;
+            liftTarget = 100;
         } else if (height.equals("MIDDLE")){    //MIDDLE
-            liftTarget = 20;
+            liftTarget = 2200;
         } else {                    //HIGH
-            liftTarget = 30;
+            liftTarget = 2900;
         }
 
-        liftLeft.setTargetPosition(liftTarget);
-        liftRight.setTargetPosition(liftTarget);
+        liftLeft.setTargetPosition(-liftTarget);
+        liftRight.setTargetPosition(-liftTarget);
 
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        motorPower = 0.1;
+        //motorPower = 0.1;
         liftLeft.setPower(motorPower);
         liftRight.setPower(motorPower);
 
         if(opModeIsActive() && liftLeft.isBusy()){
-            telemetry.addData("Right", getLiftRight.getCurrentPosition());
-            telemetry.addData("left", getLiftLeft.getCurrentPosition());
+            telemetry.addData("Right", liftRight.getCurrentPosition());
+            telemetry.addData("left", liftLeft.getCurrentPosition());
             telemetry.addData("Target", liftTarget);
             telemetry.update();
         }
-
+        /*
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        */
+
     }
 
     private void resetLiftEncoders(){
-        getLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        getLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        getLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        getLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     private void resetPivotEncoders(){
-        getPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        getPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

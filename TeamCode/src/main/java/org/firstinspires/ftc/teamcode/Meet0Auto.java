@@ -249,12 +249,12 @@ public class Meet0Auto extends LinearOpMode
         if(tagOfInterest.id == LEFT){
             driveForwards(0.7, 10);
             turn90CCW(0.6);
-            driveForwards(0.6, 66);
+            driveForwards(0.6, 70);
             //resetAngle();
             //turn90CW(0.6);
             //turnCW(0.6, 270);
             resetIMUCW();
-            driveForwards(0.6, 60);
+            driveForwards(0.6, 55);
             telemetry.addData("In forward one", "right now");
             telemetry.update();
         }else if(tagOfInterest.id == MIDDLE){
