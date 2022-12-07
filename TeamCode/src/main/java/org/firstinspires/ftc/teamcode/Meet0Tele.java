@@ -38,9 +38,11 @@ public class Meet0Tele extends LinearOpMode {
     private int liftTarget;
     private int pivotTarget;
 
-    private String height = "GROUND";
+    private String height = "MANUAL";
 
     private double drivePower;
+
+    private boolean tankDrive = true;
 
     //@Override         doesn't like override?
     public void runOpMode(){
@@ -110,48 +112,71 @@ public class Meet0Tele extends LinearOpMode {
             //frontRight.setPower(-gamepad1.right_stick_y);
             //backRight.setPower(-gamepad1.right_stick_y);
 
-            if(gamepad1.left_stick_y > 0.2){
-                frontLeft.setPower(-leftDrivePower);
-                backLeft.setPower(-leftDrivePower);
-            } else if(gamepad1.left_stick_y < -0.2){
-                frontLeft.setPower(leftDrivePower);
-                backLeft.setPower(leftDrivePower);
-            } else {
-                frontLeft.setPower(0);
-                backLeft.setPower(0);
+            if(gamepad1.right_bumper){
+                tankDrive = !tankDrive;
+            }
+            if(tankDrive) {
+                if (gamepad1.left_stick_y > 0.2) {
+                    frontLeft.setPower(-leftDrivePower);
+                    backLeft.setPower(-leftDrivePower);
+                } else if (gamepad1.left_stick_y < -0.2) {
+                    frontLeft.setPower(leftDrivePower);
+                    backLeft.setPower(leftDrivePower);
+                } else {
+                    frontLeft.setPower(0);
+                    backLeft.setPower(0);
+                }
+
+                if (gamepad1.right_stick_y > 0.2) {
+                    frontRight.setPower(-rightDrivePower);
+                    backRight.setPower(-rightDrivePower);
+                } else if (gamepad1.right_stick_y < -0.2) {
+                    frontRight.setPower(rightDrivePower);
+                    backRight.setPower(rightDrivePower);
+                } else {
+                    frontRight.setPower(0);
+                    backRight.setPower(0);
+                }
+            } else if (!tankDrive){
+                if (gamepad1.left_stick_y > 0.2) {
+                    frontRight.setPower(-rightDrivePower);
+                    backRight.setPower(-rightDrivePower);
+                    frontLeft.setPower(-leftDrivePower);
+                    backLeft.setPower(-leftDrivePower);
+                } else if (gamepad1.right_stick_y < -0.2) {
+                    frontRight.setPower(rightDrivePower);
+                    backRight.setPower(rightDrivePower);
+                    frontLeft.setPower(leftDrivePower);
+                    backLeft.setPower(leftDrivePower);
+                } else {
+                    frontRight.setPower(0);
+                    backRight.setPower(0);
+                }
+
+                if(gamepad1.right_stick_x > 0.2) {
+                    frontLeft.setPower(-leftDrivePower);
+                    backLeft.setPower(-leftDrivePower);
+                    frontRight.setPower(rightDrivePower);
+                    backRight.setPower(rightDrivePower);
+                } else if(gamepad1.right_stick_x < 0.2) {
+                    frontLeft.setPower(leftDrivePower);
+                    backLeft.setPower(leftDrivePower);
+                    frontRight.setPower(-rightDrivePower);
+                    backRight.setPower(-rightDrivePower);
+                }
             }
 
-            if(gamepad1.right_stick_y > 0.2){
-                frontRight.setPower(-rightDrivePower);
-                backRight.setPower(-rightDrivePower);
-            } else if(gamepad1.right_stick_y < -0.2){
-                frontRight.setPower(rightDrivePower);
-                backRight.setPower(rightDrivePower);
-            } else {
-                frontRight.setPower(0);
-                backRight.setPower(0);
-            }
 
-            if(gamepad2.right_stick_y > 0.2 && Math.abs(liftLeft.getCurrentPosition()) < 3000 && Math.abs(liftRight.getCurrentPosition()) < 3000){
-                liftLeft.setPower(liftPower);
-                liftRight.setPower(liftPower);
-            } else if(gamepad2.right_stick_y < -0.2){
-                liftLeft.setPower(-liftPower);
-                liftRight.setPower(-liftPower);
-            }
-            else
-            {
-                liftLeft.setPower(0.0);
-                liftRight.setPower(0.0);
-            }
             /*
-             if(gamepad2.y) { height = "GROUND"; }
+            if(gamepad2.y) { height = "GROUND"; }
             else if(gamepad2.x){ height = "LOW"; }
             else if(gamepad2.b){ height = "MIDDLE"; }
             else if(gamepad2.a){ height = "HIGH"; }
-
-            liftPosition(0.3, height);
             */
+
+            //height = "MANUAL"; //set manual at the very beginning
+            liftPosition(0.3, height);
+
 
             //if(pivot.getCurrentPosition() < 100){
                // pivot.setPower(0);
@@ -191,7 +216,7 @@ public class Meet0Tele extends LinearOpMode {
 
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        motorPower = 0.1;
+        //motorPower = 0.1;
         pivot.setPower(motorPower);
 
         if(opModeIsActive() && pivot.isBusy()){
@@ -204,38 +229,101 @@ public class Meet0Tele extends LinearOpMode {
     }
 
     private void liftPosition(double motorPower, String height){
-        if(height.equals("GROUND")){     //GROUND
+        if(height.equals("MANUAL")){
+            liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            if(gamepad2.right_stick_y > 0.2 && Math.abs(liftLeft.getCurrentPosition()) < 3000 && Math.abs(liftRight.getCurrentPosition()) < 3000){
+                liftLeft.setPower(motorPower);
+                liftRight.setPower(motorPower);
+            } else if(gamepad2.right_stick_y < -0.2){
+                liftLeft.setPower(-motorPower);
+                liftRight.setPower(-motorPower);
+            }
+            else
+            {
+                liftLeft.setPower(0.15);
+                liftRight.setPower(0.15);
+            }
+        }
+        else if(height.equals("GROUND")){     //GROUND
             liftTarget = 0;
 
+            liftLeft.setTargetPosition(-liftTarget);
+            liftRight.setTargetPosition(-liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("Target", liftTarget);
+                telemetry.update();
+            }
+
         } else if (height.equals("LOW")){    //LOW
-            liftTarget = 100;
+            liftTarget = 1400;
+
+            liftLeft.setTargetPosition(-liftTarget);
+            liftRight.setTargetPosition(-liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("Target", liftTarget);
+                telemetry.update();
+            }
         } else if (height.equals("MIDDLE")){    //MIDDLE
             liftTarget = 2200;
+
+            liftLeft.setTargetPosition(-liftTarget);
+            liftRight.setTargetPosition(-liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("Target", liftTarget);
+                telemetry.update();
+            }
         } else {                    //HIGH
             liftTarget = 2900;
+
+            liftLeft.setTargetPosition(-liftTarget);
+            liftRight.setTargetPosition(-liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("Target", liftTarget);
+                telemetry.update();
+            }
         }
-
-        liftLeft.setTargetPosition(-liftTarget);
-        liftRight.setTargetPosition(-liftTarget);
-
-        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //motorPower = 0.1;
-        liftLeft.setPower(motorPower);
-        liftRight.setPower(motorPower);
-
-        if(opModeIsActive() && liftLeft.isBusy()){
-            telemetry.addData("Right", liftRight.getCurrentPosition());
-            telemetry.addData("left", liftLeft.getCurrentPosition());
-            telemetry.addData("Target", liftTarget);
-            telemetry.update();
-        }
-        /*
-        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        */
-
     }
 
     private void resetLiftEncoders(){

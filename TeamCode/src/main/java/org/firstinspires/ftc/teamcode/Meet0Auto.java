@@ -249,7 +249,7 @@ public class Meet0Auto extends LinearOpMode
         if(tagOfInterest.id == LEFT){
             driveForwards(0.7, 10);
             turn90CCW(0.6);
-            driveForwards(0.6, 70);
+            driveForwards(0.6, 74);
             //resetAngle();
             //turn90CW(0.6);
             //turnCW(0.6, 270);
@@ -265,7 +265,7 @@ public class Meet0Auto extends LinearOpMode
         else{
             driveForwards(0.7, 6);
             turn90CW(0.5);
-            driveForwards(0.6, 66);
+            driveForwards(0.6, 70);
             //resetAngle();
             //turn90CW(0.6);
             resetIMUCCW();
