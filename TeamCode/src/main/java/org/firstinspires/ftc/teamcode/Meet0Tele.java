@@ -306,7 +306,7 @@ public class Meet0Tele extends LinearOpMode {
                 telemetry.addData("Target", liftTarget);
                 telemetry.update();
             }
-        } else {                    //HIGH
+        } else if(height.equals("HIGH")){                    //HIGH
             liftTarget = 2900;
 
             liftLeft.setTargetPosition(-liftTarget);
@@ -325,6 +325,8 @@ public class Meet0Tele extends LinearOpMode {
                 telemetry.addData("Target", liftTarget);
                 telemetry.update();
             }
+        } else {
+            height = "MANUAL";
         }
     }
 
