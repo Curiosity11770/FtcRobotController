@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
+
 @TeleOp //used to say "extends LinearOpMode but that got error
 public class Meet0Tele extends LinearOpMode {
 
@@ -236,7 +238,7 @@ public class Meet0Tele extends LinearOpMode {
             if(gamepad2.right_stick_y > 0.2 && Math.abs(liftLeft.getCurrentPosition()) < 3000 && Math.abs(liftRight.getCurrentPosition()) < 3000){
                 liftLeft.setPower(motorPower);
                 liftRight.setPower(motorPower);
-            } else if(gamepad2.right_stick_y < -0.2){
+            } else if(gamepad2.right_stick_y < -0.2 && Math.abs(liftLeft.getCurrentPosition()) < 0 && Math.abs(liftRight.getCurrentPosition()) > 0){
                 liftLeft.setPower(-motorPower);
                 liftRight.setPower(-motorPower);
             }
