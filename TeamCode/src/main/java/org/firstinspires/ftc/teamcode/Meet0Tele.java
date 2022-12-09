@@ -46,6 +46,15 @@ public class Meet0Tele extends LinearOpMode {
 
     private boolean tankDrive = true;
 
+    private boolean slow = false;
+
+
+    private double rightPower;
+    private double leftPower;
+    private double liftPower = 0.5;
+    private double pivotPower = 0.4;
+    private double intakePower = 0.5;
+
     //@Override         doesn't like override?
     public void runOpMode(){
         telemetry.addData("Status", "Initialized");
@@ -94,12 +103,6 @@ public class Meet0Tele extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            double rightDrivePower = 0.5;
-            double leftDrivePower = 0.5;
-            double liftPower = 0.5;
-            double pivotPower = 0.4;
-            double intakePower = 0.5;
-
             //boolean intakeIn = false;
 
             telemetry.addData("LR ticks", liftRight.getCurrentPosition());
@@ -117,57 +120,25 @@ public class Meet0Tele extends LinearOpMode {
             if(gamepad1.right_bumper){
                 tankDrive = !tankDrive;
             }
+            if(gamepad1.left_bumper){
+                slow = !slow;
+            }
             if(tankDrive) {
-                if (gamepad1.left_stick_y > 0.2) {
-                    frontLeft.setPower(-leftDrivePower);
-                    backLeft.setPower(-leftDrivePower);
-                } else if (gamepad1.left_stick_y < -0.2) {
-                    frontLeft.setPower(leftDrivePower);
-                    backLeft.setPower(leftDrivePower);
-                } else {
-                    frontLeft.setPower(0);
-                    backLeft.setPower(0);
-                }
-
-                if (gamepad1.right_stick_y > 0.2) {
-                    frontRight.setPower(-rightDrivePower);
-                    backRight.setPower(-rightDrivePower);
-                } else if (gamepad1.right_stick_y < -0.2) {
-                    frontRight.setPower(rightDrivePower);
-                    backRight.setPower(rightDrivePower);
-                } else {
-                    frontRight.setPower(0);
-                    backRight.setPower(0);
-                }
+                leftPower = -gamepad1.left_stick_y/2;
+                rightPower = -gamepad1.right_stick_x/2;
             } else if (!tankDrive){
-                if (gamepad1.left_stick_y > 0.2) {
-                    frontRight.setPower(-rightDrivePower);
-                    backRight.setPower(-rightDrivePower);
-                    frontLeft.setPower(-leftDrivePower);
-                    backLeft.setPower(-leftDrivePower);
-                } else if (gamepad1.right_stick_y < -0.2) {
-                    frontRight.setPower(rightDrivePower);
-                    backRight.setPower(rightDrivePower);
-                    frontLeft.setPower(leftDrivePower);
-                    backLeft.setPower(leftDrivePower);
-                } else {
-                    frontRight.setPower(0);
-                    backRight.setPower(0);
-                }
-
-                if(gamepad1.right_stick_x > 0.2) {
-                    frontLeft.setPower(-leftDrivePower);
-                    backLeft.setPower(-leftDrivePower);
-                    frontRight.setPower(rightDrivePower);
-                    backRight.setPower(rightDrivePower);
-                } else if(gamepad1.right_stick_x < 0.2) {
-                    frontLeft.setPower(leftDrivePower);
-                    backLeft.setPower(leftDrivePower);
-                    frontRight.setPower(-rightDrivePower);
-                    backRight.setPower(-rightDrivePower);
-                }
+                leftPower = -gamepad1.left_stick_y/2 + -gamepad1.right_stick_x/2;
+                rightPower = -gamepad1.left_stick_y/2 - -gamepad1.right_stick_x/2;
+            }
+            if(slow){
+                leftPower = leftPower/2;
+                rightPower = rightPower/2;
             }
 
+            frontRight.setPower(rightPower);
+            backRight.setPower(rightPower);
+            frontLeft.setPower(leftPower);
+            backLeft.setPower(leftPower);
 
             /*
             if(gamepad2.y) { height = "GROUND"; }
