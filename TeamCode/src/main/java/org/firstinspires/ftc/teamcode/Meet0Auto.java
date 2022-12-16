@@ -25,6 +25,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -52,6 +53,8 @@ public class Meet0Auto extends LinearOpMode
 
     static final double FEET_PER_METER = 3.28084;
     static final double countspercm = 19.3566666;
+
+    private int liftTarget;
 
     Orientation angles;
     Acceleration gravity;
@@ -86,6 +89,15 @@ public class Meet0Auto extends LinearOpMode
 
     private DcMotor verticalLeft = null;
     private DcMotor horizontal = null;
+
+    private DcMotor liftLeft = null;
+    private DcMotor liftRight = null;
+
+    private DcMotor pivot = null;
+
+    private CRServo intake = null;
+
+    private String height = "LOW";
 
     //state/control stuff
     private ElapsedTime runtime = new ElapsedTime();
@@ -126,6 +138,13 @@ public class Meet0Auto extends LinearOpMode
         verticalLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         horizontal = hardwareMap.get(DcMotor.class, "backRight");
 
+        liftLeft = hardwareMap.get(DcMotor.class, "leftSlides");
+        liftRight = hardwareMap.get(DcMotor.class, "rightSlides");
+
+        pivot = hardwareMap.get(DcMotor.class, "pivot");
+
+        intake = hardwareMap.get(CRServo.class, "intakeServo");
+
         //frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -137,6 +156,16 @@ public class Meet0Auto extends LinearOpMode
 
         backRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight.setDirection(DcMotor.Direction.REVERSE);
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        pivot.setDirection(DcMotor.Direction.REVERSE);
+        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        resetLiftEncoders();
+        resetPivotEncoders();
 
         //reset encoders
 
@@ -292,7 +321,7 @@ public class Meet0Auto extends LinearOpMode
     }
 
     private void driveForwards(double motorPower, double distance){
-        resetEncoders();
+        resetDriveEncoders();
         double counts = distance*countspercm;
 
         while(opModeIsActive() && verticalLeft.getCurrentPosition() < counts){
@@ -308,7 +337,7 @@ public class Meet0Auto extends LinearOpMode
     }
 
     private void driveBackwards(double motorPower, double distance){
-        resetEncoders();
+        resetDriveEncoders();
         double counts = distance*countspercm;
 
         while(opModeIsActive() && verticalLeft.getCurrentPosition() < counts){
@@ -379,6 +408,109 @@ public class Meet0Auto extends LinearOpMode
         driveStop();
     }
 
+    private void liftPosition(double motorPower, String height){
+        if(height.equals("MANUAL")){
+            liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            //add touch sensor lower bound (if touch sensor not pressed)
+            if(gamepad2.right_stick_y > 0.2 && Math.abs(liftLeft.getCurrentPosition()) < 3000 && Math.abs(liftRight.getCurrentPosition()) < 3000){
+                liftLeft.setPower(-motorPower);
+                liftRight.setPower(-motorPower);
+                //make proportional to right_stick_y? (like drivetrain)
+            } else if(gamepad2.right_stick_y < -0.2){
+                liftLeft.setPower(motorPower);
+                liftRight.setPower(motorPower);
+            }
+            else
+            {
+                liftLeft.setPower(0.15);
+                liftRight.setPower(0.15);
+            }
+        }
+        else if(height.equals("GROUND")){     //GROUND
+            liftTarget = 0;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getTargetPosition());
+                telemetry.addData("Target", liftTarget);
+                //telemetry.update();
+            }
+
+        } else if (height.equals("LOW")){    //LOW
+            liftTarget = 1400;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getTargetPosition());
+                telemetry.addData("Target", liftTarget);
+                //telemetry.update();
+            }
+        } else if (height.equals("MIDDLE")){    //MIDDLE
+            liftTarget = 2200;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("Target", liftTarget);
+                //telemetry.update();
+            }
+        } else if(height.equals("HIGH")){                    //HIGH
+            liftTarget = 2900;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+            if(opModeIsActive() && liftLeft.isBusy()){
+                telemetry.addData("Right", liftRight.getCurrentPosition());
+                telemetry.addData("left", liftLeft.getCurrentPosition());
+                telemetry.addData("Target", liftTarget);
+                //telemetry.update();
+            }
+        } else {
+            height = "MANUAL";
+        }
+    }
+
     private void resetIMUCCW(){
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -408,10 +540,23 @@ public class Meet0Auto extends LinearOpMode
         frontRight.setPower(0);
     }
 
-    private void resetEncoders(){
+    private void resetDriveEncoders(){
         verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+    }
+
+    private void resetLiftEncoders(){
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    private void resetPivotEncoders(){
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     private void setStateRunning(State state){
