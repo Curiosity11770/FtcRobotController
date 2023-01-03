@@ -172,6 +172,7 @@ public class Meet0Tele extends LinearOpMode {
                    pivot.setPower(gamepad2.left_stick_x/2.5);
                }
                //set positions
+
                else if (gamepad2.dpad_left) { pivotPosition(0.1, "LEFT"); }
                else if(gamepad2.dpad_up) { pivotPosition(0.1, "CENTER"); }
                else if(gamepad2.dpad_right) { pivotPosition(0.1, "RIGHT"); }

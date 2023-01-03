@@ -87,8 +87,8 @@ public class Meet0Auto extends LinearOpMode
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
 
-    private DcMotor verticalLeft = null;
-    private DcMotor horizontal = null;
+    //private DcMotor verticalLeft = null;
+    //private DcMotor horizontal = null;
 
     private DcMotor liftLeft = null;
     private DcMotor liftRight = null;
@@ -135,8 +135,8 @@ public class Meet0Auto extends LinearOpMode
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        verticalLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        horizontal = hardwareMap.get(DcMotor.class, "backRight");
+        //verticalLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        //horizontal = hardwareMap.get(DcMotor.class, "backRight");
 
         liftLeft = hardwareMap.get(DcMotor.class, "leftSlides");
         liftRight = hardwareMap.get(DcMotor.class, "rightSlides");
@@ -324,13 +324,13 @@ public class Meet0Auto extends LinearOpMode
         resetDriveEncoders();
         double counts = distance*countspercm;
 
-        while(opModeIsActive() && verticalLeft.getCurrentPosition() < counts){
+        while(opModeIsActive() && frontLeft.getCurrentPosition() < counts){
             backLeft.setPower(motorPower);
             backRight.setPower(motorPower);
             frontLeft.setPower(motorPower);
             frontRight.setPower(motorPower);
 
-            telemetry.addData("Motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.addData("Motor position: ", frontLeft.getCurrentPosition());
             telemetry.update();
         }
         driveStop();
@@ -340,13 +340,13 @@ public class Meet0Auto extends LinearOpMode
         resetDriveEncoders();
         double counts = distance*countspercm;
 
-        while(opModeIsActive() && verticalLeft.getCurrentPosition() < counts){
+        while(opModeIsActive() && frontLeft.getCurrentPosition() < counts){
             backLeft.setPower(-motorPower);
             backRight.setPower(-motorPower);
             frontLeft.setPower(-motorPower);
             frontRight.setPower(-motorPower);
 
-            telemetry.addData("Motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.addData("Motor position: ", frontLeft.getCurrentPosition());
             telemetry.update();
         }
         driveStop();
@@ -363,7 +363,7 @@ public class Meet0Auto extends LinearOpMode
             frontRight.setPower(-motorPower);
 
             telemetry.addData("imu: ", angles.firstAngle);
-            telemetry.addData("motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.addData("motor position: ", frontLeft.getCurrentPosition());
             telemetry.update();
         }
         driveStop();
@@ -388,7 +388,7 @@ public class Meet0Auto extends LinearOpMode
             frontRight.setPower(motorPower);
 
             telemetry.addData("imu: ", angles.firstAngle);
-            telemetry.addData("motor position: ", verticalLeft.getCurrentPosition());
+            telemetry.addData("motor position: ", frontLeft.getCurrentPosition());
             telemetry.update();
         }
         driveStop();
@@ -541,8 +541,8 @@ public class Meet0Auto extends LinearOpMode
     }
 
     private void resetDriveEncoders(){
-        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
