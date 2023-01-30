@@ -47,7 +47,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class Meet0Auto extends LinearOpMode
+public class Meet3Auto extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -93,6 +93,8 @@ public class Meet0Auto extends LinearOpMode
 
     private DcMotor liftLeft = null;
     private DcMotor liftRight = null;
+
+    private double pPos;
 
     private Servo pivot = null;
 
@@ -168,6 +170,7 @@ public class Meet0Auto extends LinearOpMode
         resetLiftEncoders();
         //resetPivotEncoders();
         pivot.setPosition(0.5);
+
         //reset encoders
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -263,6 +266,8 @@ public class Meet0Auto extends LinearOpMode
 
         /* Update the telemetry */
 
+        pPos = pivot.getPosition();
+
         if(tagOfInterest != null)
         {
             telemetry.addLine("Tag snapshot:\n");
@@ -279,7 +284,7 @@ public class Meet0Auto extends LinearOpMode
         if(tagOfInterest.id == LEFT){
             driveForwards(0.7, 10);
             turn90CCW(0.6);
-            driveForwards(0.6, 60);
+            driveForwards(0.6, 74);
             //resetAngle();
             //turn90CW(0.6);
             //turnCW(0.6, 270);
@@ -295,7 +300,7 @@ public class Meet0Auto extends LinearOpMode
         else{
             driveForwards(0.7, 6);
             turn90CW(0.5);
-            driveForwards(0.6, 66);
+            driveForwards(0.6, 70);
             //resetAngle();
             //turn90CW(0.6);
             resetIMUCCW();
@@ -375,7 +380,7 @@ public class Meet0Auto extends LinearOpMode
     }
 
     private void turn90CCW(double motorPower){
-        turnCCW(motorPower, 70);
+        turnCCW(motorPower, 60);
     }
 
     private void turnCCW(double motorPower, double degrees){
@@ -425,8 +430,8 @@ public class Meet0Auto extends LinearOpMode
             }
             else
             {
-                liftLeft.setPower(0.15);
-                liftRight.setPower(0.15);
+                liftLeft.setPower(0.1);
+                liftRight.setPower(0.1);
             }
         }
         else if(height.equals("GROUND")){     //GROUND
@@ -532,6 +537,24 @@ public class Meet0Auto extends LinearOpMode
         while(opModeIsActive() && runtime.seconds() < time){
 
         }
+    }
+
+    private void pivotPosition(double pivotTarget){
+        if (pPos > pivotTarget) {
+            pivot.setPosition(pPos - 0.005);
+        } else if (pPos < pivotTarget) {
+            pivot.setPosition(pPos + 0.005);
+        }
+    }
+
+    private void intakeIn(){
+        intake.setPower(0.7);
+    }
+    private void intakeOut(){
+        intake.setPower(-0.7);
+    }
+    private void intakeStop(){
+        intake.setPower(0.0);
     }
 
     private void driveStop(){

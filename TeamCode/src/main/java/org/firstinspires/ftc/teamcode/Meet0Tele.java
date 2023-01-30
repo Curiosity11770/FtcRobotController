@@ -35,12 +35,11 @@ public class Meet0Tele extends LinearOpMode {
     private DcMotor liftLeft = null;
     private DcMotor liftRight = null;
 
-    private DcMotor pivot = null;
+    private Servo pivot = null;
 
     private CRServo intake = null;
 
     private int liftTarget;
-    private int pivotTarget;
 
     private TouchSensor touch = null;
     private String height = "MANUAL";
@@ -51,6 +50,9 @@ public class Meet0Tele extends LinearOpMode {
 
     private boolean slow = false;
 
+    private double pPos = 0;
+    private double pivotTarget = 0.5;
+    private boolean manual;
 
     private double rightPower;
     private double leftPower;
@@ -76,7 +78,8 @@ public class Meet0Tele extends LinearOpMode {
         liftLeft = hardwareMap.get(DcMotor.class, "leftSlides");
         liftRight = hardwareMap.get(DcMotor.class, "rightSlides");
 
-        pivot = hardwareMap.get(DcMotor.class, "pivot");
+        //pivot = hardwareMap.get(DcMotor.class, "pivot");
+        pivot = hardwareMap.get(Servo.class, "pivot");
 
         intake = hardwareMap.get(CRServo.class, "intakeServo");
 
@@ -97,12 +100,15 @@ public class Meet0Tele extends LinearOpMode {
         liftRight.setDirection(DcMotor.Direction.REVERSE);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        pivot.setDirection(DcMotor.Direction.REVERSE);
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //pivot.setDirection(DcMotor.Direction.REVERSE);
+        //pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //resetLift();
         resetLiftEncoders();
-        resetPivotEncoders();
+        //resetPivotEncoders();
+
+        pivot.setPosition(0.5);
+        //manual = true;
 
         waitForStart();
         runtime.reset();
@@ -113,8 +119,10 @@ public class Meet0Tele extends LinearOpMode {
 
             telemetry.addData("LR ticks", liftRight.getCurrentPosition());
             telemetry.addData("LL ticks", liftLeft.getCurrentPosition());
-            telemetry.addData("P ticks", pivot.getCurrentPosition());
+            telemetry.addData("P ticks", pivot.getPosition());
            // telemetry.update();
+
+            pPos = pivot.getPosition();
 
             //do we want it to be set up this way? we can also do
             //frontLeft.setPower(-gamepad1.left_stick_y);
@@ -167,20 +175,27 @@ public class Meet0Tele extends LinearOpMode {
 
                 //manual
                if (gamepad2.left_stick_x > 0.2) {
-                   pivot.setPower(gamepad2.left_stick_x/2.5);
+                   //pivot.setPower(gamepad2.left_stick_x/2.5);
+                   manual = true;
+                   //pivot.setPosition(pPos+0.005);
                } else if (gamepad2.left_stick_x < -0.2) {
-                   pivot.setPower(gamepad2.left_stick_x/2.5);
+                   //pivot.setPower(gamepad2.left_stick_x/2.5);
+                   manual = true;
+                   //pivot.setPosition(pPos-0.005);
                }
                //set positions
 
-               else if (gamepad2.dpad_left) { pivotPosition(0.1, "LEFT"); }
-               else if(gamepad2.dpad_up) { pivotPosition(0.1, "CENTER"); }
-               else if(gamepad2.dpad_right) { pivotPosition(0.1, "RIGHT"); }
-               else {
-                   pivot.setPower(0);
-               }
+               if (gamepad2.dpad_left) { pivotTarget = 0.0; manual = false; }
+               else if(gamepad2.dpad_up) { pivotTarget = 0.5; manual = false; }
+               else if(gamepad2.dpad_right) { pivotTarget = 1.0; manual = false; }
+               //else {
+                 //  pivot.setPower(0);
+               //}
 
-            //pivot.setPower(gamepad2.left_stick_x/2.5);
+            pivotPosition(manual, pivotTarget);
+
+            //pivot.setPower(gamepad
+            // 2.left_stick_x/2.5);
 
             if(gamepad2.right_bumper) {
                 intake.setPower(intakePower);
@@ -193,7 +208,24 @@ public class Meet0Tele extends LinearOpMode {
         }
     }
 
-    private void pivotPosition(double motorPower, String side){
+    private void pivotPosition(boolean manual, double pivotTarget){
+        if(manual = true) {
+            if (gamepad2.left_stick_x > 0.2) {
+                pivot.setPosition(pPos + 0.005);
+            } else if (gamepad2.left_stick_x < -0.2) {
+                pivot.setPosition(pPos - 0.005);
+            }
+        }
+        else if(manual = false) {
+            if (pPos > pivotTarget) {
+                pivot.setPosition(pPos - 0.005);
+            } else if (pPos < pivotTarget) {
+                pivot.setPosition(pPos + 0.005);
+            }
+        }
+    }
+
+    /*private void pivotPositionOLD(double motorPower, String side){
         if(side.equals("LEFT")){     //LEFT
             pivotTarget = -663;
 
@@ -217,7 +249,7 @@ public class Meet0Tele extends LinearOpMode {
         }
 
         pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
+    }*/
     //positive encoder values and motor powers are UP
     private void liftPosition(double motorPower, String height){
         if(height.equals("MANUAL")){
@@ -235,8 +267,8 @@ public class Meet0Tele extends LinearOpMode {
             }
             else
             {
-                liftLeft.setPower(0.15);
-                liftRight.setPower(0.15);
+                liftLeft.setPower(0.1);
+                liftRight.setPower(0.1);
             }
         }
         else if(height.equals("GROUND")){     //GROUND
@@ -346,8 +378,8 @@ public class Meet0Tele extends LinearOpMode {
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    private void resetPivotEncoders(){
+    /*private void resetPivotEncoders(){
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
+    }*/
 }
