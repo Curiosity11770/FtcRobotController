@@ -39,6 +39,8 @@ public class Meet0Tele extends LinearOpMode {
 
     private CRServo intake = null;
 
+    private Servo sweeper = null;
+
     private int liftTarget;
 
     private TouchSensor touch = null;
@@ -46,12 +48,12 @@ public class Meet0Tele extends LinearOpMode {
 
     private double drivePower;
 
-    private boolean tankDrive = true;
+    private boolean tankDrive = false;
 
-    private boolean slow = false;
+    private boolean turbo = false;
 
     private double pPos = 0;
-    private double pivotTarget = 0.5;
+    private double pivotTarget = 0.54;
     private boolean manual;
 
     private double rightPower;
@@ -83,6 +85,8 @@ public class Meet0Tele extends LinearOpMode {
 
         intake = hardwareMap.get(CRServo.class, "intakeServo");
 
+        sweeper = hardwareMap.get(Servo.class, "sweep");
+
         touch = hardwareMap.get(TouchSensor.class, "touchSensor");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -107,7 +111,7 @@ public class Meet0Tele extends LinearOpMode {
         resetLiftEncoders();
         //resetPivotEncoders();
 
-        pivot.setPosition(0.5);
+        pivot.setPosition(0.54);
         //manual = true;
 
         waitForStart();
@@ -134,20 +138,20 @@ public class Meet0Tele extends LinearOpMode {
             if(gamepad1.right_bumper){
                 tankDrive = !tankDrive;
             }
-            if(gamepad1.left_bumper){
-                slow = !slow;
-            }
+            //if(gamepad1.left_bumper){
+                turbo = !turbo;
+            //}
             if(tankDrive) {
 
-                leftPower = -gamepad1.left_stick_y/2;
-                rightPower = -gamepad1.right_stick_y/2;
+                leftPower = -gamepad1.left_stick_y/1.2;
+                rightPower = -gamepad1.right_stick_y/1.2;
             } else if (!tankDrive){
-                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x/2;
-                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x/2;
+                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x/1.2;
+                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x/1.2;
             }
-            if(slow){
-                leftPower = leftPower/2;
-                rightPower = rightPower/2;
+            if(gamepad1.left_bumper){
+                leftPower = leftPower*1.9;
+                rightPower = rightPower*1.9;
             }
 
             frontRight.setPower(rightPower);
@@ -159,7 +163,7 @@ public class Meet0Tele extends LinearOpMode {
             if(gamepad2.right_stick_y > 0.2 || gamepad2.right_stick_y < -0.2){
                 height = "MANUAL";
             }
-            else if(gamepad2.y) { height = "GROUND"; }
+            else if(gamepad2.y){ height = "GROUND"; }
             else if(gamepad2.x){ height = "LOW"; }
             else if(gamepad2.b){ height = "MIDDLE"; }
             else if(gamepad2.a){ height = "HIGH"; }
@@ -174,32 +178,29 @@ public class Meet0Tele extends LinearOpMode {
             //} else {
 
                 //manual
-               if (gamepad2.left_stick_x > 0.2) {
+               if (gamepad2.left_stick_x > 0.2 || gamepad2.left_stick_x < -0.2) {
                    //pivot.setPower(gamepad2.left_stick_x/2.5);
                    manual = true;
                    //pivot.setPosition(pPos+0.005);
-               } else if (gamepad2.left_stick_x < -0.2) {
-                   //pivot.setPower(gamepad2.left_stick_x/2.5);
-                   manual = true;
-                   //pivot.setPosition(pPos-0.005);
                }
                //set positions
 
-               if (gamepad2.dpad_left) { pivotTarget = 0.0; manual = false; }
-               else if(gamepad2.dpad_up) { pivotTarget = 0.5; manual = false; }
-               else if(gamepad2.dpad_right) { pivotTarget = 1.0; manual = false; }
+               if (gamepad2.left_bumper) { pivotTarget = 0.2; manual = false; }
+               //else if(gamepad2.dpad_up) { pivotTarget = 0.5; manual = false; }
+               else if(gamepad2.right_bumper) { pivotTarget = 0.8; manual = false; }
                //else {
                  //  pivot.setPower(0);
                //}
 
             pivotPosition(manual, pivotTarget);
+               setSweeper();
 
             //pivot.setPower(gamepad
             // 2.left_stick_x/2.5);
 
-            if(gamepad2.right_bumper) {
+            if(gamepad2.right_trigger > 0.2) {
                 intake.setPower(intakePower);
-            } else if(gamepad2.left_bumper){
+            } else if(gamepad2.left_trigger > 0.2){
                 intake.setPower(-intakePower);
             } else {
                 intake.setPower(0);
@@ -209,18 +210,20 @@ public class Meet0Tele extends LinearOpMode {
     }
 
     private void pivotPosition(boolean manual, double pivotTarget){
-        if(manual = true) {
+        if(manual) {
             if (gamepad2.left_stick_x > 0.2) {
-                pivot.setPosition(pPos + 0.005);
-            } else if (gamepad2.left_stick_x < -0.2) {
                 pivot.setPosition(pPos - 0.005);
+            } else if (gamepad2.left_stick_x < -0.2) {
+                pivot.setPosition(pPos + 0.005);
             }
         }
-        else if(manual = false) {
-            if (pPos > pivotTarget) {
-                pivot.setPosition(pPos - 0.005);
-            } else if (pPos < pivotTarget) {
-                pivot.setPosition(pPos + 0.005);
+        else {
+            if(Math.abs(pPos-pivotTarget) >= 0.01) {
+                if (pPos > pivotTarget) {
+                    pivot.setPosition(pPos - 0.005);
+                } else if (pPos < pivotTarget) {
+                    pivot.setPosition(pPos + 0.005);
+                }
             }
         }
     }
@@ -281,6 +284,8 @@ public class Meet0Tele extends LinearOpMode {
             liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            pivotPosition(false, 0.54);
+
             liftLeft.setPower(-motorPower);
             liftRight.setPower(motorPower);
 
@@ -291,9 +296,6 @@ public class Meet0Tele extends LinearOpMode {
                 telemetry.addData("Target", liftTarget);
                 //telemetry.update();
             }
-
-
-
         } else if (height.equals("LOW")){    //LOW
             liftTarget = 1400;
 
@@ -368,8 +370,19 @@ public class Meet0Tele extends LinearOpMode {
         }
     }
 
+    */
 
-     */
+    private void setSweeper(){
+        //pivot to the left
+        if(pPos > 0.75){
+            sweeper.setPosition(0.95);
+        } else if(pPos < 0.25){
+            sweeper.setPosition(0.05);
+        } else {
+            sweeper.setPosition(0.5);
+        }
+    }
+
     private void resetLiftEncoders(){
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

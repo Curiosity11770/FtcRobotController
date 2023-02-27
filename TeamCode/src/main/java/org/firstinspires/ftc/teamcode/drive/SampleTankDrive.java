@@ -18,6 +18,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.TankDrive;
+import com.acmerobotics.roadrunner.followers.RamseteFollower;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -52,12 +53,15 @@ import java.util.List;
  */
 @Config
 public class SampleTankDrive extends TankDrive {
-    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0.02, 0, 0.7);
     public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0);
 
     public static double VX_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
+
+    private double b = 0.02;
+    private double zeta = 0.7;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -76,6 +80,7 @@ public class SampleTankDrive extends TankDrive {
 
         follower = new TankPIDVAFollower(AXIAL_PID, CROSS_TRACK_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+        //follower = new RamseteFollower(AXIAL_PID.kP, AXIAL_PID.kD,  new Pose2d(0.5, 0.5, Math.toRadians(5.0)));
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -186,6 +191,14 @@ public class SampleTankDrive extends TankDrive {
                         .addTrajectory(trajectory)
                         .build()
         );
+    }
+
+    public void setB(float a){
+        b = a;
+    }
+
+    public void setZeta(float a){
+        zeta = a;
     }
 
     public void followTrajectory(Trajectory trajectory) {
@@ -299,6 +312,14 @@ public class SampleTankDrive extends TankDrive {
     @Override
     public double getRawExternalHeading() {
         return 0;
+    }
+
+    public double getB(){
+        return b;
+    }
+
+    public double getZeta(){
+        return zeta;
     }
 
     @Override
