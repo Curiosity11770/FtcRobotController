@@ -143,15 +143,18 @@ public class Meet0Tele extends LinearOpMode {
             //}
             if(tankDrive) {
 
-                leftPower = -gamepad1.left_stick_y/1.2;
-                rightPower = -gamepad1.right_stick_y/1.2;
+                leftPower = -gamepad1.left_stick_y;
+                rightPower = -gamepad1.right_stick_y;
             } else if (!tankDrive){
-                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x/1.2;
-                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x/1.2;
+                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x;
+                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x;
             }
             if(gamepad1.left_bumper){
-                leftPower = leftPower*1.9;
-                rightPower = rightPower*1.9;
+                leftPower = leftPower*1.95;
+                rightPower = leftPower*1.95;
+            } else if(gamepad1.left_trigger > 0.2){
+                leftPower = leftPower/2;
+                rightPower = rightPower/2;
             }
 
             frontRight.setPower(rightPower);

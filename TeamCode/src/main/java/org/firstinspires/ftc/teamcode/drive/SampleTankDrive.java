@@ -32,11 +32,13 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -70,7 +72,38 @@ public class SampleTankDrive extends TankDrive {
 
     private TrajectoryFollower follower;
 
-    private List<DcMotorEx> motors, leftMotors, rightMotors;
+    public List<DcMotorEx> motors, leftMotors, rightMotors;
+    public DcMotorEx leftFront;
+    public DcMotorEx leftRear;
+    public DcMotorEx rightRear;
+    public DcMotorEx rightFront;
+
+    public PIDController drivePID;
+    public PIDController headingPID;
+
+    public double driveKp = 0.02;   // increase until it gets to target
+    public double driveKi = 0;
+    public double driveKd = 0;
+
+    public double headingKp = 0.01;
+    public double headingKi = 0;
+    public double headingKd = 0;
+
+    private DcMotor liftLeft = null;
+    private DcMotor liftRight = null;
+
+    private Servo pivot = null;
+
+    private CRServo intake = null;
+
+    private int liftTarget;
+
+    private double pPos = 0;
+    private double pivotTarget = 0.54;
+
+    private double liftPower = 0.5;
+    private double intakePower = 0.7;
+
     private BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
@@ -115,10 +148,27 @@ public class SampleTankDrive extends TankDrive {
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         // add/remove motors depending on your robot (e.g., 6WD)
-        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
-        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+
+        // add all the stuff on robot to hardware map, so don't have it individual per program
+        // constants also here, can call them in any program that uses this
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
+        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+
+        liftLeft = hardwareMap.get(DcMotor.class, "leftSlides");
+        liftRight = hardwareMap.get(DcMotor.class, "rightSlides");
+
+        //pivot = hardwareMap.get(DcMotor.class, "pivot");
+        pivot = hardwareMap.get(Servo.class, "pivot");
+
+        intake = hardwareMap.get(CRServo.class, "intakeServo");
+
+        //liftLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight.setDirection(DcMotor.Direction.REVERSE);
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
         leftMotors = Arrays.asList(leftFront, leftRear);
@@ -150,6 +200,10 @@ public class SampleTankDrive extends TankDrive {
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+
+        drivePID = new PIDController(driveKp, driveKi, driveKd);
+        headingPID = new PIDController(headingKp, headingKi, headingKd);
+
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
