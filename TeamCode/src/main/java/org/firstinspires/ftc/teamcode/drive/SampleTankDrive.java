@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
@@ -12,6 +13,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
+import static java.lang.Math.PI;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -22,6 +25,7 @@ import com.acmerobotics.roadrunner.followers.RamseteFollower;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -32,6 +36,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -41,11 +46,15 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
+
+import org.firstinspires.ftc.teamcode.util.MotionProfile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,13 +90,16 @@ public class SampleTankDrive extends TankDrive {
     public PIDController drivePID;
     public PIDController headingPID;
 
-    public double driveKp = 0.02;   // increase until it gets to target
-    public double driveKi = 0;
-    public double driveKd = 0;
+    public static double DRIVE_KP = 0.02;   // increase until it gets to target
+    public static double DRIVE_KI = 0;
+    public static double DRIVE_KD = 0;
 
-    public double headingKp = 0.01;
-    public double headingKi = 0;
-    public double headingKd = 0;
+    public static double headingKp = 0.01;
+    public static double headingKi = 0;
+    public static double headingKd = 0;
+
+    public static double maxAcceleration = 1;
+    public static double maxVelocity = 5;
 
     private DcMotor liftLeft = null;
     private DcMotor liftRight = null;
@@ -104,9 +116,14 @@ public class SampleTankDrive extends TankDrive {
     private double liftPower = 0.5;
     private double intakePower = 0.7;
 
+    public double f;
+    public double t;
+    public double currentDistance;
+
     private BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
+
 
     public SampleTankDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);
@@ -201,9 +218,49 @@ public class SampleTankDrive extends TankDrive {
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
-        drivePID = new PIDController(driveKp, driveKi, driveKd);
+        drivePID = new PIDController(DRIVE_KP, DRIVE_KI, DRIVE_KD);
         headingPID = new PIDController(headingKp, headingKi, headingKd);
 
+    }
+
+    public void followPath(MotionProfile path, double time) {
+        update();
+
+        double xError = path.targetX - getPoseEstimate().getX();
+        double yError = path.targetY - getPoseEstimate().getY();
+        double theta = Math.atan2(yError, xError);
+        // 0 is the reference because we want the distance to go to 0
+         currentDistance = Math.hypot(xError, yError);
+         if(currentDistance > 0.5) {
+             f = drivePID.calculate(-path.distance + path.calculate(time), -currentDistance);
+             t = headingPID.calculate(theta, angleWrap(Math.toRadians(getPoseEstimate().getHeading())));
+             //f *= Math.cos(Range.clip(headingPID.error, -PI/2, PI/2));
+             double left_power = f + t;
+             double right_power = f - t;
+
+             leftFront.setPower(left_power);
+             leftRear.setPower(left_power);
+             rightFront.setPower(right_power);
+             rightRear.setPower(right_power);
+         }else{
+             leftFront.setPower(0);
+             leftRear.setPower(0);
+             rightFront.setPower(0);
+             rightRear.setPower(0);
+         }
+    }
+
+    public double angleWrap(double radians){
+
+        while(radians > Math.PI){
+            radians -= 2 * Math.PI;
+        }
+        while(radians < -Math.PI){
+            radians += 2 * Math.PI;
+        }
+
+        //result in radians
+        return radians;
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

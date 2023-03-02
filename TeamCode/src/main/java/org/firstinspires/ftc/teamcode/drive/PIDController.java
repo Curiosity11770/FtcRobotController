@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-
+@Config
 public class PIDController {
 //PID Control Class
 
@@ -16,10 +17,12 @@ public class PIDController {
     double lastError = 0;
     double lastReference = 0;
     double integralSum = 0;
-    double maxOut = 0.4;    //test and change this (if necessary)
+    public static double maxOut = 0.4;    //test and change this (if necessary)
     double errorMargin = 1;     //could make smaller (this currently in encoder ticks/degrees)
     double previousFilterEstimate = 0;
     double currentFilterEstimate = 0;
+
+    double error;
 
 
 
@@ -36,7 +39,7 @@ public class PIDController {
         }
 
         // calculate the error
-        double error = reference - currentPosition;
+        error = reference - currentPosition;
 
         // rate of change of the error
         double derivative = (error - lastError);

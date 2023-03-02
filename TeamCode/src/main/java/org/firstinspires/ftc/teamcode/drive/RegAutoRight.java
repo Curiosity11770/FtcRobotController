@@ -1,10 +1,20 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 
+import static java.lang.Math.PI;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.util.MotionProfile;
+
+@Config
 @Autonomous
 public class RegAutoRight extends LinearOpMode {
 
@@ -12,11 +22,33 @@ public class RegAutoRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        SampleTankDrive robot = new SampleTankDrive(hardwareMap);
+        ElapsedTime timer = new ElapsedTime();
+
+        robot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
+        MotionProfile path1 = new MotionProfile(robot, 24, 0);
+        timer.reset();
+        while(timer.seconds() < path1.totalTime()){
+            robot.followPath(path1, timer.seconds());
 
+            telemetry.addData("wrapped heading", robot.angleWrap(Math.toRadians(robot.getPoseEstimate().getHeading())));
+            telemetry.addData("f mult", Math.cos(Range.clip(robot.headingPID.error, -PI/2, PI/2)));
+            telemetry.addData("heading error", robot.headingPID.error);
+            telemetry.addData("distance", path1.distance);
+            telemetry.addData("current distance", robot.currentDistance);
+            telemetry.addData("f", robot.f);
+            telemetry.addData("t", robot.t);
+            telemetry.addData("seconds", timer.seconds());
+            telemetry.addData("total time", path1.totalTime());
+            telemetry.addData("target", -path1.distance+path1.calculate(time));
+            telemetry.update();
+        }
+
+        /*
         while(opModeIsActive()) {
             drive.update();
 
@@ -44,6 +76,9 @@ public class RegAutoRight extends LinearOpMode {
             telemetry.addData("finalHeading", poseEstimate.getHeading());
             telemetry.update();
         }
+
+        */
+
 
     }
 }
