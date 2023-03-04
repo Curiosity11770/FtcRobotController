@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @Config
@@ -32,7 +32,7 @@ public class PIDController {
         Kd = kdIn;
     }
 
-    double calculate(double reference, double currentPosition){
+    public double calculate(double reference, double currentPosition){
         // check if new target
         if(lastReference != reference){
             reset();
