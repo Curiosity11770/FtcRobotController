@@ -10,12 +10,15 @@ public class MotionProfile {
     public double targetX;
     public double targetY;
 
-    public MotionProfile(SampleTankDrive robot, double tX, double tY) {
+    public boolean forward;
+
+    public MotionProfile(SampleTankDrive robot, double tX, double tY, boolean tF) {
         max_acceleration = robot.maxAcceleration;
         max_velocity = robot.maxVelocity;
 
         targetX = tX;
         targetY = tY;
+        forward = tF;
 
         //calculate initial distance and angle to target
         double xError = targetX - robot.getPoseEstimate().getX();

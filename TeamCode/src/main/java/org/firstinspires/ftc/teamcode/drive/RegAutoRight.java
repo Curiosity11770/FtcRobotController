@@ -30,12 +30,17 @@ public class RegAutoRight extends LinearOpMode {
 
         waitForStart();
 
-        MotionProfile path1 = new MotionProfile(robot, 24, 0);
+        MotionProfile path1 = new MotionProfile(robot, 36, 10, true);
         timer.reset();
-        while(timer.seconds() < path1.totalTime()){
+        while(timer.seconds() < path1.totalTime() + 0.5){
             robot.followPath(path1, timer.seconds());
 
-            telemetry.addData("wrapped heading", robot.angleWrap(Math.toRadians(robot.getPoseEstimate().getHeading())));
+            telemetry.addData("last theta", robot.lastTheta);
+
+            telemetry.addData("theta", robot.theta);
+            //telemetry.addData("angle to target", Math.abs(robot.lastTheta - robot.theta));
+            telemetry.addData("forward", path1.forward);
+            telemetry.addData("wrapped heading", robot.angleWrap(robot.getPoseEstimate().getHeading()));
             telemetry.addData("f mult", Math.cos(Range.clip(robot.headingPID.error, -PI/2, PI/2)));
             telemetry.addData("heading error", robot.headingPID.error);
             telemetry.addData("distance", path1.distance);

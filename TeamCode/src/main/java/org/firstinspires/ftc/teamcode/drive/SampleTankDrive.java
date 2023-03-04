@@ -90,7 +90,10 @@ public class SampleTankDrive extends TankDrive {
     public PIDController drivePID;
     public PIDController headingPID;
 
-    public static double DRIVE_KP = 0.02;   // increase until it gets to target
+    public double lastTheta;
+    public double theta;
+
+    public static double DRIVE_KP = 0.09;   // increase until it gets to target
     public static double DRIVE_KI = 0;
     public static double DRIVE_KD = 0;
 
@@ -98,8 +101,8 @@ public class SampleTankDrive extends TankDrive {
     public static double headingKi = 0;
     public static double headingKd = 0;
 
-    public static double maxAcceleration = 1;
-    public static double maxVelocity = 5;
+    public static double maxAcceleration = 28;
+    public static double maxVelocity = 50;
 
     private DcMotor liftLeft = null;
     private DcMotor liftRight = null;
@@ -221,6 +224,8 @@ public class SampleTankDrive extends TankDrive {
         drivePID = new PIDController(DRIVE_KP, DRIVE_KI, DRIVE_KD);
         headingPID = new PIDController(headingKp, headingKi, headingKd);
 
+        lastTheta = getPoseEstimate().getHeading();
+
     }
 
     public void followPath(MotionProfile path, double time) {
@@ -228,15 +233,33 @@ public class SampleTankDrive extends TankDrive {
 
         double xError = path.targetX - getPoseEstimate().getX();
         double yError = path.targetY - getPoseEstimate().getY();
-        double theta = Math.atan2(yError, xError);
+        theta = Math.atan2(yError, xError);
+
+        if(Math.abs(angleWrap(Math.toRadians(getPoseEstimate().getHeading())) - theta) > Math.PI/2){      // note: lastTheta starts at robot start heading
+            path.forward = false;                 // note: taken from motionprofile
+        }
         // 0 is the reference because we want the distance to go to 0
          currentDistance = Math.hypot(xError, yError);
          if(currentDistance > 0.5) {
              f = drivePID.calculate(-path.distance + path.calculate(time), -currentDistance);
              t = headingPID.calculate(theta, angleWrap(Math.toRadians(getPoseEstimate().getHeading())));
              //f *= Math.cos(Range.clip(headingPID.error, -PI/2, PI/2));
-             double left_power = f + t;
-             double right_power = f - t;
+             if (!path.forward){
+                 f *= 0;
+             }
+
+             double left_power;
+             double right_power;
+
+             if(Math.abs(theta) > Math.toRadians(5))
+             {
+                 left_power = -t;
+                 right_power = t;
+             } else {
+                 left_power = f - t;
+                 right_power = f + t;
+             }
+
 
              leftFront.setPower(left_power);
              leftRear.setPower(left_power);
@@ -248,6 +271,8 @@ public class SampleTankDrive extends TankDrive {
              rightFront.setPower(0);
              rightRear.setPower(0);
          }
+
+         lastTheta = theta;
     }
 
     public double angleWrap(double radians){
