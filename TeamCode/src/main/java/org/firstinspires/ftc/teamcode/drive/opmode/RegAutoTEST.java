@@ -31,7 +31,7 @@ public class RegAutoTEST extends LinearOpMode {
         //while the path is incomplete
         while (!path1.targetReached) {
             //follow the path!
-            path1.followPath();
+            path1.followPathSteady();
 
             //telemetry to check state
             telemetry.addData("path state", path1.state);

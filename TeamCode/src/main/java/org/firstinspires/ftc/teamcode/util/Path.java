@@ -34,6 +34,8 @@ public class Path {
     public double currentDistance;
     public double currentHeading;
 
+    public double headingError;
+
     public double f;
     public double t;
 
@@ -74,12 +76,12 @@ public class Path {
 
         //***This stuff redundant? It is all calculated elsewhere
         //calculate initial distance and angle to target
-        //double xError = targetX - robot.getPoseEstimate().getX();
-        //double yError = targetY - robot.getPoseEstimate().getY();
+        double xError = targetX - robot.getPoseEstimate().getX();
+        double yError = targetY - robot.getPoseEstimate().getY();
         //theta stores angle from robot to the target
-        //theta = Math.atan2(yError, xError);
+        theta = Math.atan2(yError, xError)+ headingOffset;
         // distance stores the initial distance from robot to the target
-        //totalDistance= Math.hypot(xError, yError);
+        totalDistance= Math.hypot(xError, yError);
         //use distance to calculate motion profile
     }
 
@@ -92,21 +94,26 @@ public class Path {
         double xError = targetX - robot.getPoseEstimate().getX();
         double yError = targetY - robot.getPoseEstimate().getY();
         //confirm theta is in radians and runs positive and negative as expected (it needs to be in same format as robot heading)
+        // Note : heading offset added to account for direction robot is traveling
         theta = Math.atan2(yError, xError) + headingOffset; //radians
         currentDistance = Math.hypot(xError, yError);
         //get the current heading of the robot, wrapped and converted to radians
         // Note: *check angle units of getPoseEstimate.getHeading
         // Reminder: theta must be in same format as currentHeading
-        // Note 2: heading offset added to account for direction robot is traveling
-        currentHeading = robot.angleWrap(robot.getPoseEstimate().getHeading());   //radians
+
+        //currentHeading = robot.angleWrap(robot.getPoseEstimate().getHeading());   //radians
+        //**according to ctrl alt ftc, 'normalizing' of angle should happen AFTER error is calculated
+        //**try storing currentHeading without wrapping
+        currentHeading = robot.getPoseEstimate().getHeading();
 
         //get the error between robot heading and angle to target
-        double headingError = currentHeading-theta;     //radians
+        //**Now call angleWrap on the error
+        headingError = robot.angleWrap(theta-currentHeading);     //radians
 
         if(state == "TURN_TO_TARGET"){
             //calculate an output to only turn the robot
             f = 0;
-            t = robot.headingPID.calculate(theta, currentHeading);
+            t = robot.headingPID.calculate(headingError);
             //if heading error is less than threshold (true when robot is pointed at target)
             if(Math.abs(headingError) < Math.toRadians(3)){
                 state = "DRIVE_TO_TARGET";
@@ -117,10 +124,10 @@ public class Path {
             //calculate the outputs to drive and maintain heading
             //note that the 'reference' for f should be approaching 0
             f = robot.drivePID.calculate(-totalDistance + calculate(time.seconds()), -currentDistance);
-            //t = robot.headingPID.calculate(theta, currentHeading);
+            //t = robot.headingPID.calculate(headingError);
             // prevents t from taking over motor power as f goes to zero
             if(Math.abs(currentDistance) > 6.0){
-                t = robot.headingPID.calculate(theta, currentHeading);
+                t = robot.headingPID.calculate(headingError);
             } else {
                 t = 0;
             }
@@ -130,6 +137,75 @@ public class Path {
             }
             //handle overshoot...if angle to target changes by large margin, stop the robot
             if(Math.abs(headingError) > Math.PI/2){
+                state = "STOP";
+            }
+        }else if(state == "STOP"){
+            //make the outputs zero to stop the robot
+            f = 0;
+            t = 0;
+            targetReached = true;
+        }
+
+        //assign motor powers
+        double left_power;
+        double right_power;
+        //handle robot's direction by multiplying by direction multiplier (-1 if path reversed)
+        left_power = (f*directionMultiplier) - t;
+        right_power = (f*directionMultiplier) + t;
+        robot.leftFront.setPower(left_power);
+        robot.leftRear.setPower(left_power);
+        robot.rightFront.setPower(right_power);
+        robot.rightRear.setPower(right_power);
+    }
+
+    public void followPathSteady() {
+        //update localization of robot
+        robot.update();
+
+        //update distance to target
+        double xError = targetX - robot.getPoseEstimate().getX();
+        double yError = targetY - robot.getPoseEstimate().getY();
+        //confirm theta is in radians and runs positive and negative as expected (it needs to be in same format as robot heading)
+        // Note : heading offset added to account for direction robot is traveling
+        //theta = Math.atan2(yError, xError) + headingOffset; //radians
+        currentDistance = Math.hypot(xError, yError);
+        //get the current heading of the robot, wrapped and converted to radians
+        // Note: *check angle units of getPoseEstimate.getHeading
+        // Reminder: theta must be in same format as currentHeading
+
+        //currentHeading = robot.angleWrap(robot.getPoseEstimate().getHeading());   //radians
+        //**according to ctrl alt ftc, 'normalizing' of angle should happen AFTER error is calculated
+        //**try storing currentHeading without wrapping
+        currentHeading = robot.getPoseEstimate().getHeading();
+
+        //get the error between robot heading and angle to target
+        //**Now call angleWrap on the error
+        headingError = robot.angleWrap(theta-currentHeading);     //radians
+
+        if(state == "TURN_TO_TARGET"){
+            //calculate an output to only turn the robot
+            f = 0;
+            t = robot.headingPID.calculate(headingError);
+            //if heading error is less than threshold (true when robot is pointed at target)
+            if(Math.abs(headingError) < Math.toRadians(3)){
+                state = "DRIVE_TO_TARGET";
+                time.reset();
+                totalDistance = currentDistance;
+            }
+        }else if(state == "DRIVE_TO_TARGET"){
+            //calculate the outputs to drive and maintain heading
+            //note that the 'reference' for f should be approaching 0
+            f = robot.drivePID.calculate(-totalDistance + calculate(time.seconds()), -currentDistance);
+            t = robot.headingPID.calculate(headingError);
+
+            //if distance is less than threshold (once robot reaches target)
+            if(Math.abs(currentDistance) < 0.5){
+                state = "STOP";
+            }
+            double liveTheta = Math.atan2(yError, xError) + headingOffset;
+            double liveHeadingError = robot.angleWrap(liveTheta-currentHeading);
+            //handle overshoot...if angle to target changes by large margin, stop the robot
+            if(Math.abs(liveHeadingError) > Math.PI/2){
                 state = "STOP";
             }
         }else if(state == "STOP"){
