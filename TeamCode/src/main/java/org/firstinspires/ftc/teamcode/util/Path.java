@@ -92,23 +92,23 @@ public class Path {
         double xError = targetX - robot.getPoseEstimate().getX();
         double yError = targetY - robot.getPoseEstimate().getY();
         //confirm theta is in radians and runs positive and negative as expected (it needs to be in same format as robot heading)
-        theta = Math.atan2(yError, xError);
+        theta = Math.atan2(yError, xError) + headingOffset; //radians
         currentDistance = Math.hypot(xError, yError);
         //get the current heading of the robot, wrapped and converted to radians
         // Note: *check angle units of getPoseEstimate.getHeading
         // Reminder: theta must be in same format as currentHeading
         // Note 2: heading offset added to account for direction robot is traveling
-        currentHeading = robot.angleWrap(Math.toRadians(robot.getPoseEstimate().getHeading())+headingOffset);
+        currentHeading = robot.angleWrap(robot.getPoseEstimate().getHeading());   //radians
 
         //get the error between robot heading and angle to target
-        double headingError = currentHeading-theta;
+        double headingError = currentHeading-theta;     //radians
 
         if(state == "TURN_TO_TARGET"){
             //calculate an output to only turn the robot
             f = 0;
             t = robot.headingPID.calculate(theta, currentHeading);
             //if heading error is less than threshold (true when robot is pointed at target)
-            if(Math.abs(headingError) < Math.toRadians(5)){
+            if(Math.abs(headingError) < Math.toRadians(3)){
                 state = "DRIVE_TO_TARGET";
                 time.reset();
                 totalDistance = currentDistance;
@@ -117,9 +117,15 @@ public class Path {
             //calculate the outputs to drive and maintain heading
             //note that the 'reference' for f should be approaching 0
             f = robot.drivePID.calculate(-totalDistance + calculate(time.seconds()), -currentDistance);
-            t = robot.headingPID.calculate(theta, currentHeading);
+            //t = robot.headingPID.calculate(theta, currentHeading);
+            // prevents t from taking over motor power as f goes to zero
+            if(Math.abs(currentDistance) > 6.0){
+                t = robot.headingPID.calculate(theta, currentHeading);
+            } else {
+                t = 0;
+            }
             //if distance is less than threshold (once robot reaches target)
-            if(currentDistance < 0.5){
+            if(Math.abs(currentDistance) < 0.5){
                 state = "STOP";
             }
             //handle overshoot...if angle to target changes by large margin, stop the robot
@@ -137,8 +143,8 @@ public class Path {
         double left_power;
         double right_power;
         //handle robot's direction by multiplying by direction multiplier (-1 if path reversed)
-        left_power = (f - t)*directionMultiplier;
-        right_power = (f + t)*directionMultiplier;
+        left_power = (f*directionMultiplier) - t;
+        right_power = (f*directionMultiplier) + t;
         robot.leftFront.setPower(left_power);
         robot.leftRear.setPower(left_power);
         robot.rightFront.setPower(right_power);

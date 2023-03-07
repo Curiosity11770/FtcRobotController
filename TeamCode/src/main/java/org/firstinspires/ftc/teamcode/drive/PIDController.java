@@ -34,9 +34,9 @@ public class PIDController {
 
     public double calculate(double reference, double currentPosition){
         // check if new target
-        if(lastReference != reference){
+        /*if(lastReference != reference){
             reset();
-        }
+        }*/
 
         // calculate the error
         error = reference - currentPosition;

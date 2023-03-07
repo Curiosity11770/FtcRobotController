@@ -48,9 +48,11 @@ public class Meet0Tele extends LinearOpMode {
 
     private double drivePower;
 
+    private double pivotAdjustment = 0.005;
     private boolean tankDrive = false;
 
     private boolean turbo = false;
+
 
     private double pPos = 0;
     private double pivotTarget = 0.54;
@@ -168,9 +170,15 @@ public class Meet0Tele extends LinearOpMode {
             }
             else if(gamepad2.y){ height = "GROUND"; }
             else if(gamepad2.x){ height = "LOW"; }
-            else if(gamepad2.b){ height = "MIDDLE"; }
+            //else if(gamepad2.b){ height = "MIDDLE"; }
             else if(gamepad2.a){ height = "HIGH"; }
 
+            if(gamepad2.b){
+                pivotAdjustment = 0.009;
+            }
+            else{
+                pivotAdjustment = 0.005;
+            }
 
             //height = "MANUAL"; //set manual at the very beginning
             liftPosition(0.65, height);
@@ -213,11 +221,13 @@ public class Meet0Tele extends LinearOpMode {
     }
 
     private void pivotPosition(boolean manual, double pivotTarget){
+
         if(manual) {
+            //0.005
             if (gamepad2.left_stick_x > 0.2) {
-                pivot.setPosition(pPos - 0.005);
+                pivot.setPosition(pPos - pivotAdjustment);
             } else if (gamepad2.left_stick_x < -0.2) {
-                pivot.setPosition(pPos + 0.005);
+                pivot.setPosition(pPos + pivotAdjustment);
             }
         }
         else {

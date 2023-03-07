@@ -84,12 +84,12 @@ public class SampleTankDrive extends TankDrive {
     public double lastTheta;
     public double theta;
 
-    public static double DRIVE_KP = 0.09;   // increase until it gets to target
-    public static double DRIVE_KI = 0;
-    public static double DRIVE_KD = 0;
+    public static double DRIVE_KP = 0.07;   // increase until it gets to target
+    public static double DRIVE_KI = 0.01;
+    public static double DRIVE_KD = 0.02;
 
-    public static double headingKp = 0.01;
-    public static double headingKi = 0;
+    public static double headingKp = 0.72;
+    public static double headingKi = 0.0;
     public static double headingKd = 0;
 
     public static double maxAcceleration = 28;

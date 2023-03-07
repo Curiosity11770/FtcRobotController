@@ -13,6 +13,10 @@ import org.firstinspires.ftc.teamcode.util.Path;
 @Autonomous
 public class RegAutoTEST extends LinearOpMode {
 
+    public static double tx = 10;
+    public static double ty = 10;
+    public static boolean tf = true;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -22,7 +26,7 @@ public class RegAutoTEST extends LinearOpMode {
         waitForStart();
 
         //create the path object
-        Path path1 = new Path(robot, 36, 10, true);
+        Path path1 = new Path(robot, tx, ty, tf);
 
         //while the path is incomplete
         while (!path1.targetReached) {
@@ -33,6 +37,7 @@ public class RegAutoTEST extends LinearOpMode {
             telemetry.addData("path state", path1.state);
             //telemetry to check agreement of angle formats
             telemetry.addData("robot Heading", path1.currentHeading);
+
             telemetry.addData("angle to target", path1.theta);
             //telemetry to check distance
             telemetry.addData("distance to target", path1.currentDistance);
