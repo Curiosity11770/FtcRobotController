@@ -46,7 +46,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous
 public class Meet3Auto extends LinearOpMode
 {
     OpenCvCamera camera;

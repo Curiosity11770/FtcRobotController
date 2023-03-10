@@ -115,7 +115,7 @@ public class Path {
             f = 0;
             t = robot.headingPID.calculate(headingError);
             //if heading error is less than threshold (true when robot is pointed at target)
-            if(Math.abs(headingError) < Math.toRadians(3)){
+            if(Math.abs(headingError) < Math.toRadians(4) || time.seconds() > 1.3){
                 state = "DRIVE_TO_TARGET";
                 time.reset();
                 totalDistance = currentDistance;

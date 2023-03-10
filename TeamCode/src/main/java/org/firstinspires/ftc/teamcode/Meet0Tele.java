@@ -39,7 +39,7 @@ public class Meet0Tele extends LinearOpMode {
 
     private CRServo intake = null;
 
-    private Servo sweeper = null;
+    private Servo align = null;
 
     private int liftTarget;
 
@@ -87,7 +87,7 @@ public class Meet0Tele extends LinearOpMode {
 
         intake = hardwareMap.get(CRServo.class, "intakeServo");
 
-        sweeper = hardwareMap.get(Servo.class, "sweep");
+        align = hardwareMap.get(Servo.class, "sweep");
 
         touch = hardwareMap.get(TouchSensor.class, "touchSensor");
 
@@ -115,6 +115,8 @@ public class Meet0Tele extends LinearOpMode {
 
         pivot.setPosition(0.54);
         //manual = true;
+
+        align.setPosition(1.0);
 
         waitForStart();
         runtime.reset();
@@ -148,8 +150,8 @@ public class Meet0Tele extends LinearOpMode {
                 leftPower = -gamepad1.left_stick_y;
                 rightPower = -gamepad1.right_stick_y;
             } else if (!tankDrive){
-                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x;
-                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x;
+                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x*0.7;
+                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x*0.7;
             }
             if(gamepad1.left_bumper){
                 leftPower = leftPower*1.95;
@@ -388,11 +390,11 @@ public class Meet0Tele extends LinearOpMode {
     private void setSweeper(){
         //pivot to the left
         if(pPos > 0.75){
-            sweeper.setPosition(0.95);
+            align.setPosition(0.6);
         } else if(pPos < 0.25){
-            sweeper.setPosition(0.05);
+            align.setPosition(0.7);
         } else {
-            sweeper.setPosition(0.5);
+            align.setPosition(1.0);
         }
     }
 

@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 
 import java.util.ArrayList;
 
-@Autonomous
+//@Autonomous
 public class TrajectoryAutoLeft extends LinearOpMode {
 
     OpenCvCamera camera;

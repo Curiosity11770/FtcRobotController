@@ -41,11 +41,22 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MotionProfile;
+
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +75,7 @@ public class SampleTankDrive extends TankDrive {
 
     private double b = 0.02;
     private double zeta = 0.7;
+    public AprilTagDetection tagOfInterest = null;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -88,27 +100,38 @@ public class SampleTankDrive extends TankDrive {
     public static double DRIVE_KI = 0.01;
     public static double DRIVE_KD = 0.02;
 
-    public static double headingKp = 0.72;
+    public static double headingKp = 0.78;
     public static double headingKi = 0.0;
     public static double headingKd = 0;
 
     public static double maxAcceleration = 28;
     public static double maxVelocity = 50;
 
-    private DcMotor liftLeft = null;
-    private DcMotor liftRight = null;
+    public OpenCvCamera camera;
+    public AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    public static final double FEET_PER_METER = 3.28084;
+    public double tagsize = 0.166;
+    public double fx = 578.272;
+    public double fy = 578.272;
+    public double cx = 402.145;
+    public double cy = 221.506;
 
-    private Servo pivot = null;
+    public DcMotor liftLeft = null;
+    public DcMotor liftRight = null;
 
-    private CRServo intake = null;
+    public Servo pivot = null;
 
-    private int liftTarget;
+    public CRServo intake = null;
 
-    private double pPos = 0;
-    private double pivotTarget = 0.54;
+    public Servo align = null;
+
+    public int liftTarget;
+
+    public double pPos = 0;
+    public double pivotTarget = 0.54;
 
     private double liftPower = 0.5;
-    private double intakePower = 0.7;
+    public double intakePower = 0.7;
 
     public double f;
     public double t;
@@ -175,6 +198,8 @@ public class SampleTankDrive extends TankDrive {
         pivot = hardwareMap.get(Servo.class, "pivot");
 
         intake = hardwareMap.get(CRServo.class, "intakeServo");
+
+        align = hardwareMap.get(Servo.class, "sweep");
 
         //liftLeft.setDirection(DcMotor.Direction.REVERSE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -402,6 +427,148 @@ public class SampleTankDrive extends TankDrive {
 
         setDrivePower(vel);
     }
+
+
+
+    public void pivotPosition(double pivotTarget){
+
+        if(Math.abs(pPos-pivotTarget) >= 0.01) {
+            if (pPos > pivotTarget) {
+                pivot.setPosition(pPos - 0.005);
+            } else if (pPos < pivotTarget) {
+                pivot.setPosition(pPos + 0.005);
+            }
+        }
+    }
+
+    public void liftPosition(double motorPower, String height) {
+        if (height.equals("GROUND")) {     //GROUND
+            //resetLift();
+            liftTarget = 0;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //pivotPosition(0.54);
+
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+
+        } else if (height.equals("CONE1")) {    //LOW
+            liftTarget = 450;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+
+        } else if (height.equals("MIDDLE")) {    //MIDDLE
+            liftTarget = 1750;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+        } else if (height.equals("HIGH")) {                    //HIGH
+            liftTarget = 2800;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+        }else if (height.equals("HIGHAUTO")) {                    //HIGH
+            liftTarget = 2600;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+        } else if (height.equals("ABOVESTACK")) {                    //HIGH
+            liftTarget = 1000;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+        } else if (height.equals("CONE2")) {                    //HIGH
+            liftTarget = 400;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+        }
+    }
+
+    public void intakeIn(double power){
+        intake.setPower(-power);
+    }
+    public void intakeOut(double power){
+        intake.setPower(power);
+    }
+    public void  intakeStop(){
+        intake.setPower(0);
+    }
+
+    public void alignLeft(){
+        align.setPosition(0.25);
+    }
+    public void alignRight(){
+        align.setPosition(0.75);
+    }
+    public void alignBack(){
+        align.setPosition(1.0);
+    }
+
+    public void resetLiftEncoders(){
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+
 
     @NonNull
     @Override
