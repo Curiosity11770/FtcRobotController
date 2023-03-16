@@ -73,7 +73,11 @@ public class RegAutoLeft extends LinearOpMode {
         telemetry.setMsTransmissionInterval(50);
         timer = new ElapsedTime();
 
-        //create the path object
+        //create the path object - see Path.java class in util folder
+        //the path objects are declared here so they can be easily edited from the dashboard
+        
+        //new Path(takes in the robot object, x coordinate, y coordinate, drive backwards boolean)
+        
         Path path1 = new Path(robot, tx, ty, tf);
         Path path2 = new Path(robot, tx2, ty2, tf2);
         Path path3 = new Path(robot, tx3, ty3, tf3);
@@ -92,7 +96,8 @@ public class RegAutoLeft extends LinearOpMode {
         robot.alignBack();
 
         //waitForStart();
-
+        
+        //scan april tag
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = robot.aprilTagDetectionPipeline.getLatestDetections();
 
