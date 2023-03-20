@@ -12,15 +12,22 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
     //5) added a condition so that if the robot overshoots target, it should stop
 
 //Need to Test (in somewhat order they should be checked)
-    //1) check all units, especially angles for degrees vs. radians (ex. does getHeading() return degrees or radians)?
-    //2) my state conditions based on Strings...you  can do this in Processing but I don't know if you check strings differently in Java
-    //2) direction of turning (does the robot turn the shorter distance to the target angle?)
-    //3) transition from turning to driving straight
-    //4) transition from driving straight to stopping
-    //5) running a path in reverse
-    //6) running two paths in sequence
-    //7) IF ALL THE ABOVE WORKS...then you can tune constants for PID controllers
-    //8) Once function works and constants are tuned so robot drives predictably...you should be good to make auto.
+
+    //1) transition from turning to driving straight
+    //2) transition from driving straight to stopping
+    //3) running a path in reverse
+    //4) running two paths in sequence
+    //5) IF ALL THE ABOVE WORKS...then you can tune constants for PID controllers
+    //6) Once function works and constants are tuned so robot drives predictably...you should be good to make auto.
+//note - we use tank drive
+/* 
+Our robot uses an algorithm that is able to take in a max velocity and acceleration to calculate where the robot should be 
+between its starting position and its end position (a coordinate on the field) over time. This calculates ‘steps’ for the 
+robot to follow, and the error between the robot’s position and this target. The error is then passed to the PID Controller 
+to calculate motor output. Our motion profile has multiple states for the turn to the target, drive in a straight line to 
+that target (which is necessary as the junctions on the field require more precise movement), and stop. The robot is able 
+to correct its course due to its localization
+*/
 
 public class Path {
     public double max_acceleration;
@@ -69,12 +76,11 @@ public class Path {
         if(forward){
             headingOffset = 0;
             directionMultiplier = 1;
-        }else{
+        }else {
             headingOffset = Math.PI;
             directionMultiplier = -1;
         }
 
-        //***This stuff redundant? It is all calculated elsewhere
         //calculate initial distance and angle to target
         double xError = targetX - robot.getPoseEstimate().getX();
         double yError = targetY - robot.getPoseEstimate().getY();
@@ -120,7 +126,7 @@ public class Path {
                 time.reset();
                 totalDistance = currentDistance;
             }
-        }else if(state == "DRIVE_TO_TARGET"){
+        } else if(state == "DRIVE_TO_TARGET"){
             //calculate the outputs to drive and maintain heading
             //note that the 'reference' for f should be approaching 0
             f = robot.drivePID.calculate(-totalDistance + calculate(time.seconds()), -currentDistance);
