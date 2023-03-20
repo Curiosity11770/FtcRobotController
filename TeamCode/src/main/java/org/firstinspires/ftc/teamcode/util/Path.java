@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
+import org.firstinspires.ftc.teamcode.code2023.SampleTankDrive;
 
 //Features and improvements of Path class
     //1) moved follow path function from tankDrive to Path, allows easy resetting of timer for motion profile.

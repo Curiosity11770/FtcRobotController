@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
+import org.firstinspires.ftc.teamcode.code2023.SampleTankDrive;
 
 import java.util.Objects;
 
