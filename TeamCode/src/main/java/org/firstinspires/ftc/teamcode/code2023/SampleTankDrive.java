@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.code2023;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.code2023.DriveConstants.kV;
 
 import androidx.annotation.NonNull;
 
@@ -41,7 +41,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -49,14 +49,8 @@ import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MotionProfile;
 
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.Arrays;
 import java.util.List;
