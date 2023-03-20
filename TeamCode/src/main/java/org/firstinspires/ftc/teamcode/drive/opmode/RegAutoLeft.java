@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -26,12 +27,12 @@ public class RegAutoLeft extends LinearOpMode {
     public static double ty = 0;
     public static boolean tf = true;
 
-    public static double tx2 = 52;
+    public static double tx2 = 51;
     public static double ty2 = 0;
     public static boolean tf2 = true;
 
-    public static double tx3 = 52;
-    public static double ty3 = 22.5;
+    public static double tx3 = 51;
+    public static double ty3 = 23.25;
     public static boolean tf3 = true;
 
     public static double tx4 = 53;
@@ -84,7 +85,7 @@ public class RegAutoLeft extends LinearOpMode {
 
         Path right = new Path(robot, 52, -20, false);
         Path middle = new Path(robot, 52, -3, true);
-        Path left = new Path(robot, 52, 26, true);
+        Path left = new Path(robot, 52, 20, true);
 
         robot.resetLiftEncoders();
 
@@ -207,8 +208,8 @@ public class RegAutoLeft extends LinearOpMode {
         //robot.pivot.setPosition(0.83);
         robot.pivot.setPosition(0.2);
         wait(1.5);
-        robot.intakeOut(robot.intakePower);     // make this slower? current = 0.7
-        wait(0.25);
+        robot.intakeOut(0.98);     // make this slower? current = 0.7
+        wait(0.35);
         robot.pivot.setPosition(0.54);
         wait(0.2);
 
@@ -237,8 +238,8 @@ public class RegAutoLeft extends LinearOpMode {
         //robot.pivot.setPosition(0.83);
         robot.pivot.setPosition(0.17);
         wait(1.5);
-        robot.intakeOut(robot.intakePower);     // make this slower? current = 0.7
-        wait(0.25);
+        robot.intakeOut(0.98);     // make this slower? current = 0.7
+        wait(0.35);
         robot.pivot.setPosition(0.54);
         wait(0.2);
 
@@ -256,12 +257,16 @@ public class RegAutoLeft extends LinearOpMode {
             }
         }
         else if(robot.tagOfInterest.id == RIGHT){
-            right.time.reset();
-            while (!isStopRequested() && (!right.targetReached  || right.time.seconds() < 10.0)){
-                right.followPath();
-                pathTele(right);
-                robot.liftPosition(0.8, "GROUND");
+            wait(0.2);
+            robot.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            //robot.pivot.setPosition(0.54);
+            timer.reset();
+            while(timer.seconds() < 1.5){
+                robot.liftPosition(0.87, "GROUND");
             }
+            driveBackwardsLiftDown(0.7, 460);
+
         }
         else{
             middle.time.reset();
@@ -305,5 +310,24 @@ public class RegAutoLeft extends LinearOpMode {
     void wait(double seconds){
         resetRuntime();
         while(getRuntime() < seconds){}
+    }
+    private void driveBackwardsLiftDown(double motorPower, double distance){
+
+        double counts = distance*19.3566666;
+        //double counts = 100;
+        while(opModeIsActive() && Math.abs(robot.rightRear.getCurrentPosition()) < counts && !isStopRequested()){
+            robot.leftFront.setPower(-motorPower);
+            robot.rightRear.setPower(-motorPower);
+            robot.leftRear.setPower(-motorPower);
+            robot.rightFront.setPower(-motorPower);
+
+
+            telemetry.addData("Motor position: ", robot.rightRear.getCurrentPosition());
+            telemetry.update();
+        }
+        robot.leftFront.setPower(0);
+        robot.rightRear.setPower(0);
+        robot.leftRear.setPower(0);
+        robot.rightFront.setPower(0);
     }
 }
