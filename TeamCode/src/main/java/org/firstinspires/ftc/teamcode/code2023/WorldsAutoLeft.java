@@ -83,9 +83,9 @@ public class WorldsAutoLeft extends LinearOpMode {
         Path path7 = new Path(robot, tx3, ty3+0.5, tf3);
         Path path8 = new Path(robot, tx4, ty4, tf4);
 
-        Path right = new Path(robot, 52, -19, true);
+        Path right = new Path(robot, 52, -19, false);
         Path middle = new Path(robot, 52, 3, true);
-        Path left = new Path(robot, 52, 26, false);
+        Path left = new Path(robot, 52, 22, true);
 
         robot.resetLiftEncoders();
 
