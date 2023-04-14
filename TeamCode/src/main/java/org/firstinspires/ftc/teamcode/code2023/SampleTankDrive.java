@@ -98,7 +98,7 @@ public class SampleTankDrive extends TankDrive {
     public static double headingKi = 0.0;
     public static double headingKd = 0;
 
-    public static double maxAcceleration = 28;
+    public static double maxAcceleration = 40;  // reg works with 34
     public static double maxVelocity = 50;
 
     public OpenCvCamera camera;
@@ -120,6 +120,10 @@ public class SampleTankDrive extends TankDrive {
     public Servo align = null;
 
     public int liftTarget;
+
+
+    private Servo barRight = null;
+    private Servo barLeft = null;
 
     public double pPos = 0;
     public double pivotTarget = 0.54;
@@ -194,6 +198,9 @@ public class SampleTankDrive extends TankDrive {
         intake = hardwareMap.get(CRServo.class, "intakeServo");
 
         align = hardwareMap.get(Servo.class, "sweep");
+
+        barRight = hardwareMap.get(Servo.class, "wbRight");
+        barLeft = hardwareMap.get(Servo.class, "wbLeft");
 
         //liftLeft.setDirection(DcMotor.Direction.REVERSE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -424,6 +431,18 @@ public class SampleTankDrive extends TankDrive {
 
 
 
+    public void barOut(){
+        double distance = 0.55;
+        barLeft.setPosition(distance);
+        barRight.setPosition(1.0-0.52);
+
+    }
+
+    public void barIn(){
+        barLeft.setPosition(0.05);
+        barRight.setPosition(0.98);
+    }
+
     public void pivotPosition(double pivotTarget){
 
         if(Math.abs(pPos-pivotTarget) >= 0.01) {
@@ -433,6 +452,19 @@ public class SampleTankDrive extends TankDrive {
                 pivot.setPosition(pPos + 0.005);
             }
         }
+    }
+
+
+    public void sweeperLeft() {
+        align.setPosition(0.32);
+    }
+
+    public void sweeperRight() {
+        align.setPosition(0.38);
+    }
+
+    public void sweeperIn() {
+        align.setPosition(1.0);
     }
 
     public void liftPosition(double motorPower, String height) {
@@ -480,7 +512,7 @@ public class SampleTankDrive extends TankDrive {
             liftRight.setPower(motorPower);
 
         } else if (height.equals("HIGH")) {                    //HIGH
-            liftTarget = 2800;
+            liftTarget = 2600;
 
             liftLeft.setTargetPosition(liftTarget);
             liftRight.setTargetPosition(liftTarget);
@@ -493,7 +525,7 @@ public class SampleTankDrive extends TankDrive {
             liftRight.setPower(motorPower);
 
         }else if (height.equals("HIGHAUTO")) {                    //HIGH
-            liftTarget = 2600;
+            liftTarget = 2550;
 
             liftLeft.setTargetPosition(liftTarget);
             liftRight.setTargetPosition(liftTarget);
@@ -519,7 +551,7 @@ public class SampleTankDrive extends TankDrive {
             liftRight.setPower(motorPower);
 
         } else if (height.equals("CONE2")) {                    //HIGH
-            liftTarget = 400;
+            liftTarget = 350;
 
             liftLeft.setTargetPosition(liftTarget);
             liftRight.setTargetPosition(liftTarget);
@@ -531,6 +563,18 @@ public class SampleTankDrive extends TankDrive {
             liftLeft.setPower(-motorPower);
             liftRight.setPower(motorPower);
 
+        } else if (height.equals("CONE3")) {                    //HIGH
+            liftTarget = 300;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
         }
     }
 
@@ -544,15 +588,6 @@ public class SampleTankDrive extends TankDrive {
         intake.setPower(0);
     }
 
-    public void alignLeft(){
-        align.setPosition(0.25);
-    }
-    public void alignRight(){
-        align.setPosition(0.75);
-    }
-    public void alignBack(){
-        align.setPosition(1.0);
-    }
 
     public void resetLiftEncoders(){
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

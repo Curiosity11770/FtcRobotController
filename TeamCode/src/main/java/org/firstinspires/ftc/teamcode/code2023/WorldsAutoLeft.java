@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.code2023;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,22 +18,22 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous
-public class RegAutoLeft extends LinearOpMode {
+public class WorldsAutoLeft extends LinearOpMode {
 
-    public static double tx = 36;
+    public static double tx = 35;
     public static double ty = 0;
     public static boolean tf = true;
 
-    public static double tx2 = 51;
+    public static double tx2 = 52;
     public static double ty2 = 0;
     public static boolean tf2 = true;
 
-    public static double tx3 = 51;
-    public static double ty3 = 23.25;
+    public static double tx3 = 52;
+    public static double ty3 = 22.5;
     public static boolean tf3 = true;
 
-    public static double tx4 = 53;
-    public static double ty4 = -16;
+    public static double tx4 = 52;
+    public static double ty4 = -15;
     public static boolean tf4 = false;
 
     SampleTankDrive robot;
@@ -72,31 +71,30 @@ public class RegAutoLeft extends LinearOpMode {
         telemetry.setMsTransmissionInterval(50);
         timer = new ElapsedTime();
 
-        //create the path object - see Path.java class in util folder
-        //the path objects are declared here so they can be easily edited from the dashboard
-        
-        //new Path(takes in the robot object, x coordinate, y coordinate, drive backwards boolean)
-        
+        //create the path object
         Path path1 = new Path(robot, tx, ty, tf);
         Path path2 = new Path(robot, tx2, ty2, tf2);
         Path path3 = new Path(robot, tx3, ty3, tf3);
         Path path4 = new Path(robot, tx4, ty4, tf4);
 
-        Path path5 = new Path(robot, tx3, ty3-0.25, tf3);
+        Path path5 = new Path(robot, tx3, ty3+0.25, tf3);
         Path path6 = new Path(robot, tx4, ty4, tf4);
 
-        Path right = new Path(robot, 52, -20, false);
-        Path middle = new Path(robot, 52, -3, true);
-        Path left = new Path(robot, 52, 20, true);
+        Path path7 = new Path(robot, tx3, ty3+0.5, tf3);
+        Path path8 = new Path(robot, tx4, ty4, tf4);
+
+        Path right = new Path(robot, 52, -19, true);
+        Path middle = new Path(robot, 52, 3, true);
+        Path left = new Path(robot, 52, 26, false);
 
         robot.resetLiftEncoders();
 
         robot.pivot.setPosition(0.54);
         robot.sweeperIn();
+        robot.barIn();
 
         //waitForStart();
-        
-        //scan april tag
+
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = robot.aprilTagDetectionPipeline.getLatestDetections();
 
@@ -155,6 +153,9 @@ public class RegAutoLeft extends LinearOpMode {
         }
 
 
+        // paths start
+
+        //intake preloaded
         robot.intakeIn(robot.intakePower);
         robot.liftPosition(0.7, "MIDDLE");
         //while the path is incomplete
@@ -162,30 +163,35 @@ public class RegAutoLeft extends LinearOpMode {
         while (!path1.targetReached) {
             //follow the path!
             path1.followPath();
-
+            robot.sweeperRight();
             pathTele(path1);
         }
 
 
-        //robot.pivot.setPosition(0.85);
+        //scoring preloaded
         robot.pivot.setPosition(0.2);
-        wait(1.5);
+        wait(1.3);
         robot.intakeOut(robot.intakePower);
         wait(0.5);
         robot.intakeStop();
+
         robot.pivot.setPosition(0.54);
 
         wait(0.5);
 
+        //move to align with cone stack
         path2.time.reset();
         while (!path2.targetReached){
             path2.followPath();
+            robot.sweeperIn();
             robot.liftPosition(0.8, "CONE1");
 
             pathTele(path2);
 
         }
 
+
+        //intake from cone stack
         robot.intakeIn(robot.intakePower);
         path3.time.reset();
         while (!path3.targetReached){
@@ -193,63 +199,116 @@ public class RegAutoLeft extends LinearOpMode {
             pathTele(path3);
 
         }
-        wait(1.5);      // waiting for intaking
+        wait(0.9);      // waiting for intaking
 
         timer.reset();      // needs to be own loop or will knock over stack
-        while(timer.seconds() < 1.0 && !isStopRequested()){
+        while(timer.seconds() < 0.5 && !isStopRequested()){
             robot.liftPosition(0.7, "ABOVESTACK");
         }
+
+        //move to align with high junction
+        robot.barOut();
 
         path4.time.reset();
         while (!path4.targetReached){
             path4.followPath();
+            robot.sweeperRight();
+            //score cone on high
+            robot.pivot.setPosition(0.09);
             pathTele(path4);
             robot.liftPosition(0.65, "HIGHAUTO");
         }
 
-        //robot.pivot.setPosition(0.83);
-        robot.pivot.setPosition(0.2);
-        wait(1.5);
-        robot.intakeOut(0.98);     // make this slower? current = 0.7
-        wait(0.35);
+
+        wait(1.3);
+        robot.intakeOut(robot.intakePower);     // make this slower? current = 0.7
+        wait(0.25);
+
         robot.pivot.setPosition(0.54);
         wait(0.2);
 
         robot.intakeIn(robot.intakePower);
 
+
+        //move to align with cone stack
         path5.time.reset();
         while (!path5.targetReached){
             path5.followPath();
+            robot.sweeperIn();
             pathTele(path5);
             robot.liftPosition(0.8, "CONE2");
         }
-        wait(1.5);      // waiting for intaking
+        wait(0.9);      // waiting for intaking
 
         timer.reset();
-        while(timer.seconds() < 1.0 && !isStopRequested()){
+        while(timer.seconds() < 0.5 && !isStopRequested()){
             robot.liftPosition(0.7, "ABOVESTACK");
         }
+
+        //move to align with high junction
+
+        robot.sweeperRight();
+
         path6.time.reset();
         while (!path6.targetReached){
             path6.followPath();
             pathTele(path6);
+            robot.pivot.setPosition(0.09);
             robot.liftPosition(0.65, "HIGHAUTO");
 
         }
 
-        //robot.pivot.setPosition(0.83);
-        robot.pivot.setPosition(0.17);
+        //score on high junction
+
         wait(1.5);
-        robot.intakeOut(0.98);     // make this slower? current = 0.7
-        wait(0.35);
+        robot.intakeOut(robot.intakePower);     // make this slower? current = 0.7
+        wait(0.25);
         robot.pivot.setPosition(0.54);
         wait(0.2);
 
+        robot.intakeIn(robot.intakePower);
+
+        //move to align with cone stack
+        path7.time.reset();
+        while (!path7.targetReached){
+            path7.followPath();
+            robot.sweeperIn();
+            pathTele(path7);
+            robot.liftPosition(0.8, "CONE3");
+        }
+        wait(0.9);      // waiting for intaking
+
+        timer.reset();
+        while(timer.seconds() < 0.5 && !isStopRequested()){
+            robot.liftPosition(0.7, "ABOVESTACK");
+        }
+
+        //move to align with high junction
+
+        robot.sweeperRight();
+
+        path8.time.reset();
+        while (!path8.targetReached){
+            path8.followPath();
+            pathTele(path8);
+            robot.pivot.setPosition(0.09);
+            robot.liftPosition(0.65, "HIGHAUTO");
+
+        }
+
+        //score on high junction
+
+        wait(1.5);
+        robot.intakeOut(robot.intakePower);     // make this slower? current = 0.7
+        wait(0.25);
+        robot.pivot.setPosition(0.54);
+        robot.barIn();
+        wait(0.25);
+        robot.sweeperIn();
+
         robot.intakeStop();
 
-        //intake out for 1 second then stop
-        //pivot center
-        //lift to ground
+        //park
         if(robot.tagOfInterest.id == LEFT){
             left.time.reset();
             while (!isStopRequested() && (!left.targetReached || left.time.seconds() < 10.0)){
@@ -259,16 +318,12 @@ public class RegAutoLeft extends LinearOpMode {
             }
         }
         else if(robot.tagOfInterest.id == RIGHT){
-            wait(0.2);
-            robot.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            //robot.pivot.setPosition(0.54);
-            timer.reset();
-            while(timer.seconds() < 1.5){
-                robot.liftPosition(0.87, "GROUND");
+            right.time.reset();
+            while (!isStopRequested() && (!right.targetReached  || right.time.seconds() < 10.0)){
+                right.followPath();
+                pathTele(right);
+                robot.liftPosition(0.8, "GROUND");
             }
-            driveBackwardsLiftDown(0.7, 460);
-
         }
         else{
             middle.time.reset();
@@ -312,24 +367,5 @@ public class RegAutoLeft extends LinearOpMode {
     void wait(double seconds){
         resetRuntime();
         while(getRuntime() < seconds){}
-    }
-    private void driveBackwardsLiftDown(double motorPower, double distance){
-
-        double counts = distance*19.3566666;
-        //double counts = 100;
-        while(opModeIsActive() && Math.abs(robot.rightRear.getCurrentPosition()) < counts && !isStopRequested()){
-            robot.leftFront.setPower(-motorPower);
-            robot.rightRear.setPower(-motorPower);
-            robot.leftRear.setPower(-motorPower);
-            robot.rightFront.setPower(-motorPower);
-
-
-            telemetry.addData("Motor position: ", robot.rightRear.getCurrentPosition());
-            telemetry.update();
-        }
-        robot.leftFront.setPower(0);
-        robot.rightRear.setPower(0);
-        robot.leftRear.setPower(0);
-        robot.rightFront.setPower(0);
     }
 }

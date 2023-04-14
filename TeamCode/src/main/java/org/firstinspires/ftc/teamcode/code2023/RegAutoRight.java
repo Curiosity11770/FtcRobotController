@@ -87,7 +87,7 @@ public class RegAutoRight extends LinearOpMode {
         robot.resetLiftEncoders();
 
         robot.pivot.setPosition(0.54);
-        robot.alignBack();
+        robot.sweeperIn();
 
         //waitForStart();
 
@@ -186,10 +186,10 @@ public class RegAutoRight extends LinearOpMode {
             pathTele(path3);
 
         }
-        wait(1.5);      // waiting for intaking
+        wait(1.3);      // waiting for intaking
 
         timer.reset();      // needs to be own loop or will knock over stack
-        while(timer.seconds() < 1.0 && !isStopRequested()){
+        while(timer.seconds() < 0.8 && !isStopRequested()){
             robot.liftPosition(0.7, "ABOVESTACK");
         }
 
@@ -200,7 +200,7 @@ public class RegAutoRight extends LinearOpMode {
             robot.liftPosition(0.65, "HIGHAUTO");
         }
 
-        robot.alignRight();
+        robot.sweeperIn();
         robot.pivot.setPosition(0.83);
         wait(1.5);
         robot.intakeOut(robot.intakePower);     // make this slower? current = 0.7
@@ -216,10 +216,10 @@ public class RegAutoRight extends LinearOpMode {
             pathTele(path5);
             robot.liftPosition(0.8, "CONE2");
         }
-        wait(1.5);      // waiting for intaking
+        wait(1.3);      // waiting for intaking
 
         timer.reset();
-        while(timer.seconds() < 1.0 && !isStopRequested()){
+        while(timer.seconds() < 0.8 && !isStopRequested()){
             robot.liftPosition(0.7, "ABOVESTACK");
         }
         path6.time.reset();
