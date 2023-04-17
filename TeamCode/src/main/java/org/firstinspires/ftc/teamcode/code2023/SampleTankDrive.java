@@ -524,7 +524,7 @@ public class SampleTankDrive extends TankDrive {
             liftLeft.setPower(-motorPower);
             liftRight.setPower(motorPower);
 
-        }else if (height.equals("HIGHAUTO")) {                    //HIGH
+        }else if (height.equals("HIGHAUTORIGHT")) {                    //HIGH
             liftTarget = 2550;
 
             liftLeft.setTargetPosition(liftTarget);
@@ -537,7 +537,20 @@ public class SampleTankDrive extends TankDrive {
             liftLeft.setPower(-motorPower);
             liftRight.setPower(motorPower);
 
-        } else if (height.equals("ABOVESTACK")) {                    //HIGH
+        } else if (height.equals("HIGHAUTOLEFT")) {                    //HIGH
+            liftTarget = 2650;
+
+            liftLeft.setTargetPosition(liftTarget);
+            liftRight.setTargetPosition(liftTarget);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //motorPower = 0.1;
+            liftLeft.setPower(-motorPower);
+            liftRight.setPower(motorPower);
+
+        }else if (height.equals("ABOVESTACK")) {                    //HIGH
             liftTarget = 1000;
 
             liftLeft.setTargetPosition(liftTarget);

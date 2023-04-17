@@ -80,12 +80,12 @@ public class WorldsAutoLeft extends LinearOpMode {
         Path path5 = new Path(robot, tx3, ty3+0.25, tf3);
         Path path6 = new Path(robot, tx4, ty4, tf4);
 
-        Path path7 = new Path(robot, tx3, ty3+0.5, tf3);
+        Path path7 = new Path(robot, tx3, ty3+0.35, tf3);
         Path path8 = new Path(robot, tx4, ty4, tf4);
 
-        Path right = new Path(robot, 52, -19, false);
-        Path middle = new Path(robot, 52, 3, true);
-        Path left = new Path(robot, 52, 22, true);
+        Path right = new Path(robot, 52, -25.5, false);
+        Path middle = new Path(robot, 52, -4.5, true);
+        Path left = new Path(robot, 52, 20.5, true);
 
         robot.resetLiftEncoders();
 
@@ -216,7 +216,7 @@ public class WorldsAutoLeft extends LinearOpMode {
             //score cone on high
             robot.pivot.setPosition(0.09);
             pathTele(path4);
-            robot.liftPosition(0.65, "HIGHAUTO");
+            robot.liftPosition(0.65, "HIGHAUTOLEFT");
         }
 
 
@@ -254,7 +254,7 @@ public class WorldsAutoLeft extends LinearOpMode {
             path6.followPath();
             pathTele(path6);
             robot.pivot.setPosition(0.09);
-            robot.liftPosition(0.65, "HIGHAUTO");
+            robot.liftPosition(0.65, "HIGHAUTOLEFT");
 
         }
 
@@ -292,7 +292,7 @@ public class WorldsAutoLeft extends LinearOpMode {
             path8.followPath();
             pathTele(path8);
             robot.pivot.setPosition(0.09);
-            robot.liftPosition(0.65, "HIGHAUTO");
+            robot.liftPosition(0.65, "HIGHAUTOLEFT");
 
         }
 

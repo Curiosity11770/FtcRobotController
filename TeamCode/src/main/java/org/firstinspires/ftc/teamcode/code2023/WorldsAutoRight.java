@@ -216,7 +216,7 @@ public class WorldsAutoRight extends LinearOpMode {
             //score cone on high
             robot.pivot.setPosition(0.91);
             pathTele(path4);
-            robot.liftPosition(0.65, "HIGHAUTO");
+            robot.liftPosition(0.65, "HIGHAUTORIGHT");
         }
 
 
@@ -254,7 +254,7 @@ public class WorldsAutoRight extends LinearOpMode {
             path6.followPath();
             pathTele(path6);
             robot.pivot.setPosition(0.91);
-            robot.liftPosition(0.65, "HIGHAUTO");
+            robot.liftPosition(0.65, "HIGHAUTORIGHT");
 
         }
 
@@ -292,7 +292,7 @@ public class WorldsAutoRight extends LinearOpMode {
             path8.followPath();
             pathTele(path8);
             robot.pivot.setPosition(0.91);
-            robot.liftPosition(0.65, "HIGHAUTO");
+            robot.liftPosition(0.65, "HIGHAUTORIGHT");
 
         }
 
