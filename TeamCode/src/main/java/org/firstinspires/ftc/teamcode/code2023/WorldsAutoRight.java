@@ -20,7 +20,7 @@ import java.util.ArrayList;
 @Autonomous
 public class WorldsAutoRight extends LinearOpMode {
 
-    public static double tx = 35;
+    public static double tx = 34;
     public static double ty = 0;
     public static boolean tf = true;
 
@@ -28,11 +28,11 @@ public class WorldsAutoRight extends LinearOpMode {
     public static double ty2 = 0;
     public static boolean tf2 = true;
 
-    public static double tx3 = 52;
-    public static double ty3 = -22.5;
+    public static double tx3 = 52.75;
+    public static double ty3 = -21.5;
     public static boolean tf3 = true;
 
-    public static double tx4 = 52;
+    public static double tx4 = 52.75;
     public static double ty4 = 15;
     public static boolean tf4 = false;
 
@@ -77,7 +77,7 @@ public class WorldsAutoRight extends LinearOpMode {
         Path path3 = new Path(robot, tx3, ty3, tf3);
         Path path4 = new Path(robot, tx4, ty4, tf4);
 
-        Path path5 = new Path(robot, tx3, ty3+0.25, tf3);
+        Path path5 = new Path(robot, tx3, ty3+0.35, tf3);
         Path path6 = new Path(robot, tx4, ty4, tf4);
 
         Path path7 = new Path(robot, tx3, ty3+0.5, tf3);
@@ -169,7 +169,7 @@ public class WorldsAutoRight extends LinearOpMode {
 
 
         //scoring preloaded
-        robot.pivot.setPosition(0.85);
+        robot.pivot.setPosition(0.91);
         wait(1.3);
         robot.intakeOut(robot.intakePower);
         wait(0.5);

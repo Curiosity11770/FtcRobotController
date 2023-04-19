@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.util.Path;
 import java.util.ArrayList;
 
 @Config
-@Autonomous
 public class RegAutoRight extends LinearOpMode {
 
     public static double tx = 36;

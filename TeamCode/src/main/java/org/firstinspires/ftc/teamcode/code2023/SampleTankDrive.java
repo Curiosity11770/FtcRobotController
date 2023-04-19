@@ -525,7 +525,7 @@ public class SampleTankDrive extends TankDrive {
             liftRight.setPower(motorPower);
 
         }else if (height.equals("HIGHAUTORIGHT")) {                    //HIGH
-            liftTarget = 2550;
+            liftTarget = 2600;
 
             liftLeft.setTargetPosition(liftTarget);
             liftRight.setTargetPosition(liftTarget);

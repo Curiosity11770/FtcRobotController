@@ -20,19 +20,19 @@ import java.util.ArrayList;
 @Autonomous
 public class WorldsAutoLeft extends LinearOpMode {
 
-    public static double tx = 35;
+    public static double tx = 34;
     public static double ty = 0;
     public static boolean tf = true;
 
-    public static double tx2 = 52;
+    public static double tx2 = 51.25;
     public static double ty2 = 0;
     public static boolean tf2 = true;
 
-    public static double tx3 = 52;
+    public static double tx3 = 51.25;
     public static double ty3 = 22.5;
     public static boolean tf3 = true;
 
-    public static double tx4 = 52;
+    public static double tx4 = 51.25;
     public static double ty4 = -15;
     public static boolean tf4 = false;
 
@@ -80,12 +80,12 @@ public class WorldsAutoLeft extends LinearOpMode {
         Path path5 = new Path(robot, tx3, ty3+0.25, tf3);
         Path path6 = new Path(robot, tx4, ty4, tf4);
 
-        Path path7 = new Path(robot, tx3, ty3+0.35, tf3);
+        Path path7 = new Path(robot, tx3, ty3+0.25, tf3);
         Path path8 = new Path(robot, tx4, ty4, tf4);
 
         Path right = new Path(robot, 52, -25.5, false);
-        Path middle = new Path(robot, 52, -4.5, true);
-        Path left = new Path(robot, 52, 20.5, true);
+        Path middle = new Path(robot, 52, -3, true);
+        Path left = new Path(robot, 52, 19.5, true);
 
         robot.resetLiftEncoders();
 
@@ -169,7 +169,7 @@ public class WorldsAutoLeft extends LinearOpMode {
 
 
         //scoring preloaded
-        robot.pivot.setPosition(0.2);
+        robot.pivot.setPosition(0.09);
         wait(1.3);
         robot.intakeOut(robot.intakePower);
         wait(0.5);

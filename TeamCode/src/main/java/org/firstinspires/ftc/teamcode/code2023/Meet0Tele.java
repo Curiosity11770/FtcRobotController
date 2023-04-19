@@ -153,26 +153,27 @@ public class Meet0Tele extends LinearOpMode {
             //frontRight.setPower(-gamepad1.right_stick_y);
             //backRight.setPower(-gamepad1.right_stick_y);
 
-            if(gamepad1.right_bumper){
+            if(gamepad1.right_trigger > 0.2){
                 tankDrive = !tankDrive;
             }
 
 
             //if(gamepad1.left_bumper){
-                turbo = !turbo;
+                //turbo = !turbo;
             //}
+
             if(tankDrive) {
 
-                leftPower = -gamepad1.left_stick_y;
-                rightPower = -gamepad1.right_stick_y;
+                leftPower = -gamepad1.left_stick_y/2;
+                rightPower = -gamepad1.right_stick_y/2;
             } else if (!tankDrive){
-                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x*0.7;
-                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x*0.7;
+                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x/2;
+                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x/2;
             }
-            if(gamepad1.left_bumper){
+            if(gamepad1.right_bumper){
                 leftPower = leftPower*1.95;
-                rightPower = leftPower*1.95;
-            } else if(gamepad1.left_trigger > 0.2){
+                rightPower = rightPower*1.95;
+            } else if(gamepad1.left_bumper){
                 leftPower = leftPower/2;
                 rightPower = rightPower/2;
             }
@@ -187,7 +188,7 @@ public class Meet0Tele extends LinearOpMode {
                 height = "MANUAL";
             }
             else if(gamepad2.y){ height = "GROUND"; }
-            else if(gamepad2.x){ height = "LOW"; }
+            else if(gamepad2.x){ height = "MIDDLE"; }
             //else if(gamepad2.b){ height = "MIDDLE"; }
             else if(gamepad2.a){ height = "HIGH"; }
 
@@ -418,7 +419,7 @@ public class Meet0Tele extends LinearOpMode {
                 //telemetry.update();
             }
         } else if (height.equals("MIDDLE")){    //MIDDLE
-            liftTarget = 2200;
+            liftTarget = 2000;
 
             liftLeft.setTargetPosition(liftTarget);
             liftRight.setTargetPosition(liftTarget);
