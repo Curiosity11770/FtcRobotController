@@ -20,7 +20,7 @@ import java.util.ArrayList;
 @Autonomous
 public class WorldsAutoRight extends LinearOpMode {
 
-    public static double tx = 34;
+    public static double tx = 35;
     public static double ty = 0;
     public static boolean tf = true;
 
@@ -33,7 +33,7 @@ public class WorldsAutoRight extends LinearOpMode {
     public static boolean tf3 = true;
 
     public static double tx4 = 52.75;
-    public static double ty4 = 15;
+    public static double ty4 = 14;
     public static boolean tf4 = false;
 
     SampleTankDrive robot;
@@ -368,4 +368,60 @@ public class WorldsAutoRight extends LinearOpMode {
         resetRuntime();
         while(getRuntime() < seconds){}
     }
+
+    //hellohello hello hello
+    //hello
+    //hello
+    //hello
+    //hello
+    //hello
+    //hello
+    //hello
+    //a
+    //b
+    //c
+    //d
+    //e
+    //f
+    //g
+    //h
+    //i
+    //j
+    //k
+    //l
+    //m
+    //n
+    //o
+    //p
+    //what is your favorite letter?
+    //hello
+    //what yayyyy
+    //hello
+    //ihope you all arehavinga greatday
+    //ok
+    //why is the space bar so hard to press
+    //double slash
+    //katie did thealphabet not me
+    //thatis sointeresting
+    //i think that double slash is a good commenting method
+    //oops
+    //real code
+    //wowow
+    //hello
+    //typingon the keyboard
+    //yay
+    //hieveryone
+    //it actually ishardtopress
+    //jdkflalskdjfls;
+    //whatdid you think i was typing
+    //github
+    //u talk faster thani can type
+    //coding
+    //yay
+    //boolean
+    //sorting
+    //if statment
+    //if not
+    //else if
+    //
 }

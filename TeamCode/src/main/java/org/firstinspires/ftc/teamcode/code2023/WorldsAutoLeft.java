@@ -20,20 +20,20 @@ import java.util.ArrayList;
 @Autonomous
 public class WorldsAutoLeft extends LinearOpMode {
 
-    public static double tx = 34;
+    public static double tx = 35;
     public static double ty = 0;
     public static boolean tf = true;
 
-    public static double tx2 = 51.25;
+    public static double tx2 = 51.35;
     public static double ty2 = 0;
     public static boolean tf2 = true;
 
     public static double tx3 = 51.25;
-    public static double ty3 = 22.5;
+    public static double ty3 = 22.15;
     public static boolean tf3 = true;
 
     public static double tx4 = 51.25;
-    public static double ty4 = -15;
+    public static double ty4 = -14;
     public static boolean tf4 = false;
 
     SampleTankDrive robot;

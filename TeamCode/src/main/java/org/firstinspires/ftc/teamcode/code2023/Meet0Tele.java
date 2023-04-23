@@ -340,10 +340,10 @@ public class Meet0Tele extends LinearOpMode {
 
         if(!sweeperManual) {
             if (!reset) {
-                if (pPos > 0.75) {
+                if (pPos > 0.65) {
                     //left side
                     align.setPosition(0.32);
-                } else if (pPos < 0.25) {
+                } else if (pPos < 0.35) {
                     //right side
                     align.setPosition(0.38);
                 } else {
