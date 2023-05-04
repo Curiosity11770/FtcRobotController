@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.code2023;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.code2023.SampleTankDrive;
 import java.util.ArrayList;
 
 //@Autonomous
-public class TrajectoryAutoRight extends LinearOpMode {
+public class TrajectoryAutoLeft extends LinearOpMode {
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -129,11 +129,11 @@ public class TrajectoryAutoRight extends LinearOpMode {
                 .splineTo(new Vector2d(37, 0), Math.toRadians(0))
                 .build();
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .splineTo(new Vector2d(53, 0), Math.toRadians(0))
+                .splineTo(new Vector2d(53.5, 0), Math.toRadians(0))
                 .build();
         Trajectory traj3A = drive.trajectoryBuilder(traj2.end())
                 //84
-                .splineTo(new Vector2d(79, 0), Math.toRadians(0))
+                .splineTo(new Vector2d(77, 0), Math.toRadians(0))
                 .build();
         Trajectory traj3B = drive.trajectoryBuilder(traj2.end())
                 //84
@@ -144,14 +144,14 @@ public class TrajectoryAutoRight extends LinearOpMode {
         Trajectory traj4 = drive.trajectoryBuilder(traj3B.end(), true)
                 .splineTo(new Vector2d(47, 0), Math.toRadians(0))
                 .build();
-        Trajectory left = drive.trajectoryBuilder(traj4.end(), true)   //pos 1
+        Trajectory right = drive.trajectoryBuilder(traj4.end(), true)   //pos 1
                 .splineTo(new Vector2d(40, 0), Math.toRadians(0))
                 .build();
         Trajectory middle = drive.trajectoryBuilder(traj4.end())                 //pos 2
                 .splineTo(new Vector2d(60, 0), Math.toRadians(0))
                 .build();
-        Trajectory right = drive.trajectoryBuilder(traj4.end())                 //pos 3
-                .splineTo(new Vector2d(77, 0), Math.toRadians(0))
+        Trajectory left = drive.trajectoryBuilder(traj4.end())                 //pos 3
+                .splineTo(new Vector2d(76, 0), Math.toRadians(0))
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
@@ -216,7 +216,7 @@ public class TrajectoryAutoRight extends LinearOpMode {
         drive.followTrajectory(traj1); //this drives in front of the middle junction
 
         //pivotPosition(0.8);
-        pivot.setPosition(0.85);
+        pivot.setPosition(0.17);
         wait(1.25);
 
         //intake out for 1 second, then stop
@@ -228,27 +228,27 @@ public class TrajectoryAutoRight extends LinearOpMode {
         wait(0.5);
         timer.reset();
 
-        while(timer.seconds() < 1.5 && !isStopRequested()){
+        while(timer.seconds() < 2 && !isStopRequested()){
             liftPosition(0.65, "CONE1", 500);
             telemetry.update();
         }
         //wait(2.0);
         drive.followTrajectory(traj2); //drives to align with cone stack
         //wait(0.5);
-        drive.turn(Math.toRadians(-97)); //turns
+        drive.turn(Math.toRadians(94)); //turns
         //lift to cone height
 
         //liftPosition(0.65, "CONE1");
 
         intakeIn();
-        wait(0.2);
+        wait(0.19);
         drive.followTrajectory(traj3A); //drives into cone stack
         wait(0.1);
         //drive.followTrajectory(traj3B);
         //cone should be in robot
         //lift to above the cone stack
         timer.reset();
-        while(timer.seconds() < 1.5 && !isStopRequested()){
+        while(timer.seconds() < 2 && !isStopRequested()){
             liftPosition(0.65, "ABOVESTACK", 1000);
         }
         drive.followTrajectory(traj4); //backs up to high junction
@@ -258,7 +258,7 @@ public class TrajectoryAutoRight extends LinearOpMode {
             liftPosition(0.65, "HIGH", 2900);
         }
         //pivot left
-        pivot.setPosition(0.8);
+        pivot.setPosition(0.19);
         wait(1.25);
         intakeOut();
         wait(1.0);
@@ -286,6 +286,8 @@ public class TrajectoryAutoRight extends LinearOpMode {
         }
 
 
+        wait(1.0);
+
     }
 
     private void wait(double seconds){
@@ -295,13 +297,13 @@ public class TrajectoryAutoRight extends LinearOpMode {
 
     private void pivotPosition(double pivotTarget){
 
-            if(Math.abs(pPos-pivotTarget) >= 0.01) {
-                if (pPos > pivotTarget) {
-                    pivot.setPosition(pPos - 0.005);
-                } else if (pPos < pivotTarget) {
-                    pivot.setPosition(pPos + 0.005);
-                }
+        if(Math.abs(pPos-pivotTarget) >= 0.01) {
+            if (pPos > pivotTarget) {
+                pivot.setPosition(pPos - 0.005);
+            } else if (pPos < pivotTarget) {
+                pivot.setPosition(pPos + 0.005);
             }
+        }
     }
     //positive encoder values and motor powers are UP
     private void liftPosition(double motorPower, String height, int counts) {
