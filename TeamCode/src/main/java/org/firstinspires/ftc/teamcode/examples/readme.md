@@ -27,15 +27,16 @@ https://learnroadrunner.com/
 This is where we got our localization class from. It has a very good introductory explanation for roadrunner
 and how localization works/can be used for. Very good place to start!
 
-## Tank Drive + Mecanum drive classes
+## Tank Drive + Mecanum Drive classes
 Instead of putting all the robot functions in different programs, we can create a robot object that 'owns'
 all of the robot functions and motors. I have copies of these programs to use/look at, and the TankDrive one
-(what we used this season) is annotated!
+(what we used this season) is annotated! To use the Mecanum drive program, paste your functions into the
+MecanumDrive class.
 
 ## Features | FTC Dashboard
 https://acmerobotics.github.io/ftc-dashboard/features.html
 The dashboard is a super cool resource to make quick changes instead of having to rebuild the entire project
-(which takes around 2-5 minutes depending on how long since last build). The link to your dashbaord is the
+(which takes around 2-5 minutes depending on how long since last build). The link to your dashboard is the
 link given in 'Progamming' on the driver station '/dash'. Make sure you are connected to the robot wifi!
 To make programs and variables show up in the dashboard, add '@Config' next ro '@Autonomous' or '@Teleop'.
 Variables will show up if they are public and static.
