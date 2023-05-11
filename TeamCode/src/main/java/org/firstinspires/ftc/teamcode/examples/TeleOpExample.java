@@ -1,489 +1,345 @@
-package org.firstinspires.ftc.teamcode.examples;
+package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import androidx.collection.CircularArray;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import java.util.Set;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 
-@TeleOp //used to say "extends LinearOpMode but that got error
-public class TeleOpExample extends LinearOpMode {
+@TeleOp(name="TeleOpExample", group="Linear Opmode")
 
-    BNO055IMU imu;
+public class NewTeleBalanceTest extends LinearOpMode {
+
+    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-
+    
+    //drivetrain
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
 
-    private DcMotor verticalLeft = null;
-    private DcMotor horizontal = null;
+    
+    //lift
+    private DcMotor lift = null;
 
-
-    private DcMotor liftLeft = null;
-    private DcMotor liftRight = null;
-
+    
+    //intake
+    private DcMotor intakeRight = null;
+    private DcMotor intakeLeft = null;
+    private Servo omni = null;
+    
+    //foundation
+    private Servo hookRight = null;
+    private Servo hookLeft = null;
+    
+    //skystoneGrabber
+    private Servo skystoneGrabber = null;
+    
+    //claw
+    private Servo claw = null;
     private Servo pivot = null;
-
-    private CRServo intake = null;
-
-    private Servo align = null;
-
-    private Servo barRight = null;
-    private Servo barLeft = null;
-
-    private int liftTarget;
-
-    private TouchSensor touch = null;
-    private String height = "MANUAL";
-
-    private double drivePower;
-
-    private double pivotAdjustment = 0.005;
-    private boolean tankDrive = false;
-
-    private boolean turbo = false;
-    private boolean barDeployed = false;
-    private boolean barOverride = false;
-
-    private boolean reset = false;
-    private boolean sweeperManual = false;
-
-    private double pPos = 0;
-    private double pivotTarget = 0.54;
-    private boolean manual;
-
-    private double rightPower;
-    private double leftPower;
-    private double liftPower = 0.5;
-    private double pivotPower = 0.3;
-    private double intakePower = 0.7;
-
-    //@Override         doesn't like override?
-    public void runOpMode(){
+    
+    //flicker
+    private Servo skytoneGrabber = null;
+    
+    //capstone
+    private Servo capstone = null;
+    
+    //tape 
+    private DcMotor tape = null;
+    
+    @Override
+    public void runOpMode() {
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("Test", "Good");
-        ;
-
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        telemetry.update();
+        
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-
-        verticalLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        horizontal = hardwareMap.get(DcMotor.class, "backRight");
-
-
-        liftLeft = hardwareMap.get(DcMotor.class, "leftSlides");
-        liftRight = hardwareMap.get(DcMotor.class, "rightSlides");
-
-        //pivot = hardwareMap.get(DcMotor.class, "pivot");
+        
+        //lift
+        lift = hardwareMap.get(DcMotor.class, "lift");
+        
+        //intake
+        intakeRight = hardwareMap.get(DcMotor.class, "intakeRight");
+        intakeLeft = hardwareMap.get(DcMotor.class, "intakeLeft");
+        omni = hardwareMap.get(Servo.class, "omni");
+        
+        //servo
+        //hooks
+        hookRight = hardwareMap.get(Servo.class, "hookRight");
+        hookLeft = hardwareMap.get(Servo.class, "hookLeft");
+        boolean pressed = false;
+        
+        //skystone grabber
+        skystoneGrabber = hardwareMap.get(Servo.class, "skystoneGrabber");
+        
+        //claw
+        claw = hardwareMap.get(Servo.class, "claw");
         pivot = hardwareMap.get(Servo.class, "pivot");
-
-        intake = hardwareMap.get(CRServo.class, "intakeServo");
-
-        align = hardwareMap.get(Servo.class, "sweep");
-
-        barRight = hardwareMap.get(Servo.class, "wbRight");
-        barLeft = hardwareMap.get(Servo.class, "wbLeft");
-
-        touch = hardwareMap.get(TouchSensor.class, "touchSensor");
-
+        
+        //flicker
+        skystoneGrabber = hardwareMap.get(Servo.class, "skystoneGrabber");
+        
+        //capstone
+        capstone = hardwareMap.get(Servo.class, "capstone");
+        
+        //tape 
+        tape = hardwareMap.get(DcMotor.class, "tape");
+        
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        backRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-
-        //liftLeft.setDirection(DcMotor.Direction.REVERSE);
-        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftRight.setDirection(DcMotor.Direction.REVERSE);
-        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //pivot.setDirection(DcMotor.Direction.REVERSE);
-        //pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //resetLift();
-        resetLiftEncoders();
-        //resetPivotEncoders();
-
-        //barLeft.setPosition(0.0); //0.0 is upright
-        //barRight.setPosition(1.0); //1.0 is upright
-        barIn();
-
-        pivot.setPosition(0.54);
-        //manual = true;
-
-        align.setPosition(1.0);
-
+        
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        
+        intakeRight.setDirection(DcMotor.Direction.FORWARD);
+        intakeLeft.setDirection(DcMotor.Direction.REVERSE);
+        
+    
+        
+        //set servos to start position
+        //hookRight.setPosition(.3);
+        //hookLeft.setPosition(1);
+        hookRight.setPosition(.4);
+        hookLeft.setPosition(1);
+        //set skystone grabber to start position
+        skystoneGrabber.setPosition(1);
+        
+        //capstone hoplder to start position
+        capstone.setPosition(0.0);
+        
+        
+        //claw start position
+        boolean clawOpen = true;
+        boolean pivotIn = true;
+      
+      
+        // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
-        while(opModeIsActive()){
-
-            //boolean intakeIn = false;
-
-            telemetry.addData("LR ticks", liftRight.getCurrentPosition());
-            telemetry.addData("LL ticks", liftLeft.getCurrentPosition());
-            telemetry.addData("P ticks", pivot.getPosition());
-            // telemetry.update();
-
-            pPos = pivot.getPosition();
-
-            //do we want it to be set up this way? we can also do
-            //frontLeft.setPower(-gamepad1.left_stick_y);
-            //backLeft.setPower(-gamepad1.left_stick_y);
-
-            //frontRight.setPower(-gamepad1.right_stick_y);
-            //backRight.setPower(-gamepad1.right_stick_y);
-
-            if(gamepad1.right_trigger > 0.2){
-                tankDrive = !tankDrive;
-            }
-
-
-            //if(gamepad1.left_bumper){
-            //turbo = !turbo;
-            //}
-
-            if(tankDrive) {
-
-                leftPower = -gamepad1.left_stick_y/2;
-                rightPower = -gamepad1.right_stick_y/2;
-            } else if (!tankDrive){
-                leftPower = -gamepad1.left_stick_y/2 + gamepad1.right_stick_x/2;
-                rightPower = -gamepad1.left_stick_y/2 - gamepad1.right_stick_x/2;
-            }
-            if(gamepad1.right_bumper){
-                leftPower = leftPower*1.95;
-                rightPower = rightPower*1.95;
-            } else if(gamepad1.left_bumper){
-                leftPower = leftPower/2;
-                rightPower = rightPower/2;
-            }
-
-            frontRight.setPower(rightPower);
-            backRight.setPower(rightPower);
-            frontLeft.setPower(leftPower);
-            backLeft.setPower(leftPower);
-
-
-            if(gamepad2.right_stick_y > 0.2 || gamepad2.right_stick_y < -0.2){
-                height = "MANUAL";
-            }
-            else if(gamepad2.y){ height = "GROUND"; }
-            else if(gamepad2.x){ height = "MIDDLE"; }
-            //else if(gamepad2.b){ height = "MIDDLE"; }
-            else if(gamepad2.a){ height = "HIGH"; }
-
-            if(gamepad2.b){
-                pivotAdjustment = 0.009;
-            }
-            else{
-                pivotAdjustment = 0.005;
-            }
-
-            //height = "MANUAL"; //set manual at the very beginning
-            liftPosition(0.65, height);
-
-            barPosition();
-            //piv
-            //if(pivot.getCurrentPosition() < 100){
-            // pivot.setPower(0);
-            //} else {
-
-            //manual
-            if (gamepad2.left_stick_x > 0.2 || gamepad2.left_stick_x < -0.2) {
-                //pivot.setPower(gamepad2.left_stick_x/2.5);
-                manual = true;
-                //pivot.setPosition(pPos+0.005);
-            }
-            //set positions
-
-            if (gamepad2.left_bumper) { pivotTarget = 0.2; manual = false; }
-            //else if(gamepad2.dpad_up) { pivotTarget = 0.5; manual = false; }
-            else if(gamepad2.right_bumper) { pivotTarget = 0.8; manual = false; }
-            //else {
-            //  pivot.setPower(0);
-            //}
-
-            if(gamepad2.y){
-                reset = true;
-            } else if(liftRight.getCurrentPosition() < 300 && align.getPosition() == 1.0){
-                reset = false;
-            }
-
-            pivotPosition(manual, pivotTarget);
-            setSweeper(reset);
-
-            //pivot.setPower(gamepad
-            // 2.left_stick_x/2.5);
-
-            if(gamepad2.right_trigger > 0.2) {
-                intake.setPower(intakePower);
-            } else if(gamepad2.left_trigger > 0.2){
-                intake.setPower(-intakePower);
+        
+         
+    
+        
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+            
+            
+            // Setup a variable for each drive wheel to save power level for telemetry
+            
+            //mecanum wheels code stuff
+            double leftFrontPower;
+            double leftBackPower;
+            double rightFrontPower;
+            double rightBackPower;
+            
+            double drive = -gamepad1.left_stick_y;
+            double turn = gamepad1.right_stick_x;
+            double strafe = gamepad1.left_stick_x;
+            
+            if(gamepad1.right_bumper) {
+                leftFrontPower = Range.clip(drive + turn + strafe, -.3, .3);
+                rightFrontPower = Range.clip(drive - turn - strafe, -.3, .3);
+                rightBackPower = Range.clip(drive - turn + strafe, -.3, .3);
+                leftBackPower = Range.clip(drive + turn - strafe, -.3, .3);
             } else {
-                intake.setPower(0);
+                leftFrontPower = Range.clip(drive + turn + strafe, -1, 1);
+                rightFrontPower = Range.clip(drive - turn - strafe, -1, 1);
+                rightBackPower = Range.clip(drive - turn + strafe, -1, 1);
+                leftBackPower = Range.clip(drive + turn - strafe, -1, 1);
             }
-            telemetry.update();
-        }
-    }
+            
+            frontLeft.setPower(leftFrontPower);
+            frontRight.setPower(rightFrontPower);
+            backLeft.setPower(leftBackPower);
+            backRight.setPower(rightBackPower);
+            
+            
+            telemetry.addData("leftFrontPower: ", leftFrontPower);
+            telemetry.addData("rightFrontPower: ", rightFrontPower);
+            telemetry.addData("leftBackPower: ", leftBackPower);
+            telemetry.addData("rightBackPower: ", rightBackPower);
+            
 
-    private void pivotPosition(boolean manual, double pivotTarget){
-
-        if(manual) {
-            //0.005
-            if (gamepad2.left_stick_x > 0.2) {
-                pivot.setPosition(pPos - pivotAdjustment);
-            } else if (gamepad2.left_stick_x < -0.2) {
-                pivot.setPosition(pPos + pivotAdjustment);
-            }
-        }
-        else {
-            if(Math.abs(pPos-pivotTarget) >= 0.02) {
-                if (pPos > pivotTarget) {
-                    pivot.setPosition(pPos - 0.02);
-                } else if (pPos < pivotTarget) {
-                    pivot.setPosition(pPos + 0.02);
-                }
-            }
-        }
-    }
-
-    private void barOut(){
-        double distance = 0.55;
-        barLeft.setPosition(distance);
-        barRight.setPosition(1.0-0.52);
-
-    }
-
-    private void barIn(){
-        barLeft.setPosition(0.05);
-        barRight.setPosition(0.98);
-    }
-
-    /*private void pivotPositionOLD(double motorPower, String side){
-        if(side.equals("LEFT")){     //LEFT
-            pivotTarget = -663;
-
-        } else if (side.equals("RIGHT")){    //RIGHT
-            pivotTarget = 717;
-        } else if (side.equals("CENTER")){    //CENTER
-            pivotTarget = 0;
-        }
-
-        pivot.setTargetPosition(pivotTarget);
-
-        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //motorPower = 0.1;
-        pivot.setPower(motorPower);
-
-        if(opModeIsActive() && pivot.isBusy()){
-            telemetry.addData("pivot", pivot.getCurrentPosition());
-            telemetry.addData("Target", pivotTarget);
-            //telemetry.update();
-        }
-
-        pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }*/
-    //positive encoder values and motor powers are UP
-    private void barPosition(){
-
-        if(gamepad1.dpad_up){
-            barDeployed = false;
-            barOverride = true;
-        } else if(gamepad1.dpad_down){
-            barDeployed = true;
-            barOverride = false;
-        } else if(liftRight.getCurrentPosition() > 600 && !barOverride){
-            barDeployed = true;
-        } else if(liftRight.getCurrentPosition() < 600 && !barOverride){
-            barDeployed = false;
-        }
-
-        //liftRight.getCurrentPosition()
-        if (barDeployed){
-            barOut();
-        }
-        else {
-            barIn();
-        }
-    }
-
-    private void setSweeper(boolean reset) {
-        //left further, right less
-        //swinging to right is lower
-        //pivot to the left
-        if(gamepad2.dpad_up){
-            sweeperManual = true;
-        } else if(gamepad2.dpad_down){
-            sweeperManual = false;
-        }
-
-        if(!sweeperManual) {
-            if (!reset) {
-                if (pPos > 0.65) {
-                    //left side
-                    align.setPosition(0.32);
-                } else if (pPos < 0.35) {
-                    //right side
-                    align.setPosition(0.38);
-                } else {
-                    align.setPosition(1.0);
-                }
-            }
-        } else if(sweeperManual){
-            align.setPosition(1.0);
-        }
-    }
-
-    private void liftPosition(double motorPower, String height){
-        if(height.equals("MANUAL")){
-            liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            //add touch sensor lower bound (if touch sensor not pressed)
-            if(gamepad2.right_stick_y > 0.2 && Math.abs(liftLeft.getCurrentPosition()) < 3000 && Math.abs(liftRight.getCurrentPosition()) < 3000){
-                liftLeft.setPower(-motorPower);
-                liftRight.setPower(-motorPower);
-                //make proportional to right_stick_y? (like drivetrain)
-            } else if(gamepad2.right_stick_y < -0.2){
-                liftLeft.setPower(motorPower);
-                liftRight.setPower(motorPower);
-            }
-            else
+            
+            //lift code
+            //we want the lift to go in four inch intervals
+            double liftPower = Range.clip(gamepad2.left_stick_y, -0.95, 0.5 );
+            telemetry.addData("liftPower: ", liftPower);
+            telemetry.addData("liftPosition: ", lift.getCurrentPosition());
+            if(gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1)
             {
-                liftLeft.setPower(0.1);
-                liftRight.setPower(0.1);
+                //checks if the left stick is being pushed
+                //then operate the lift on lift power
+                lift.setPower(liftPower);
             }
+            else if(gamepad2.right_trigger > 0.3)
+            {
+                //if not pressed, and right trigger is, then run the lift to a certain position
+                if(lift.getCurrentPosition() > -250 && !gamepad2.right_bumper)
+                {
+                    lift.setPower(-.5);
+                }
+                else
+                {
+                    lift.setPower(0);
+                }
+            }
+            else if(lift.getCurrentPosition() < -261)
+            {
+                lift.setPower(-.08);
+            }
+            else 
+            {
+                if(lift.getCurrentPosition() < 0)
+                {
+                    //if not hitting joystick or trigger, make the lift go down
+                    lift.setPower(.3);
+                }
+                else
+                {
+                    lift.setPower(0);
+                }
+            }
+            //lift.setPower(liftPower);
+            /*if (lift.getCurrentPosition() > -2560 || gamepad2.left_stick_y > 0.2) {
+               if (lift.getCurrentPosition() < 0 || gamepad2.left_stick_y < -0.2){
+                lift.setPower(liftPower);
+               } else {
+                   lift.setPower(0);
+               }
+            } /*else if (lift.getCurrentPosition() < 0 || gamepad2.left_stick_y < -0.2){
+                lift.setPower(liftPower);
+            }*/
+            /*else{
+                lift.setPower(0);
+            }*/
+            
+            //intake code (x and y buttons)
+            double intakePower = 0.9; //gamepad2.right_trigger - gamepad2.left_trigger; //0.9;
+            //intakeLeft.setPower(intakePower);
+            //intakeRight.setPower(intakePower);
+            
+            if(gamepad2.right_trigger > 0.3 || gamepad2.right_bumper)
+            {
+                intakeLeft.setPower(intakePower);
+                intakeRight.setPower(intakePower);
+                omni.setPosition(1);
+            }
+            else if(gamepad2.left_trigger > 0.3)
+            {
+                intakeLeft.setPower(-intakePower);
+                intakeRight.setPower(-intakePower);
+                omni.setPosition(0);
+                
+                
+            } 
+            else 
+            {
+                intakeLeft.setPower(0.0);
+                intakeRight.setPower(0.0);
+                omni.setPosition(.5);
+                
+            }
+            
+            //if (liftPower < 0.1 && liftPower > -0.1){
+                //if(right gamepage trigger<0.3)
+            //}
+            
+            //foundation hook
+            /*if(gamepad1.right_bumper)
+            {
+                hookRight.setPosition(.5);
+                hookLeft.setPosition(1);
+            }else*/ if(gamepad1.left_bumper && !pressed)
+            {
+                if (hookRight.getPosition() == 1)
+                {
+                    hookRight.setPosition(.5);
+                    hookLeft.setPosition(1);
+                }
+                
+                else 
+                {
+                    hookRight.setPosition(1);
+                    hookLeft.setPosition(.3);
+                }
+                pressed = true;
+                    
+            }
+            
+            if (!gamepad1.left_bumper)
+                pressed = false;
+            
+            //tape 
+            double tapePower = gamepad1.right_trigger -gamepad1.left_trigger;
+            tape.setPower(tapePower);
+            if(tapePower < 0){
+                tape.setPower(.5*tapePower);
+            }
+            
+            //claw code
+            //two servos cause we fancy
+            double clawSpeed = 0.5;
+            double pivotSpeed = 0.5;
+            
+            
+            if(gamepad2.a) {
+                claw.setPosition(.3);
+            } else if (gamepad2.y) {
+                claw.setPosition(1);
+            }
+            
+            if(gamepad2.b) {
+                pivot.setPosition(0);
+            } else if (gamepad2.x) {
+                pivot.setPosition(0.76);
+            }
+            
+            //capstone code
+            if(gamepad2.left_bumper) {
+                capstone.setPosition(1);
+                
+            } else {
+                capstone.setPosition(0.05);
+            }
+            
+            
+            
+        
+            telemetry.addData("hookRight: ", hookRight.getPosition());
+            telemetry.addData("pressed: ", pressed);
+            telemetry.update();
+            
         }
-        else if(height.equals("GROUND")){     //GROUND
-            //resetLift();
-            liftTarget = 0;
+        
+        
 
-            liftLeft.setTargetPosition(liftTarget);
-            liftRight.setTargetPosition(liftTarget);
 
-            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            align.setPosition(1.0);
-            pivotPosition(false, 0.54);
-
-            liftLeft.setPower(-motorPower);
-            liftRight.setPower(motorPower);
-
-            if(opModeIsActive() && liftLeft.isBusy()){
-                telemetry.addData("Right", liftRight.getCurrentPosition());
-                telemetry.addData("left", liftLeft.getCurrentPosition());
-                telemetry.addData("left", liftLeft.getTargetPosition());
-                telemetry.addData("Target", liftTarget);
-                //telemetry.update();
-            }
-        } else if (height.equals("LOW")){    //LOW
-            liftTarget = 600;
-
-            liftLeft.setTargetPosition(liftTarget);
-            liftRight.setTargetPosition(liftTarget);
-
-            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            //motorPower = 0.1;
-            liftLeft.setPower(-motorPower);
-            liftRight.setPower(motorPower);
-
-            if(opModeIsActive() && liftLeft.isBusy()){
-                telemetry.addData("Right", liftRight.getCurrentPosition());
-                telemetry.addData("left", liftLeft.getCurrentPosition());
-                telemetry.addData("left", liftLeft.getTargetPosition());
-                telemetry.addData("Target", liftTarget);
-                //telemetry.update();
-            }
-        } else if (height.equals("MIDDLE")){    //MIDDLE
-            liftTarget = 2000;
-
-            liftLeft.setTargetPosition(liftTarget);
-            liftRight.setTargetPosition(liftTarget);
-
-            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            //motorPower = 0.1;
-            liftLeft.setPower(-motorPower);
-            liftRight.setPower(motorPower);
-
-            if(opModeIsActive() && liftLeft.isBusy()){
-                telemetry.addData("Right", liftRight.getCurrentPosition());
-                telemetry.addData("left", liftLeft.getCurrentPosition());
-                telemetry.addData("Target", liftTarget);
-                //telemetry.update();
-            }
-        } else if(height.equals("HIGH")){                    //HIGH
-            liftTarget = 2600;
-
-            liftLeft.setTargetPosition(liftTarget);
-            liftRight.setTargetPosition(liftTarget);
-
-            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            //motorPower = 0.1;
-            liftLeft.setPower(-motorPower);
-            liftRight.setPower(motorPower);
-
-            if(opModeIsActive() && liftLeft.isBusy()){
-                telemetry.addData("Right", liftRight.getCurrentPosition());
-                telemetry.addData("left", liftLeft.getCurrentPosition());
-                telemetry.addData("Target", liftTarget);
-                //telemetry.update();
-            }
-        } else {
-            height = "MANUAL";
+            // POV Mode uses left stick to go forward, and right stick to turn.
+            // - This uses basic math to combine motions and is easier to drive straight.
         }
+        
     }
-    /*
-    private void resetLift(){
-        if(!touch.isPressed()){
-            liftLeft.setPower(-0.5);
-            liftRight.setPower(-0.5);
-        } else if(touch.isPressed()){
-            liftLeft.setPower(0);
-            liftRight.setPower(0);
-            resetLiftEncoders();
-        }
-    }
-
-    */
-
-    private void resetLiftEncoders(){
-        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    /*private void resetPivotEncoders(){
-        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }*/
-}
