@@ -19,6 +19,12 @@ public class NewTeleBalanceTest extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     
+    //theoritically, if we were using a robot class (which we use for our autonomous)
+    //we wouldn't declare motors here, but rather just use the functions in the robot
+    //class when buttons are pressed.
+    //see the auto code for how to implement robot class (TankDrive) functions
+    
+    
     //drivetrain
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
