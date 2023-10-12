@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Localizer {
 
@@ -22,13 +20,6 @@ public class Localizer {
     double x = 0;
     double y = 0;
     double heading = 0;
-
-    double deltaLeftPosition = 0;
-
-    double deltaRightPosition = 0;
-
-    double deltaCenterPosition = 0;
-
 
     double lastLeftPosition = 0;
 
@@ -69,21 +60,21 @@ public class Localizer {
     }
 
     void update(){
-        deltaLeftPosition = leftEncoder.getCurrentPosition() - lastLeftPosition;
-        deltaRightPosition = rightEncoder.getCurrentPosition() - lastRightPosition;
-        deltaCenterPosition = centerEncoder.getCurrentPosition() - lastCenterPosition;
+        double deltaLeftPosition = leftEncoder.getCurrentPosition() - lastLeftPosition;
+        double deltaRightPosition = rightEncoder.getCurrentPosition() - lastRightPosition;
+        double deltaCenterPosition = centerEncoder.getCurrentPosition() - lastCenterPosition;
 
         deltaLeftPosition = deltaLeftPosition / COUNTS_PER_INCH;
         deltaRightPosition = deltaRightPosition / COUNTS_PER_INCH;
         deltaCenterPosition = deltaCenterPosition / COUNTS_PER_INCH;
 
 
-        double phi = deltaLeftPosition - deltaRightPosition / TRACK_WIDTH;
-        double middlePosition = (deltaLeftPosition + deltaRightPosition) / 2;
-        double perpPosition = deltaCenterPosition -  CENTER_OFFSET * phi;
+        double phi = (deltaLeftPosition - deltaRightPosition) / TRACK_WIDTH;
+        double deltaMiddlePosition = (deltaLeftPosition + deltaRightPosition) / 2;
+        double deltaPerpPosition = deltaCenterPosition -  CENTER_OFFSET * phi;
 
-        double deltaX = middlePosition * Math.cos(heading) - perpPosition * Math.sin(heading);
-        double deltaY = middlePosition * Math.sin(heading) - perpPosition * Math.cos(heading);
+        double deltaX = deltaMiddlePosition * Math.cos(heading) - deltaPerpPosition * Math.sin(heading);
+        double deltaY = deltaMiddlePosition * Math.sin(heading) + deltaPerpPosition * Math.cos(heading);
 
         x += deltaX;
         y += deltaY;
@@ -92,9 +83,6 @@ public class Localizer {
         lastLeftPosition = leftEncoder.getCurrentPosition();
         lastRightPosition = rightEncoder.getCurrentPosition();
         lastCenterPosition = centerEncoder.getCurrentPosition();
-
-
-
     }
 
 
