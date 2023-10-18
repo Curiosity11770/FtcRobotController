@@ -8,10 +8,10 @@ public class Localizer {
 
     //Declare Constants
     //ticks per inch
-    public static final double COUNTS_PER_INCH = 295;
+    public static final double COUNTS_PER_INCH = 272;
 
     //track width - distance between odometry wheels
-    public static final double TRACK_WIDTH = 15;
+    public static final double TRACK_WIDTH = 13.68;
 
     //center wheel offset - distance from left and right wheel; '-' is behind, '+' is in front
     public static final double CENTER_OFFSET = 5;
@@ -83,6 +83,8 @@ public class Localizer {
         lastLeftPosition = leftEncoder.getCurrentPosition();
         lastRightPosition = rightEncoder.getCurrentPosition();
         lastCenterPosition = centerEncoder.getCurrentPosition();
+
+        myOpMode.telemetry.addData("Track Width", (deltaLeftPosition - deltaRightPosition) / (20 * Math.PI));
     }
 
 
