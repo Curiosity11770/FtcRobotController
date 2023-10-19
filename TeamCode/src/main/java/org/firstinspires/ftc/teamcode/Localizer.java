@@ -92,8 +92,8 @@ public class Localizer {
 
     void drawRobot (Canvas canvas){
         canvas.strokeCircle(x, y, 8);
-        double x2 = 8 * (x + Math.cos(heading));
-        double y2 = 8 * (y + Math.sin(heading));
+        double x2 = 8 * Math.cos(heading) + x;
+        double y2 = 8 * Math.sin(heading) + y;
         canvas.strokeLine(x, y, x2, y2);
     }
 
