@@ -31,7 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -114,6 +116,10 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 
     private Localizer localizer;
 
+    TelemetryPacket packet = new TelemetryPacket(true);
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+
+
     @Override public void runOpMode()
     {
         localizer = new Localizer(this);
@@ -165,7 +171,12 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
             localizer.telemetry();
 
             localizer.update();
-            localizer.drawRobot(fieldOverlay());
+
+            TelemetryPacket packet = new TelemetryPacket();
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+
+            localizer.drawRobot(packet.fieldOverlay());
+            dashboard.sendTelemetryPacket(packet);
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();

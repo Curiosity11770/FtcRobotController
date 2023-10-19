@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import com.acmerobotics.dashboard.canvas.Canvas;
 public class Localizer {
 
     //Declare Constants
@@ -15,16 +17,17 @@ public class Localizer {
     //center wheel offset - distance from left and right wheel; '-' is behind, '+' is in front
     public static final double CENTER_OFFSET = 5;
 
-    //Declare pose variables
+  //Declare pose variables
     double x = 0;
     double y = 0;
     double heading = 0;
 
     double lastLeftPosition = 0;
-
     double lastRightPosition = 0;
 
     double lastCenterPosition = 0;
+
+    TelemetryPacket packet = new TelemetryPacket();
 
     //Declare OpMode Members
     //encoders
@@ -89,11 +92,9 @@ public class Localizer {
 
     void drawRobot (Canvas canvas){
         canvas.strokeCircle(x, y, 8);
-        double x2 = 8 * Math.cos(heading);
-        double y2 = 8 * Math.sin(heading);
+        double x2 = 8 * (x + Math.cos(heading));
+        double y2 = 8 * (y + Math.sin(heading));
         canvas.strokeLine(x, y, x2, y2);
-
-
     }
 
 
