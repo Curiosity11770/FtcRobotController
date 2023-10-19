@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -81,6 +81,8 @@ import java.util.concurrent.TimeUnit;
  *
  */
  //v\
+
+@Config
 @TeleOp(name="Omni Drive To AprilTag", group = "Concept")
 //@Disabled
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
@@ -163,6 +165,7 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
             localizer.telemetry();
 
             localizer.update();
+            localizer.drawRobot(fieldOverlay());
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();

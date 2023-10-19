@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 public class Localizer {
 
     //Declare Constants
     //ticks per inch
-    public static final double COUNTS_PER_INCH = 272;
+    public static final double COUNTS_PER_INCH = 272.5;
 
     //track width - distance between odometry wheels
-    public static final double TRACK_WIDTH = 13.68;
-
+    public static final double TRACK_WIDTH = 14.84;
     //center wheel offset - distance from left and right wheel; '-' is behind, '+' is in front
     public static final double CENTER_OFFSET = 5;
 
@@ -32,6 +31,7 @@ public class Localizer {
     DcMotorEx leftEncoder, rightEncoder, centerEncoder;
     //opMode
     LinearOpMode myOpMode;
+
 
     //Constructor with parameter for OpMode
     Localizer(LinearOpMode opMode){
@@ -85,6 +85,15 @@ public class Localizer {
         lastCenterPosition = centerEncoder.getCurrentPosition();
 
         myOpMode.telemetry.addData("Track Width", (deltaLeftPosition - deltaRightPosition) / (20 * Math.PI));
+    }
+
+    void drawRobot (Canvas canvas){
+        canvas.strokeCircle(x, y, 8);
+        double x2 = 8 * Math.cos(heading);
+        double y2 = 8 * Math.sin(heading);
+        canvas.strokeLine(x, y, x2, y2);
+
+
     }
 
 
