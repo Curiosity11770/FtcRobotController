@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
+
+@Config
 public class Localizer {
 
     //Declare Constants
@@ -15,7 +18,7 @@ public class Localizer {
     //track width - distance between odometry wheels
     public static final double TRACK_WIDTH = 14.84;
     //center wheel offset - distance from left and right wheel; '-' is behind, '+' is in front
-    public static final double CENTER_OFFSET = 5;
+    public static double CENTER_OFFSET = 5;
 
   //Declare pose variables
     double x = 0;
@@ -65,14 +68,16 @@ public class Localizer {
     void update(){
         double deltaLeftPosition = leftEncoder.getCurrentPosition() - lastLeftPosition;
         double deltaRightPosition = rightEncoder.getCurrentPosition() - lastRightPosition;
-        double deltaCenterPosition = centerEncoder.getCurrentPosition() - lastCenterPosition;
+
+        //depends on the config of motors
+        double deltaCenterPosition = (centerEncoder.getCurrentPosition() - lastCenterPosition) * -1;
 
         deltaLeftPosition = deltaLeftPosition / COUNTS_PER_INCH;
         deltaRightPosition = deltaRightPosition / COUNTS_PER_INCH;
         deltaCenterPosition = deltaCenterPosition / COUNTS_PER_INCH;
 
 
-        double phi = (deltaLeftPosition - deltaRightPosition) / TRACK_WIDTH;
+        double phi = (deltaRightPosition - deltaLeftPosition) / TRACK_WIDTH;
         double deltaMiddlePosition = (deltaLeftPosition + deltaRightPosition) / 2;
         double deltaPerpPosition = deltaCenterPosition -  CENTER_OFFSET * phi;
 
@@ -90,6 +95,11 @@ public class Localizer {
         myOpMode.telemetry.addData("Track Width", (deltaLeftPosition - deltaRightPosition) / (20 * Math.PI));
     }
 
+    void setCoordinates(double setX, double setY, double setHeading){
+      x = setX;
+      y = setY;
+      heading = setHeading;
+    }
     void drawRobot (Canvas canvas){
         canvas.strokeCircle(x, y, 8);
         double x2 = 8 * Math.cos(heading) + x;

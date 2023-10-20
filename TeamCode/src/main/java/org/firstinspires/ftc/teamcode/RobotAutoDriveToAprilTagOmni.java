@@ -163,6 +163,8 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
         telemetry.update();
         waitForStart();
 
+        localizer.setCoordinates(-36, 60, -1.57);
+
         while (opModeIsActive())
         {
             targetFound = false;
