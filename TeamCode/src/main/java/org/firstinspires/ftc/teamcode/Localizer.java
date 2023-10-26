@@ -100,6 +100,7 @@ public class Localizer {
       y = setY;
       heading = setHeading;
     }
+
     void drawRobot (Canvas canvas){
         canvas.strokeCircle(x, y, 8);
         double x2 = 8 * Math.cos(heading) + x;
