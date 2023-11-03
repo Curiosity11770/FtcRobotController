@@ -27,10 +27,11 @@ public class AutoPIDError extends LinearOpMode {
         double editedHeading = localizer.heading;
 
          if (editedHeading > 2 * Math.PI) {
-             while (editedHeading > 2 * Math.PI) {
+             while (editedHeading > 2 * Math.PI){
                  editedHeading = editedHeading - 2 * Math.PI;
              }
          }
+         
         //calculate error between current position and target position
         double xError = (localizer.x + targetX) / targetX;
         double yError = (localizer.y + targetY) / targetY;
@@ -68,7 +69,7 @@ public class AutoPIDError extends LinearOpMode {
         {
 
             localizer.telemetry();
-
+            
             localizer.update();
 
             TelemetryPacket packet = new TelemetryPacket();
