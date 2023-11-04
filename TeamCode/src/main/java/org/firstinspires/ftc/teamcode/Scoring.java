@@ -15,6 +15,10 @@ public class Scoring {
     public Servo leftGateServo;
     public Servo rightGateServo;
 
+    public boolean is_open_left;
+
+    public boolean is_open_right;
+
     public Scoring(LinearOpMode opMode){
         myOpMode = opMode;
     }
@@ -25,10 +29,43 @@ public class Scoring {
         boxServo = myOpMode.hardwareMap.get(Servo.class, "boxServo");
         leftGateServo = myOpMode.hardwareMap.get(Servo.class, "leftGateServo");
         rightGateServo = myOpMode.hardwareMap.get(Servo.class, "rightGateServo");
+
+        leftArmServo.setPosition(0);
+        rightArmServo.setPosition(0);
+        boxServo.setPosition(0);
+        leftGateServo.setPosition(0);
+        rightGateServo.setPosition(0);
+
+        is_open_left = false;
+        is_open_right = false;
+
+
     }
 
     public void teleOp() {
+        if (!is_open_left) {
+            if (myOpMode.gamepad2.x) {
+                leftGateServo.setPosition(-0.7);
+                is_open_right = true;
+            }
+        } else {
+            if (myOpMode.gamepad2.x) {
+                leftGateServo.setPosition(0);
+                is_open_right = false;
+            }
+        }
 
+        if (!is_open_right) {
+            if (myOpMode.gamepad2.y) {
+                rightGateServo.setPosition(-0.7);
+                is_open_right = true;
+            }
+        } else {
+            if (myOpMode.gamepad2.y) {
+                rightGateServo.setPosition(0);
+                is_open_right = false;
+            }
+        }
     }
 
 }
