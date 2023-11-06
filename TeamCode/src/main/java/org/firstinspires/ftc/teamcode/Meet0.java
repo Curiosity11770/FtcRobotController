@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@TeleOp(name="Meet0", group = "TeleOp")
 public class Meet0 extends LinearOpMode {
     Robot robot = new Robot(this);
 

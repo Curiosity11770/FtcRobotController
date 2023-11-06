@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class Drivetrain {
     private LinearOpMode myOpMode = null;
 
+    static final double countspercm = 19.3566666;
+
     public DcMotor driveFrontLeft = null;
     public DcMotor driveFrontRight = null;
     public DcMotor driveBackLeft = null;
@@ -25,6 +27,19 @@ public class Drivetrain {
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);
         driveBackLeft.setDirection(DcMotor.Direction.REVERSE);
         driveBackRight.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    public void driveForwards(double motorPower, double distance){
+        resetEncoders();
+        double counts = distance*countspercm;
+        while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
+            driveBackLeft.setPower(motorPower);
+            driveBackRight.setPower(motorPower);
+            driveFrontLeft.setPower(motorPower);
+            driveFrontRight.setPower(motorPower);
+
+        }
+        stopMotors();
     }
 
     public void resetEncoders(){

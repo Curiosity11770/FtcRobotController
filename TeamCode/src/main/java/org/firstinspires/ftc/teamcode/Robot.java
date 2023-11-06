@@ -7,11 +7,11 @@ public class Robot {
 
     public Drivetrain drivetrain;
 
-    public Lift lift;
+    //public Lift lift;
 
-    public Intake intake;
+    //public Intake intake;
 
-    public Scoring scoring;
+    //public Scoring scoring;
 
     public Robot(LinearOpMode opMode) {
         myOpMode = opMode;
@@ -19,20 +19,22 @@ public class Robot {
 
     public void init(){
         drivetrain = new Drivetrain(myOpMode);
-        lift = new Lift(myOpMode);
+        /*lift = new Lift(myOpMode);
         intake = new Intake(myOpMode);
         scoring = new Scoring(myOpMode);
 
         drivetrain.init();
         lift.init();
         intake.init();
-        scoring.init();
+        scoring.init();*/
+
+        drivetrain.init();
     }
 
     public void teleOp(){
         drivetrain.teleOp();
-        lift.teleOp();
-        intake.teleOp();
-        scoring.teleOp();
+        //lift.teleOp();
+        //intake.teleOp();
+        //scoring.teleOp();
     }
 }
