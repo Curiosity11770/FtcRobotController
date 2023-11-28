@@ -34,7 +34,7 @@ public class Drivetrain {
         double counts = distance*countspercm;
         while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
             driveBackLeft.setPower(motorPower);
-            driveBackRight.setPower(motorPower);
+            //driveBackRight.setPower(motorPower);
             driveFrontLeft.setPower(motorPower);
             driveFrontRight.setPower(motorPower);
 
@@ -79,6 +79,52 @@ public class Drivetrain {
         driveBackRight.setPower(backRightPower);
 
     }
+        public void driveForward(double time, double power){
+            while(myOpMode.time < time){
+                driveFrontLeft.setPower(power);
+                driveFrontRight.setPower(power);
+                driveBackLeft.setPower(power);
+                driveBackRight.setPower(power);
+            }
+            driveFrontLeft.setPower(0);
+            driveFrontRight.setPower(0);
+            driveBackLeft.setPower(0);
+            driveBackRight.setPower(0);
+
+            driveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            driveBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            driveBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            driveFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            driveFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        public void driveForward(double time, double power){
+            while(myOpMode.time < time){
+                driveFrontLeft.setPower(power);
+                driveFrontRight.setPower(power);
+                driveBackLeft.setPower(power);
+                driveBackRight.setPower(power);
+            }
+            driveFrontLeft.setPower(0);
+            driveFrontRight.setPower(0);
+            driveBackLeft.setPower(0);
+            driveBackRight.setPower(0);
+
+            driveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            driveBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            driveBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            driveFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            driveFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
 
         public void stopMotors(){
             driveFrontLeft.setPower(0);

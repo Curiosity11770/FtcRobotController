@@ -46,12 +46,12 @@ public class Scoring {
         if (!is_open_left) {
             if (myOpMode.gamepad2.x) {
                 leftGateServo.setPosition(-0.7);
-                is_open_right = true;
+                is_open_left = true;
             }
         } else {
             if (myOpMode.gamepad2.x) {
                 leftGateServo.setPosition(0);
-                is_open_right = false;
+                is_open_left = false;
             }
         }
 
@@ -66,6 +66,11 @@ public class Scoring {
                 is_open_right = false;
             }
         }
+
+    }
+
+    public void deliver(double power, double time) {
+        
     }
 
 }

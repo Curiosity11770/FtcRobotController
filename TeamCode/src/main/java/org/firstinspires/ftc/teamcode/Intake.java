@@ -27,14 +27,23 @@ public class Intake {
         if(myOpMode.gamepad2.right_trigger > 0.2){
            intakeLeft.setPower(0.7);
            intakeRight.setPower(-0.7);
-           intakeMotor.setPower(0.7);
-        } else if(myOpMode.gamepad2.left_trigger < 0.2){
+           intakeMotor.setPower(-0.7);
+        } else if(myOpMode.gamepad2.left_trigger > 0.2){
             intakeLeft.setPower(-0.7);
             intakeRight.setPower(0.7);
             intakeMotor.setPower(0.7);
         } else {
             intakeLeft.setPower(0);
             intakeRight.setPower(0);
+            intakeMotor.setPower(0);
+        }
+    }
+
+    public void outtake(double power, double time){
+        while(myOpMode.time < time){
+            intakeLeft.setPower(power);
+            intakeRight.setPower(power);
+            intakeMotor.setPower(power);
         }
     }
 
