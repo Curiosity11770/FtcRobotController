@@ -3,15 +3,17 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class Robot {
-    private LinearOpMode myOpMode= null;
+    private LinearOpMode myOpMode = null;
 
     public Drivetrain drivetrain;
 
-    //public Lift lift;
+    public Lift lift;
 
     public Intake intake;
 
-    //public Scoring scoring;
+    public Scoring scoring;
+
+    public Drone drone;
 
     public Robot(LinearOpMode opMode) {
         myOpMode = opMode;
@@ -19,22 +21,23 @@ public class Robot {
 
     public void init(){
         drivetrain = new Drivetrain(myOpMode);
-        //lift = new Lift(myOpMode);
+        lift = new Lift(myOpMode);
         intake = new Intake(myOpMode);
-        //scoring = new Scoring(myOpMode);
+        scoring = new Scoring(myOpMode);
+        drone = new Drone(myOpMode);
 
         drivetrain.init();
-        //lift.init();
+        lift.init();
         intake.init();
-        //scoring.init();*/
-
-        drivetrain.init();
+        scoring.init();
+        drone.init();
     }
 
     public void teleOp(){
         drivetrain.teleOp();
-        //lift.teleOp();
+        lift.teleOp();
         intake.teleOp();
-        //scoring.teleOp();
+        scoring.teleOp();
+        drone.teleOp();
     }
 }

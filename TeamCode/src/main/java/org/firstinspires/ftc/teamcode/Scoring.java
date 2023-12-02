@@ -24,11 +24,11 @@ public class Scoring {
     }
 
     public void init(){
-        leftArmServo = myOpMode.hardwareMap.get(Servo.class, "leftArmServo");
-        rightArmServo = myOpMode.hardwareMap.get(Servo.class, "rightArmServo");
+        leftArmServo = myOpMode.hardwareMap.get(Servo.class, "armServoLeft");
+        rightArmServo = myOpMode.hardwareMap.get(Servo.class, "armServoRight");
         boxServo = myOpMode.hardwareMap.get(Servo.class, "boxServo");
-        leftGateServo = myOpMode.hardwareMap.get(Servo.class, "leftGateServo");
-        rightGateServo = myOpMode.hardwareMap.get(Servo.class, "rightGateServo");
+        leftGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoLeft");
+        rightGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoRight");
 
         leftArmServo.setPosition(0);
         rightArmServo.setPosition(0);
