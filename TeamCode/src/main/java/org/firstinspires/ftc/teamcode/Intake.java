@@ -39,13 +39,13 @@ public class Intake {
         }
     }
 
-    public void outtake(double power, double time){
+    /*public void outtake(double power, double time){
         while(myOpMode.time < time){
             intakeLeft.setPower(power);
             intakeRight.setPower(power);
             intakeMotor.setPower(power);
         }
-    }
+    }*/
 
 
 }

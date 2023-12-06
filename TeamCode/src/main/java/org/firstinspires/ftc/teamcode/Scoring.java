@@ -30,9 +30,8 @@ public class Scoring {
         leftGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoLeft");
         rightGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoRight");
 
-        leftArmServo.setPosition(0);
-        rightArmServo.setPosition(0);
-        boxServo.setPosition(0);
+        leftArmServo.setPosition(-0.75);
+        rightArmServo.setPosition(-0.75);
         leftGateServo.setPosition(0);
         rightGateServo.setPosition(0);
 
@@ -65,6 +64,22 @@ public class Scoring {
                 rightGateServo.setPosition(0);
                 is_open_right = false;
             }
+        }
+        if(myOpMode.gamepad2.dpad_down){
+            leftArmServo.setPosition(-0.75);
+            rightArmServo.setPosition(-0.75);
+        }
+        if(myOpMode.gamepad2.dpad_up){
+            leftArmServo.setPosition(0);
+            rightArmServo.setPosition(0);
+        }
+
+        if(myOpMode.gamepad2.right_bumper){
+            boxServo.setPosition(0.57);
+
+        } else if (myOpMode.gamepad2.left_bumper){
+            boxServo.setPosition(0);
+
         }
 
     }

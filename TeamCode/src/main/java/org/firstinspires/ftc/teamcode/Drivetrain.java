@@ -27,6 +27,8 @@ public class Drivetrain {
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);
         driveBackLeft.setDirection(DcMotor.Direction.REVERSE);
         driveBackRight.setDirection(DcMotor.Direction.FORWARD);
+
+        localizer = new Localizer(myOpMode);
     }
 
     public void resetEncoders(){
@@ -65,7 +67,7 @@ public class Drivetrain {
 
     }
         public void driveForwards(double motorPower, double distance){
-            resetEncoders();
+            //resetEncoders();
             double counts = distance*localizer.COUNTS_PER_INCH;
             while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
                 driveBackLeft.setPower(motorPower);
@@ -77,7 +79,7 @@ public class Drivetrain {
         }
 
         public void strafeRight(double motorPower, double distance){
-            resetEncoders();
+            //resetEncoders();
             double counts = distance*localizer.COUNTS_PER_INCH;
             while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
                 driveBackLeft.setPower(-motorPower);
@@ -88,7 +90,7 @@ public class Drivetrain {
             stopMotors();
         }
         public void strafeLeft(double motorPower, double distance){
-            resetEncoders();
+           //resetEncoders();
             double counts = distance*localizer.COUNTS_PER_INCH;
             while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
                 driveBackLeft.setPower(motorPower);

@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "CameraScanningTestAuto", group = "Linear Opmode")
-public class CameraScanningAuto extends LinearOpMode {
+@Autonomous(name = "OtherTry", group = "Linear Opmode")
+public class OtherTry extends LinearOpMode {
     Robot robot = new Robot(this);
     Camera camera = new Camera(this);
 
-   OpenCv.OpenCvPosition position = OpenCv.OpenCvPosition.LEFT;
+    OpenCv.OpenCvPosition position = OpenCv.OpenCvPosition.LEFT;
 
     public void runOpMode(){
         robot.init();
@@ -32,7 +32,7 @@ public class CameraScanningAuto extends LinearOpMode {
         }*/
         waitForStart();
 
-        robot.drivetrain.strafeRight(0.7, 40);
+        robot.drivetrain.strafeLeft(0.7, 40);
         //robot.drivetrain.driveForwards(0.7, 20);
         robot.drivetrain.stopMotors();
 

@@ -26,6 +26,8 @@ public class Robot {
         scoring = new Scoring(myOpMode);
         drone = new Drone(myOpMode);
 
+        myOpMode.telemetry.addData("IsWorking", drone);
+
         drivetrain.init();
         lift.init();
         intake.init();
