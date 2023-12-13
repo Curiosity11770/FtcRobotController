@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Lift {
     private LinearOpMode myOpMode = null;
@@ -9,7 +10,7 @@ public class Lift {
     public DcMotor liftLeft = null;
     public DcMotor liftRight = null;
 
-    //public TouchSensor touch = null;
+    public TouchSensor touch = null;
 
     public enum LiftMode {
         MANUAL
@@ -22,7 +23,7 @@ public class Lift {
         liftLeft = myOpMode.hardwareMap.get(DcMotor.class, "liftLeft");
         liftRight = myOpMode.hardwareMap.get(DcMotor.class, "liftRight");
 
-        //touch = myOpMode.hardwareMap.get(TouchSensor.class, "touch");
+        touch = myOpMode.hardwareMap.get(TouchSensor.class, "touch");
 
         liftLeft.setDirection(DcMotor.Direction.FORWARD);
         liftRight.setDirection(DcMotor.Direction.REVERSE);
@@ -41,14 +42,14 @@ public class Lift {
         if(Math.abs(myOpMode.gamepad2.left_stick_y) > 0.3){
             liftMode = LiftMode.MANUAL;
         }
-        //myOpMode.telemetry.addData("Touch", "Pressed:" + touch.isPressed());
+        myOpMode.telemetry.addData("Touch", "Pressed:" + touch.isPressed());
 
-        /*if(touch.isPressed()){
+        if(touch.isPressed()){
             liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }*/
+        }
 
             myOpMode.telemetry.addData("working", liftLeft.getCurrentPosition());
             liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -61,5 +62,8 @@ public class Lift {
                 liftLeft.setPower(0);
                 liftRight.setPower(0);
             }
+    }
+    public boolean getTouch() {
+        return touch.isPressed();
     }
 }

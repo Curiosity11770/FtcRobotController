@@ -32,9 +32,9 @@ public class OtherTry extends LinearOpMode {
         }*/
         waitForStart();
 
-        robot.drivetrain.strafeLeft(0.7, 40);
+        //robot.drivetrain.strafeLeft(0.7, 40);
         //robot.drivetrain.driveForwards(0.7, 20);
-        robot.drivetrain.stopMotors();
+        //robot.drivetrain.stopMotors();
 
     }
 

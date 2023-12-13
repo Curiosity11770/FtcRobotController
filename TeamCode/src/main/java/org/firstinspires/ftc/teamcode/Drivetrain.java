@@ -29,6 +29,7 @@ public class Drivetrain {
         driveBackRight.setDirection(DcMotor.Direction.FORWARD);
 
         localizer = new Localizer(myOpMode);
+        useEncoders();
     }
 
     public void resetEncoders(){

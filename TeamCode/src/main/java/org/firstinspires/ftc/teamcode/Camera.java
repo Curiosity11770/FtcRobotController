@@ -8,7 +8,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class Camera {
@@ -37,7 +39,7 @@ public class Camera {
 
     }
 
-    private void initAuto(){
+    public void initAuto(){
         aprilTag = new AprilTagProcessor.Builder().build();
 
         // Create the vision portal by using a builder.
@@ -62,6 +64,19 @@ public class Camera {
         webcam1.setPipeline(pipeline);
 
         webcam1.setMillisecondsPermissionTimeout(5000);
+        webcam1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam1.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
     }
 
     private void initAprilTag() {

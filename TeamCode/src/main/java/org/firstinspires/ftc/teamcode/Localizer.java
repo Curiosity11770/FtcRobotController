@@ -43,9 +43,9 @@ public class Localizer {
     Localizer(LinearOpMode opMode){
         myOpMode = opMode;
 
-        leftEncoder = myOpMode.hardwareMap.get(DcMotorEx.class,"leftBackDrive");
-        rightEncoder = myOpMode.hardwareMap.get(DcMotorEx.class, "rightBackDrive");
-        centerEncoder = myOpMode.hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
+        leftEncoder = myOpMode.hardwareMap.get(DcMotorEx.class,"driveBackLeft");
+        rightEncoder = myOpMode.hardwareMap.get(DcMotorEx.class, "driveBackRight");
+        centerEncoder = myOpMode.hardwareMap.get(DcMotorEx.class, "driveFrontRight");
 
         //reset the encoder counts (stop and reset encoders)
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

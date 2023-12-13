@@ -42,4 +42,11 @@ public class Robot {
         scoring.teleOp();
         drone.teleOp();
     }
+    public void touchSense(){
+        if(!lift.getTouch()){
+            intake.intakeLeft.setPower(0);
+            intake.intakeRight.setPower(0);
+            intake.intakeMotor.setPower(0);
+        }
+    }
 }

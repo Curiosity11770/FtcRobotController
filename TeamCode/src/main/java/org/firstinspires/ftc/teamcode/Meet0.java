@@ -17,6 +17,8 @@ public class Meet0 extends LinearOpMode {
 
         while(opModeIsActive()){
             robot.teleOp();
+            robot.touchSense();
+            telemetry.update();
         }
     }
 

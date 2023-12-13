@@ -28,9 +28,9 @@ public class BeamBreakerTest extends LinearOpMode {
 
             String switchState;
             if (passed) {
-                switchState = "Has pixel";
-            } else {
                 switchState = "No pixel";
+            } else {
+                switchState = "Has pixel";
             }
             telemetry.addData("time", "elapsed time: " + Double.toString(this.time));
             telemetry.addData("state", ":  " + switchState);
