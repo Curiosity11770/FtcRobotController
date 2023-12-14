@@ -55,7 +55,7 @@ public class Lift {
             liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            if(Math.abs(myOpMode.gamepad2.left_stick_y) > 0.3) {
+            if(Math.abs(myOpMode.gamepad2.left_stick_y) > 0.1) {
                 liftLeft.setPower(-myOpMode.gamepad2.left_stick_y);
                 liftRight.setPower(-myOpMode.gamepad2.left_stick_y);
             } else {

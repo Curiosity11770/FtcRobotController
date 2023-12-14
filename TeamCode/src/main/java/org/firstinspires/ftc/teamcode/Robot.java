@@ -39,7 +39,7 @@ public class Robot {
         drivetrain.teleOp();
         lift.teleOp();
         intake.teleOp();
-        scoring.teleOp();
+        scoring.teleOp(intake.passed1, intake.passed2);
         drone.teleOp();
     }
     public void touchSense(){

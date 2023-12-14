@@ -14,6 +14,13 @@ public class Intake {
     public boolean inAction = false;
     public DigitalChannel beamBreaker1;
     public DigitalChannel beamBreaker2;
+    public boolean passed1;
+
+    public boolean switchState1;
+
+    public boolean passed2 = beamBreaker2.getState();
+
+    public boolean switchState2;
 
     public Intake(LinearOpMode opMode){
         myOpMode = opMode;
@@ -27,13 +34,16 @@ public class Intake {
         beamBreaker1 = myOpMode.hardwareMap.digitalChannel.get("switch");
         beamBreaker2 = myOpMode.hardwareMap.digitalChannel.get("switch");
 
+        passed1 = beamBreaker1.getState();
+        passed2 = beamBreaker2.getState();
+
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
     public void teleOp(){
-        boolean passed1 = beamBreaker1.getState();
 
-        boolean switchState1;
+        passed1 = beamBreaker1.getState();
+
         if (passed1) {
             switchState1 = false;
         } else {
@@ -41,9 +51,8 @@ public class Intake {
         }
         myOpMode.telemetry.addData("state", ":  " + switchState1);
 
-        boolean passed2 = beamBreaker2.getState();
+        passed2 = beamBreaker2.getState();
 
-        Boolean switchState2;
         if (passed2) {
             switchState2 = false;
         } else {
@@ -67,8 +76,7 @@ public class Intake {
                 intakeRight.setPower(0);
                 intakeMotor.setPower(0);
             }
-        }
-        else {
+        } else {
             if (myOpMode.gamepad2.right_trigger > 0.2) {
                 inAction = true;
                 intakeLeft.setPower(0.7);

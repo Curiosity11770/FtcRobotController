@@ -19,6 +19,8 @@ public class Scoring {
 
     public boolean is_open_right;
 
+    public boolean isUp;
+
     public Scoring(LinearOpMode opMode) {
         myOpMode = opMode;
     }
@@ -30,8 +32,8 @@ public class Scoring {
         leftGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoLeft");
         rightGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoRight");
 
-        leftArmServo.setPosition(0.02);
-        rightArmServo.setPosition(0.98);
+        leftArmServo.setPosition(0.3);
+        rightArmServo.setPosition(0.7);
         boxServo.setPosition(0.93);
         leftGateServo.setPosition(0.5);
         rightGateServo.setPosition(0);
@@ -39,12 +41,17 @@ public class Scoring {
         is_open_left = false;
         is_open_right = false;
 
+        isUp = false;
+
 
     }
 
-    public void teleOp() {
+    public void teleOp(boolean firstBreak, boolean secondBreak) {
 
         if (myOpMode.gamepad2.x) {
+            leftGateServo.setPosition(0);
+            is_open_left = true;
+        } else if(firstBreak){
             leftGateServo.setPosition(0);
             is_open_left = true;
         } else {
@@ -55,6 +62,9 @@ public class Scoring {
         if (myOpMode.gamepad2.y) {
             rightGateServo.setPosition(0.7);
             is_open_right = true;
+        } else if (secondBreak){
+            rightGateServo.setPosition(0.7);
+            is_open_right = true;
         } else {
             rightGateServo.setPosition(0);
             is_open_right = false;
@@ -62,17 +72,20 @@ public class Scoring {
         if(myOpMode.gamepad2.dpad_up) {
             leftArmServo.setPosition(0.3);
             rightArmServo.setPosition(0.7);
+            isUp = true;
         }
         if(myOpMode.gamepad2.dpad_down) {
             leftArmServo.setPosition(0.02);
             rightArmServo.setPosition(0.98);
+            isUp = false;
         }
 
         if(myOpMode.gamepad2.right_bumper) {
             boxServo.setPosition(0.93);
-
         } else if(myOpMode.gamepad2.left_bumper) {
-            boxServo.setPosition(0.58);
+            if(isUp = true) {
+                boxServo.setPosition(0.58);
+            }
         }
     }
 
