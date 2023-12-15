@@ -42,11 +42,11 @@ public class Robot {
         scoring.teleOp(intake.passed1, intake.passed2);
         drone.teleOp();
     }
-    public void touchSense(){
+    /*public void touchSense(){
         if(!lift.getTouch()){
             intake.intakeLeft.setPower(0);
             intake.intakeRight.setPower(0);
             intake.intakeMotor.setPower(0);
         }
-    }
+    }*/
 }

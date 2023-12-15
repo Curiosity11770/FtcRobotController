@@ -13,6 +13,8 @@ public class Drivetrain {
     public DcMotor driveBackLeft = null;
     public DcMotor driveBackRight = null;
 
+    public double counts2 = 19.35666666;
+
     public Drivetrain(LinearOpMode opmode){
         myOpMode = opmode;
     }
@@ -68,9 +70,29 @@ public class Drivetrain {
 
     }
         public void driveForwards(double motorPower, double distance){
-            //resetEncoders();
+            useEncoders();
             double counts = distance*localizer.COUNTS_PER_INCH;
-            while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
+            while(localizer.rightEncoder.getCurrentPosition()*-1 < counts && myOpMode.opModeIsActive()){
+                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
+                myOpMode.telemetry.update();
+                driveBackLeft.setPower(motorPower);
+                driveBackRight.setPower(motorPower);
+                driveFrontLeft.setPower(motorPower);
+                driveFrontRight.setPower(motorPower);
+            }
+            stopMotors();
+        }
+
+        public void driveBackwards(double motorPower, double distance){
+            useEncoders();
+            double counts = distance*localizer.COUNTS_PER_INCH;
+            while(localizer.rightEncoder.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
+                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
+                myOpMode.telemetry.update();
                 driveBackLeft.setPower(motorPower);
                 driveBackRight.setPower(motorPower);
                 driveFrontLeft.setPower(motorPower);
@@ -80,9 +102,13 @@ public class Drivetrain {
         }
 
         public void strafeRight(double motorPower, double distance){
-            //resetEncoders();
+            useEncoders();
             double counts = distance*localizer.COUNTS_PER_INCH;
-            while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
+            while(localizer.rightEncoder.getCurrentPosition()*-1 < counts && myOpMode.opModeIsActive()){
+                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
+                myOpMode.telemetry.update();
                 driveBackLeft.setPower(-motorPower);
                 driveBackRight.setPower(motorPower);
                 driveFrontLeft.setPower(motorPower);
@@ -91,9 +117,13 @@ public class Drivetrain {
             stopMotors();
         }
         public void strafeLeft(double motorPower, double distance){
-           //resetEncoders();
+           useEncoders();
             double counts = distance*localizer.COUNTS_PER_INCH;
-            while(driveFrontLeft.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
+            while(localizer.rightEncoder.getCurrentPosition()*-1 < counts && myOpMode.opModeIsActive()){
+                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
+                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
+                myOpMode.telemetry.update();
                 driveBackLeft.setPower(motorPower);
                 driveBackRight.setPower(-motorPower);
                 driveFrontLeft.setPower(-motorPower);

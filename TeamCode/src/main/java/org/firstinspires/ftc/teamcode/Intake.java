@@ -18,7 +18,7 @@ public class Intake {
 
     public boolean switchState1;
 
-    public boolean passed2 = beamBreaker2.getState();
+    public boolean passed2;
 
     public boolean switchState2;
 
@@ -32,7 +32,7 @@ public class Intake {
         intakeMotor = myOpMode.hardwareMap.get(DcMotor.class, "intakeMotor");
 
         beamBreaker1 = myOpMode.hardwareMap.digitalChannel.get("switch");
-        beamBreaker2 = myOpMode.hardwareMap.digitalChannel.get("switch");
+        beamBreaker2 = myOpMode.hardwareMap.digitalChannel.get("switch2");
 
         passed1 = beamBreaker1.getState();
         passed2 = beamBreaker2.getState();
@@ -59,7 +59,7 @@ public class Intake {
             switchState2 = true;
         }
         myOpMode.telemetry.addData("state", ":  " + switchState2);
-        if (switchState1 & switchState2){
+        /*if (switchState1 & switchState2){
             if (myOpMode.gamepad2.right_trigger > 0.2) {
                 inAction = true;
                 intakeLeft.setPower(-0.7);
@@ -76,7 +76,7 @@ public class Intake {
                 intakeRight.setPower(0);
                 intakeMotor.setPower(0);
             }
-        } else {
+        } else {*/
             if (myOpMode.gamepad2.right_trigger > 0.2) {
                 inAction = true;
                 intakeLeft.setPower(0.7);
@@ -93,6 +93,6 @@ public class Intake {
                 intakeRight.setPower(0);
                 intakeMotor.setPower(0);
             }
-        }
+       // }
     }
 }

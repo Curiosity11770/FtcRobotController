@@ -27,7 +27,7 @@ public class Camera {
 
     OpenCvWebcam webcam1;
 
-    OpenCvWebcam webcam2;
+    //OpenCvWebcam webcam2;
 
 
 
@@ -40,7 +40,7 @@ public class Camera {
     }
 
     public void initAuto(){
-        aprilTag = new AprilTagProcessor.Builder().build();
+        /*aprilTag = new AprilTagProcessor.Builder().build();
 
         // Create the vision portal by using a builder.
         if (USE_WEBCAM) {
@@ -55,7 +55,7 @@ public class Camera {
                     .setCamera(BuiltinCameraDirection.BACK)
                     .addProcessor(aprilTag)
                     .build();
-        }
+        }*/
 
         pipeline = new OpenCv();
 
