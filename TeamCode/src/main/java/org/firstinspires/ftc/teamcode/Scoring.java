@@ -32,8 +32,8 @@ public class Scoring {
         leftGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoLeft");
         rightGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoRight");
 
-        leftArmServo.setPosition(0.08);
-        rightArmServo.setPosition(0.92);
+        leftArmServo.setPosition(0.04);
+        rightArmServo.setPosition(0.96);
         boxServo.setPosition(0.94);
         leftGateServo.setPosition(0);
         rightGateServo.setPosition(0.7);
@@ -49,27 +49,30 @@ public class Scoring {
     public void teleOp(boolean firstBreak, boolean secondBreak) {
 
         if (myOpMode.gamepad2.x) {
-            leftGateServo.setPosition(0.5);
             rightGateServo.setPosition(0);
             is_open_left = true;
+        } else if (myOpMode.gamepad2.a){
+            rightGateServo.setPosition(0.7);
         }
         //myOpMode.telemetry.addData("isWorking");
         if (myOpMode.gamepad2.y) {
-            rightGateServo.setPosition(0.7);
             leftGateServo.setPosition(0);
             is_open_right = true;
+        }
+            else if(myOpMode.gamepad2.b){
+                leftGateServo.setPosition(0.5);
+            }
         /*} else if (secondBreak){
             rightGateServo.setPosition(0);
             is_open_right = true;*/
-        }
         if(myOpMode.gamepad2.dpad_up) {
             leftArmServo.setPosition(0.3);
             rightArmServo.setPosition(0.7);
             isUp = true;
         }
         if(myOpMode.gamepad2.dpad_down) {
-            leftArmServo.setPosition(0.08);
-            rightArmServo.setPosition(0.92);
+            leftArmServo.setPosition(0.06);
+            rightArmServo.setPosition(0.94);
             isUp = false;
         }
 

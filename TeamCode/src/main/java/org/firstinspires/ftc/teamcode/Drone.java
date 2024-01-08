@@ -28,7 +28,7 @@ public class Drone {
         }
 
         if(myOpMode.gamepad1.y) {
-            droneServo2.setPosition(0.36);
+            droneServo2.setPosition(0.27);
         }
     }
 }

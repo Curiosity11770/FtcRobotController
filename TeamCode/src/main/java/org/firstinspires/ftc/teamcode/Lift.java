@@ -57,17 +57,23 @@ public class Lift {
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if (liftLeft.getCurrentPosition() > -100) {
             if (myOpMode.gamepad2.left_stick_y > 0.1) {
                 liftLeft.setPower(-0.75);
                 liftRight.setPower(-0.75);
-            } else if (myOpMode.gamepad2.left_stick_y < -0.1) {
+            } else if (myOpMode.gamepad2.left_stick_y < -0.1 && liftLeft.getCurrentPosition() > -100) {
                 liftLeft.setPower(0.75);
                 liftRight.setPower(0.75);
             } else {
                 liftLeft.setPower(0);
                 liftRight.setPower(0);
             }
+        if(myOpMode.gamepad2.dpad_right){
+            //.setTargetPosition(-98);
+            //liftLeft.setTargetPosition(-98);
+            //liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
         }
     }
     //public boolean getTouch() {

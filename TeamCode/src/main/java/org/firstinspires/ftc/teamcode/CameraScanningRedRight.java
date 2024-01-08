@@ -14,7 +14,7 @@ public class CameraScanningRedRight extends LinearOpMode {
 
     public void runOpMode(){
         robot.init();
-        camera.initAuto();
+        camera.initAutoRed();
         position = camera.pipeline.getAnalysis();
         waitForStart();
         runtime.reset();
@@ -24,20 +24,22 @@ public class CameraScanningRedRight extends LinearOpMode {
             telemetry.update();
 
             if (position == OpenCv.OpenCvPosition.RIGHT) {
-                robot.drivetrain.driveForwards(0.7, 17);
+                robot.drivetrain.driveForwards(0.7, 20);
                 robot.drivetrain.strafeRight(0.7, 5);
+                robot.drivetrain.driveBackwards(0.7, 5);
+                robot.drivetrain.strafeRight(0.7, 20);
                 //robot.intake.outtake(0.7, 3);
 
             } else if (position == OpenCv.OpenCvPosition.LEFT) {
-                robot.drivetrain.driveForwards(0.7, 17);
-                robot.drivetrain.strafeLeft(0.7, 20);
+                robot.drivetrain.driveForwards(0.7, 20);
+                robot.drivetrain.strafeLeft(0.7, 5);
                 robot.drivetrain.driveBackwards(0.7,5);
                 robot.drivetrain.strafeRight(0.7, 20);
                 //robot.intake.outtake(0.7, 3);
 
             } else {
-                robot.drivetrain.driveForwards(0.7, 17);
-                robot.drivetrain.driveBackwards(0.7,5);
+                robot.drivetrain.driveForwards(0.7, 20);
+                robot.drivetrain.driveBackwards(0.7, 5);
                 robot.drivetrain.strafeRight(0.7, 20);
                 //robot.intake.outtake(0.7, 3);
 
