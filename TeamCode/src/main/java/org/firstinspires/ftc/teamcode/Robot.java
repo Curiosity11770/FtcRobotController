@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.classes.SimpleCamera;
+
 public class Robot {
     private LinearOpMode myOpMode = null;
 
@@ -15,6 +17,8 @@ public class Robot {
 
     public Drone drone;
 
+    public SimpleCamera camera;
+
     public Robot(LinearOpMode opMode) {
         myOpMode = opMode;
     }
@@ -25,6 +29,7 @@ public class Robot {
         intake = new Intake(myOpMode);
         scoring = new Scoring(myOpMode);
         drone = new Drone(myOpMode);
+        camera = new SimpleCamera(myOpMode);
 
         myOpMode.telemetry.addData("IsWorking", drone);
 
@@ -33,6 +38,7 @@ public class Robot {
         intake.init();
         scoring.init();
         drone.init();
+        camera.init();
     }
 
     public void teleOp(){

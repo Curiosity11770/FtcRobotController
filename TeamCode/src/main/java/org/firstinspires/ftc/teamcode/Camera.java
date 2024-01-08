@@ -25,7 +25,7 @@ public class Camera {
 
     OpenCv pipeline;
 
-    OpenCvBlue pipeline2;
+    protected OpenCvBlue pipeline2;
 
     OpenCvWebcam webcam1;
 
