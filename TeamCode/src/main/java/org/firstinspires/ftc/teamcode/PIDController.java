@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.Range;
 
-@Config
+
 public class PIDController {
 //PID Control Class
 
@@ -15,17 +14,13 @@ public class PIDController {
 
     double Kp, Ki, Kd;
     double lastError = 0;
-    double lastReference = 0;
     double integralSum = 0;
     double integralCap = 0.25;
-    public static double maxOut = 0.95;    //test and change this (if necessary)
-    double errorMargin = 1;     //could make smaller (this currently in encoder ticks/degrees)
+    double maxOut = 0.4;
+    double errorMargin = 1;
     double previousFilterEstimate = 0;
     double currentFilterEstimate = 0;
     double a = 0.5;
-
-    double error;
-
 
 
     PIDController(double kpIn, double kiIn, double kdIn){
@@ -34,14 +29,10 @@ public class PIDController {
         Kd = kdIn;
     }
 
-    public double calculate(double reference, double currentPosition){
-        // check if new target
-        /*if(lastReference != reference){
-            reset();
-        }*/
+    double calculate(double reference, double currentPosition){
 
         // calculate the error
-        error = reference - currentPosition;
+        double error = reference - currentPosition;
 
         // rate of change of the error
         double errorChange = (error - lastError);
@@ -67,16 +58,11 @@ public class PIDController {
         out = Range.clip(out, -maxOut, maxOut);
 
         lastError = error;
-        lastReference = reference;
 
         return out;
     }
 
-    public double calculate(double error){
-        // check if new target
-        /*if(lastReference != reference){
-            reset();
-        }*/
+    double calculate(double error){
 
         // rate of change of the error
         double errorChange = (error - lastError);

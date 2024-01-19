@@ -13,13 +13,34 @@ public class Drivetrain {
     public DcMotor driveBackLeft = null;
     public DcMotor driveBackRight = null;
 
-    public double counts2 = 19.35666666;
+    public static double HEADING_KP = 0.7;
+    public static double HEADING_KI = 0.0;
+    public static double HEADING_KD = 0.0;
+    public static double DRIVE_KP = 0.07;
+    public static double DRIVE_KI = 0.0;
+    public static double DRIVE_KD = 0;//0.0003;g
+    public static double DRIVE_MAX_ACC = 2000;
+    public static double DRIVE_MAX_VEL = 3500;
+    public static double DRIVE_MAX_OUT = 0.8;
+
+    PIDController xPID;
+    PIDController yPID;
+    PIDController headingPID;
 
     public Drivetrain(LinearOpMode opmode){
         myOpMode = opmode;
     }
 
     public void init(){
+
+        xPID = new PIDController(DRIVE_KP, DRIVE_KI, DRIVE_KD);
+        yPID = new PIDController(DRIVE_KP, DRIVE_KI, DRIVE_KD);
+        headingPID = new PIDController(HEADING_KP, HEADING_KI, HEADING_KD);
+
+        xPID.maxOut = DRIVE_MAX_OUT;
+        yPID.maxOut = DRIVE_MAX_OUT;
+        headingPID.maxOut = DRIVE_MAX_OUT;
+
         driveFrontLeft = myOpMode.hardwareMap.get(DcMotor.class, "driveFrontLeft");
         driveFrontRight = myOpMode.hardwareMap.get(DcMotor.class, "driveFrontRight");
         driveBackLeft = myOpMode.hardwareMap.get(DcMotor.class, "driveBackLeft");
@@ -30,8 +51,13 @@ public class Drivetrain {
         driveBackLeft.setDirection(DcMotor.Direction.REVERSE);
         driveBackRight.setDirection(DcMotor.Direction.FORWARD);
 
+
         localizer = new Localizer(myOpMode);
-        useEncoders();
+
+        driveFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void resetEncoders(){
@@ -72,76 +98,42 @@ public class Drivetrain {
         myOpMode.telemetry.addData("Counts", localizer.rightEncoder.getCurrentPosition());
 
     }
-        public void driveForwards(double motorPower, double distance){
-            resetEncoders();
-            useEncoders();
-            double counts = distance*20;
-            while(localizer.rightEncoder.getCurrentPosition()*-1 < counts && myOpMode.opModeIsActive()){
-                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Counts", counts);
-                myOpMode.telemetry.update();
-                driveBackLeft.setPower(motorPower);
-                driveBackRight.setPower(motorPower);
-                driveFrontLeft.setPower(motorPower);
-                driveFrontRight.setPower(motorPower);
-            }
-            stopMotors();
+
+    public void driveToPose(double xTarget, double yTarget, double thetaTarget){
+        //Use PIDs to calculate motor powers based on error to targets
+        double xPower = xPID.calculate(xTarget, localizer.x);
+        double yPower = yPID.calculate(yTarget, localizer.y);
+
+        double wrappedAngle = angleWrap(Math.toRadians(thetaTarget)- localizer.heading);
+        double tPower = headingPID.calculate(wrappedAngle);
+
+        //rotate the motor powers based on robot heading
+        double xPower_rotated = xPower * Math.cos(-localizer.heading) - yPower * Math.sin(-localizer.heading);
+        double yPower_rotated = xPower * Math.sin(-localizer.heading) + yPower * Math.cos(-localizer.heading);
+
+        // x, y, theta input mixing
+        driveFrontLeft.setPower(-xPower_rotated + yPower_rotated + tPower);
+        driveBackLeft.setPower(-xPower_rotated - yPower_rotated + tPower);
+        driveFrontRight.setPower(-xPower_rotated - yPower_rotated - tPower);
+        driveBackLeft.setPower(-xPower_rotated + yPower_rotated - tPower);
+    }
+
+    // This function normalizes the angle so it returns a value between -180° and 180° instead of 0° to 360°.
+    public double angleWrap(double radians) {
+
+        while (radians > Math.PI) {
+            radians -= 2 * Math.PI;
+        }
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
         }
 
-        public void driveBackwards(double motorPower, double distance){
-            resetEncoders();
-            useEncoders();
-            double counts = distance*20;
-            while(localizer.rightEncoder.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
-                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
-                myOpMode.telemetry.update();
-                driveBackLeft.setPower(motorPower);
-                driveBackRight.setPower(motorPower);
-                driveFrontLeft.setPower(motorPower);
-                driveFrontRight.setPower(motorPower);
-            }
-            stopMotors();
-        }
+        // keep in mind that the result is in radians
+        return radians;
+    }
 
-        public void strafeRight(double motorPower, double distance){
-            resetEncoders();
-            useEncoders();
-            double counts = distance;
-            while(localizer.rightEncoder.getCurrentPosition() < counts && myOpMode.opModeIsActive()){
-                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
-                myOpMode.telemetry.update();
-                driveBackLeft.setPower(-motorPower);
-                driveBackRight.setPower(motorPower);
-                driveFrontLeft.setPower(motorPower);
-                driveFrontRight.setPower(-motorPower);
-            }
-            stopMotors();
-        }
-        public void strafeLeft(double motorPower, double distance) {
-            resetEncoders();
-            useEncoders();
-            double counts = distance*20;
-            while (localizer.rightEncoder.getCurrentPosition() * -1 < counts && myOpMode.opModeIsActive()) {
-                myOpMode.telemetry.addData("Right", localizer.rightEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Left", localizer.leftEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Center", localizer.centerEncoder.getCurrentPosition());
-                myOpMode.telemetry.addData("Counts", counts);
-                myOpMode.telemetry.update();
-                driveBackLeft.setPower(motorPower);
-                driveBackRight.setPower(-motorPower);
-                driveFrontLeft.setPower(-motorPower);
-                driveFrontRight.setPower(motorPower);
-            }
-            stopMotors();
-        }
 
-        public void stopMotors(){
+    public void stopMotors(){
             driveFrontLeft.setPower(0);
             driveFrontRight.setPower(0);
             driveBackLeft.setPower(0);

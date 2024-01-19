@@ -13,7 +13,7 @@ public class Localizer {
 
     //Declare Constants
     //ticks per inch
-    public static final double COUNTS_PER_INCH = 272.5;
+    public static final double COUNTS_PER_INCH = 250;
 
     //track width - distance between odometry wheels
     public static final double TRACK_WIDTH = 12.5;

@@ -58,11 +58,11 @@ public class Lift {
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             if (myOpMode.gamepad2.left_stick_y > 0.1) {
-                liftLeft.setPower(-0.75);
-                liftRight.setPower(-0.75);
+                liftLeft.setPower(-0.85);
+                liftRight.setPower(-0.85);
             } else if (myOpMode.gamepad2.left_stick_y < -0.1 && liftLeft.getCurrentPosition() > -100) {
-                liftLeft.setPower(0.75);
-                liftRight.setPower(0.75);
+                liftLeft.setPower(0.85);
+                liftRight.setPower(0.85);
             } else {
                 liftLeft.setPower(0);
                 liftRight.setPower(0);

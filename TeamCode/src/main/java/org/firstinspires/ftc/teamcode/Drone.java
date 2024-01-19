@@ -19,7 +19,7 @@ public class Drone {
         droneServo2 = myOpMode.hardwareMap.get(Servo.class, "droneServo2");
 
         droneServo.setPower(0);
-        droneServo2.setPosition(0.5);
+        droneServo2.setPosition(1);
     }
 
     public void teleOp(){
@@ -28,7 +28,7 @@ public class Drone {
         }
 
         if(myOpMode.gamepad1.y) {
-            droneServo2.setPosition(0.27);
+            droneServo2.setPosition(0.8);
         }
     }
 }

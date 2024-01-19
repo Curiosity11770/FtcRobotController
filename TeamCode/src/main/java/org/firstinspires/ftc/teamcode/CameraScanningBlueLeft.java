@@ -4,58 +4,35 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.classes.SimpleVisionProcessor;
+
 @Autonomous(name = "CameraScanningBlueLeft", group = "Linear OpMode")
 public class CameraScanningBlueLeft extends LinearOpMode {
     Robot robot = new Robot(this);
     Camera camera = new Camera(this);
-
-    OpenCvBlue.OpenCvPosition position = OpenCvBlue.OpenCvPosition.LEFT;
+    SimpleVisionProcessor.Selected position;
     private ElapsedTime runtime = new ElapsedTime();
 
-    public void runOpMode(){
+    public void runOpMode() {
         robot.init();
-        camera.initAutoBlue();
-        position = camera.pipeline2.getAnalysis();
-        telemetry.addData("pipeline", position);
+        camera.init();
         waitForStart();
         runtime.reset();
-
-
-        if(opModeIsActive()) {
-            telemetry.addData("Pipeline", position);
-            telemetry.update();
-
-            if (position == OpenCvBlue.OpenCvPosition.RIGHT) {
-                robot.drivetrain.driveForwards(0.7, 200);
-                telemetry.addData("Pipeline", position);
-                robot.drivetrain.strafeRight(0.7, 5);
-                robot.drivetrain.driveBackwards(0.7, 5);
-                robot.drivetrain.strafeLeft(0.7, 20);
-                //robot.intake.outtake(0.7, 3);
-
-            } else if (position == OpenCvBlue.OpenCvPosition.LEFT) {
-                robot.drivetrain.driveForwards(0.7, 20);
-                robot.drivetrain.strafeLeft(0.7, 5);
-                robot.drivetrain.driveBackwards(0.7, 5);
-                robot.drivetrain.strafeLeft(0.7, 20);
-                //robot.intake.outtake(0.7, 3);
-
-            } else {
-                robot.drivetrain.driveForwards(0.7, 20);
-                robot.drivetrain.driveBackwards(0.7, 5);
-                robot.drivetrain.strafeLeft(0.7, 20);
-                //robot.intake.outtake(0.7, 3);
-
-            }
-        robot.drivetrain.driveForwards(0.7,200);
-        robot.drivetrain.stopMotors();
-            waitForStart();
+        telemetry.addData("DIRECTION", position);
+        position = camera.returnSelection();
+        if(position == SimpleVisionProcessor.Selected.RIGHT){;
+        } else if (position == SimpleVisionProcessor.Selected.LEFT){
+            robot.drivetrain.driveToPose(10, 10, 90);
+            robot.drivetrain.driveToPose(20, 20, 90);
+        } else {
+            robot.drivetrain.driveToPose(30, 30, 90);
         }
+        telemetry.addData("POSITION", robot.drivetrain.driveFrontRight.getCurrentPosition());
 
-        //robot.drivetrain.strafeRight(0.7, 40);
-        //robot.drivetrain.driveForwards(0.7, 20);
-        //robot.drivetrain.stopMotors();
+        robot.drivetrain.stopMotors();
 
+        if (opModeIsActive()) {
+            telemetry.update();
+        }
     }
-
 }

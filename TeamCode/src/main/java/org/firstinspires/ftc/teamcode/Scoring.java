@@ -32,15 +32,14 @@ public class Scoring {
         leftGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoLeft");
         rightGateServo = myOpMode.hardwareMap.get(Servo.class, "gateServoRight");
 
-        leftArmServo.setPosition(0.04);
-        rightArmServo.setPosition(0.96);
+        leftArmServo.setPosition(0.08);
+        rightArmServo.setPosition(0.92);
         boxServo.setPosition(0.94);
         leftGateServo.setPosition(0);
         rightGateServo.setPosition(0.7);
 
         is_open_left = false;
         is_open_right = false;
-
         isUp = false;
 
 
@@ -51,28 +50,28 @@ public class Scoring {
         if (myOpMode.gamepad2.x) {
             rightGateServo.setPosition(0);
             is_open_left = true;
-        } else if (myOpMode.gamepad2.a){
+        } else if (myOpMode.gamepad2.y){
             rightGateServo.setPosition(0.7);
         }
         //myOpMode.telemetry.addData("isWorking");
-        if (myOpMode.gamepad2.y) {
+        if (myOpMode.gamepad2.b) {
             leftGateServo.setPosition(0);
             is_open_right = true;
         }
-            else if(myOpMode.gamepad2.b){
+            else if(myOpMode.gamepad2.a){
                 leftGateServo.setPosition(0.5);
             }
         /*} else if (secondBreak){
             rightGateServo.setPosition(0);
             is_open_right = true;*/
         if(myOpMode.gamepad2.dpad_up) {
-            leftArmServo.setPosition(0.3);
-            rightArmServo.setPosition(0.7);
+            leftArmServo.setPosition(0.35);
+            rightArmServo.setPosition(0.65);
             isUp = true;
         }
         if(myOpMode.gamepad2.dpad_down) {
-            leftArmServo.setPosition(0.06);
-            rightArmServo.setPosition(0.94);
+            leftArmServo.setPosition(0.08);
+            rightArmServo.setPosition(0.92);
             isUp = false;
         }
 
