@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.classes.SimpleVisionProcessor;
 
-public class SimpleVisionTest extends LinearOpMode {
+@Autonomous public class SimpleVisionTest extends LinearOpMode {
 
     Robot robot = new Robot(this);
 

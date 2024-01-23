@@ -22,11 +22,11 @@ public class Intake {
 
     public boolean switchState2;
 
-    public Intake(LinearOpMode opMode){
+    public Intake(LinearOpMode opMode) {
         myOpMode = opMode;
     }
 
-    public void init(){
+    public void init() {
         intakeLeft = myOpMode.hardwareMap.get(CRServo.class, "intakeLeft");
         intakeRight = myOpMode.hardwareMap.get(CRServo.class, "intakeRight");
         intakeMotor = myOpMode.hardwareMap.get(DcMotor.class, "intakeMotor");
@@ -40,7 +40,7 @@ public class Intake {
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
-    public void teleOp(){
+    public void teleOp() {
 
         passed1 = beamBreaker1.getState();
 
@@ -77,22 +77,28 @@ public class Intake {
                 intakeMotor.setPower(0);
             }
         } else {*/
-            if (myOpMode.gamepad2.right_trigger > 0.2) {
-                inAction = true;
-                intakeLeft.setPower(0.7);
-                intakeRight.setPower(-0.7);
-                intakeMotor.setPower(-0.7);
-            } else if (myOpMode.gamepad2.left_trigger > 0.2) {
-                inAction = true;
-                intakeLeft.setPower(-0.7);
-                intakeRight.setPower(0.7);
-                intakeMotor.setPower(0.7);
-            } else {
-                inAction = false;
-                intakeLeft.setPower(0);
-                intakeRight.setPower(0);
-                intakeMotor.setPower(0);
-            }
-       // }
+        if (myOpMode.gamepad2.right_trigger > 0.2) {
+            inAction = true;
+            intakeLeft.setPower(0.7);
+            intakeRight.setPower(-0.7);
+            intakeMotor.setPower(-0.7);
+        } else if (myOpMode.gamepad2.left_trigger > 0.2) {
+            inAction = true;
+            intakeLeft.setPower(-0.7);
+            intakeRight.setPower(0.7);
+            intakeMotor.setPower(0.7);
+        } else {
+            inAction = false;
+            intakeLeft.setPower(0);
+            intakeRight.setPower(0);
+            intakeMotor.setPower(0);
+        }
+        // }
+    }
+
+    public void outtake(double motorPower) {
+        intakeLeft.setPower(-motorPower);
+        intakeRight.setPower(motorPower);
+        intakeMotor.setPower(motorPower);
     }
 }

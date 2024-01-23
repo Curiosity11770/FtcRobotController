@@ -13,12 +13,12 @@ public class Localizer {
 
     //Declare Constants
     //ticks per inch
-    public static final double COUNTS_PER_INCH = 250;
+    public static final double COUNTS_PER_INCH = 260;
 
     //track width - distance between odometry wheels
-    public static final double TRACK_WIDTH = 12.5;
+    public static final double TRACK_WIDTH = 13.1;
     //center wheel offset - distance from left and right wheel; '-' is behind, '+' is in front
-    public static double CENTER_OFFSET = 8;
+    public static double CENTER_OFFSET = 2;
 
   //Declare pose variables
     double x = 0;
@@ -66,8 +66,8 @@ public class Localizer {
     }
 
     void update(){
-        double deltaLeftPosition = leftEncoder.getCurrentPosition() - lastLeftPosition;
-        double deltaRightPosition = rightEncoder.getCurrentPosition() - lastRightPosition;
+        double deltaLeftPosition = (leftEncoder.getCurrentPosition() - lastLeftPosition);
+        double deltaRightPosition = (rightEncoder.getCurrentPosition() - lastRightPosition);
 
         //depends on the config of motors
         double deltaCenterPosition = (centerEncoder.getCurrentPosition() - lastCenterPosition) * -1;
@@ -77,8 +77,8 @@ public class Localizer {
         deltaCenterPosition = deltaCenterPosition / COUNTS_PER_INCH;
 
 
-        double phi = (deltaRightPosition - deltaLeftPosition) / TRACK_WIDTH;
-        double deltaMiddlePosition = (deltaLeftPosition + deltaRightPosition) / 2;
+        double phi = -(deltaRightPosition - deltaLeftPosition) / TRACK_WIDTH;
+        double deltaMiddlePosition = -(deltaLeftPosition + deltaRightPosition) / 2;
         double deltaPerpPosition = deltaCenterPosition -  CENTER_OFFSET * phi;
 
         double deltaX = deltaMiddlePosition * Math.cos(heading) - deltaPerpPosition * Math.sin(heading);

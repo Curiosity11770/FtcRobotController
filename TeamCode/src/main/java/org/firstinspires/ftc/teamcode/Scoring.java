@@ -51,7 +51,7 @@ public class Scoring {
             rightGateServo.setPosition(0);
             is_open_left = true;
         } else if (myOpMode.gamepad2.y){
-            rightGateServo.setPosition(0.7);
+            rightGateServo.setPosition(0.5);
         }
         //myOpMode.telemetry.addData("isWorking");
         if (myOpMode.gamepad2.b) {
@@ -65,8 +65,8 @@ public class Scoring {
             rightGateServo.setPosition(0);
             is_open_right = true;*/
         if(myOpMode.gamepad2.dpad_up) {
-            leftArmServo.setPosition(0.35);
-            rightArmServo.setPosition(0.65);
+            leftArmServo.setPosition(0.4);
+            rightArmServo.setPosition(0.6);
             isUp = true;
         }
         if(myOpMode.gamepad2.dpad_down) {

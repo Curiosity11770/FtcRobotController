@@ -21,7 +21,7 @@ public class Drivetrain {
     public static double DRIVE_KD = 0;//0.0003;g
     public static double DRIVE_MAX_ACC = 2000;
     public static double DRIVE_MAX_VEL = 3500;
-    public static double DRIVE_MAX_OUT = 0.8;
+    public static double DRIVE_MAX_OUT = 0.4;
 
     PIDController xPID;
     PIDController yPID;
@@ -94,28 +94,39 @@ public class Drivetrain {
         driveBackLeft.setPower(backLeftPower);
         driveBackRight.setPower(backRightPower);
 
-       myOpMode.telemetry.addData("Counts", localizer.leftEncoder.getCurrentPosition());
-        myOpMode.telemetry.addData("Counts", localizer.rightEncoder.getCurrentPosition());
+       myOpMode.telemetry.addData("Counts", localizer.leftEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
+        myOpMode.telemetry.addData("Counts", localizer.rightEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
+        myOpMode.telemetry.addData("Counts", localizer.centerEncoder.getCurrentPosition()/localizer.TRACK_WIDTH);
 
     }
 
     public void driveToPose(double xTarget, double yTarget, double thetaTarget){
-        //Use PIDs to calculate motor powers based on error to targets
-        double xPower = xPID.calculate(xTarget, localizer.x);
-        double yPower = yPID.calculate(yTarget, localizer.y);
 
-        double wrappedAngle = angleWrap(Math.toRadians(thetaTarget)- localizer.heading);
-        double tPower = headingPID.calculate(wrappedAngle);
+        //localizer.update();
+        while(myOpMode.opModeIsActive() && ((Math.abs(localizer.x - xTarget) > 1 || Math.abs(localizer.y - yTarget) > 1
+        /*Math.abs(localizer.heading - thetaTarget) < Math.PI/10*/))) {
+            //Use PIDs to calculate motor powers based on error to targets
+            double xPower = xPID.calculate(xTarget, localizer.x);
+            double yPower = yPID.calculate(yTarget, localizer.y);
 
-        //rotate the motor powers based on robot heading
-        double xPower_rotated = xPower * Math.cos(-localizer.heading) - yPower * Math.sin(-localizer.heading);
-        double yPower_rotated = xPower * Math.sin(-localizer.heading) + yPower * Math.cos(-localizer.heading);
+            double wrappedAngle = angleWrap(thetaTarget - localizer.heading);
+            double tPower = headingPID.calculate(wrappedAngle);
 
-        // x, y, theta input mixing
-        driveFrontLeft.setPower(-xPower_rotated + yPower_rotated + tPower);
-        driveBackLeft.setPower(-xPower_rotated - yPower_rotated + tPower);
-        driveFrontRight.setPower(-xPower_rotated - yPower_rotated - tPower);
-        driveBackLeft.setPower(-xPower_rotated + yPower_rotated - tPower);
+            //rotate the motor powers based on robot heading
+            double xPower_rotated = xPower * Math.cos(-localizer.heading) - yPower * Math.sin(-localizer.heading);
+            double yPower_rotated = xPower * Math.sin(-localizer.heading) + yPower * Math.cos(-localizer.heading);
+
+            // x, y, theta input mixing
+            driveFrontLeft.setPower((-xPower_rotated + yPower_rotated + tPower) * -1);
+            driveBackLeft.setPower((-xPower_rotated - yPower_rotated + tPower) * -1);
+            driveFrontRight.setPower((-xPower_rotated - yPower_rotated - tPower) * -1);
+            driveBackRight.setPower((-xPower_rotated + yPower_rotated - tPower) * -1);
+
+            localizer.update();
+            localizer.telemetry();
+            myOpMode.telemetry.update();
+        }
+        stopMotors();
     }
 
     // This function normalizes the angle so it returns a value between -180° and 180° instead of 0° to 360°.
