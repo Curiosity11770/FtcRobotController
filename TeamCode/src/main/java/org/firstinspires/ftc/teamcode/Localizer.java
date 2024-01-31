@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import com.acmerobotics.dashboard.canvas.Canvas;
 
 @Config
 public class Localizer {
@@ -106,6 +106,14 @@ public class Localizer {
         double x2 = 8 * Math.cos(heading) + x;
         double y2 = 8 * Math.sin(heading) + y;
         canvas.strokeLine(x, y, x2, y2);
+    }
+
+    void updateDashboard(){
+        TelemetryPacket packet = new TelemetryPacket();
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+
+        drawRobot(packet.fieldOverlay());
+        dashboard.sendTelemetryPacket(packet);
     }
 
 

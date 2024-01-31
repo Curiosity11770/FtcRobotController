@@ -24,9 +24,9 @@ public class Lift {
     PIDController liftLeftPID;
     PIDController liftRightPID;
 
-    public static final double LIFT_KP = 0.01;
+    public static final double LIFT_KP = 0.005;
     public static final double LIFT_KI = 0;
-    public static final double LIFT_KD = 0;
+    public static final double LIFT_KD = 0.0;
 
     public Lift(LinearOpMode opMode){
         myOpMode = opMode;
@@ -92,7 +92,7 @@ public class Lift {
         } else if (liftMode == LiftMode.MIDDLE) {
             liftToPositionPIDClass(200);
         } else if (liftMode == LiftMode.LOW) {
-            liftToPositionPIDClass(100);
+            liftToPositionPIDClass(500);
         } else if (liftMode == LiftMode.INTAKE) {
             liftToPositionPIDClass(0);
         }
