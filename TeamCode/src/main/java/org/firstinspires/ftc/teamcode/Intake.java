@@ -1,9 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
+import android.view.View;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Intake {
 
@@ -12,15 +19,22 @@ public class Intake {
     public CRServo intakeRight = null;
     public DcMotor intakeMotor = null;
     public boolean inAction = false;
-    public DigitalChannel beamBreaker1;
-    public DigitalChannel beamBreaker2;
-    public boolean passed1;
+    public NormalizedColorSensor colorFront;
+    public NormalizedColorSensor colorBack;
 
-    public boolean switchState1;
+    public boolean frontPixel, backPixel;
 
-    public boolean passed2;
+    View relativeLayout;
 
-    public boolean switchState2;
+    public enum IntakeMode {
+        INTAKE,
+        OUTTAKE,
+        OFF
+    }
+
+    public IntakeMode state = IntakeMode.OFF;
+
+    public ElapsedTime timer = new ElapsedTime();
 
     public Intake(LinearOpMode opMode) {
         myOpMode = opMode;
@@ -31,67 +45,63 @@ public class Intake {
         intakeRight = myOpMode.hardwareMap.get(CRServo.class, "intakeRight");
         intakeMotor = myOpMode.hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        beamBreaker1 = myOpMode.hardwareMap.digitalChannel.get("switch");
-        beamBreaker2 = myOpMode.hardwareMap.digitalChannel.get("switch2");
 
-        passed1 = beamBreaker1.getState();
-        passed2 = beamBreaker2.getState();
+        colorFront = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "colorFront");
+        colorBack = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "colorBack");
+
+        int relativeLayoutId = myOpMode.hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", myOpMode.hardwareMap.appContext.getPackageName());
+        relativeLayout = ((Activity) myOpMode.hardwareMap.appContext).findViewById(relativeLayoutId);
+
 
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
     public void teleOp() {
 
-        passed1 = beamBreaker1.getState();
+        myOpMode.telemetry.addData("Distance Left (cm)", "%.3f", ((DistanceSensor) colorFront).getDistance(DistanceUnit.CM));
+        myOpMode.telemetry.addData("Distance Right (cm)", "%.3f", ((DistanceSensor) colorBack).getDistance(DistanceUnit.CM));
 
-        if (passed1) {
-            switchState1 = false;
-        } else {
-            switchState1 = true;
+        if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 3){
+            frontPixel = true;
+        }else{
+            frontPixel = false;
+
         }
-        myOpMode.telemetry.addData("state", ":  " + switchState1);
-
-        passed2 = beamBreaker2.getState();
-
-        if (passed2) {
-            switchState2 = false;
-        } else {
-            switchState2 = true;
+        if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 3){
+            backPixel = true;
+        }else{
+            backPixel = false;
         }
-        myOpMode.telemetry.addData("state", ":  " + switchState2);
-        /*if (switchState1 & switchState2){
-            if (myOpMode.gamepad2.right_trigger > 0.2) {
-                inAction = true;
-                intakeLeft.setPower(-0.7);
-                intakeRight.setPower(0.7);
-                intakeMotor.setPower(0.7);
-            } else if (myOpMode.gamepad2.left_trigger > 0.2) {
-                inAction = true;
-                intakeLeft.setPower(-0.7);
-                intakeRight.setPower(0.7);
-                intakeMotor.setPower(0.7);
-            } else {
-                inAction = false;
-                intakeLeft.setPower(0);
-                intakeRight.setPower(0);
-                intakeMotor.setPower(0);
-            }
-        } else {*/
-        if (myOpMode.gamepad2.right_trigger > 0.2) {
-            inAction = true;
+        if(state == IntakeMode.INTAKE) {
             intakeLeft.setPower(0.7);
             intakeRight.setPower(-0.7);
             intakeMotor.setPower(-0.7);
-        } else if (myOpMode.gamepad2.left_trigger > 0.2) {
-            inAction = true;
+
+            if(frontPixel && backPixel){
+                state = IntakeMode.OUTTAKE;
+                timer.reset();
+            }
+        } else if (state == IntakeMode.OUTTAKE){
             intakeLeft.setPower(-0.7);
             intakeRight.setPower(0.7);
             intakeMotor.setPower(0.7);
-        } else {
-            inAction = false;
+            if(timer.seconds() > 2){
+                state = IntakeMode.OFF;
+            }
+
+        } else if(state == IntakeMode.OFF){
             intakeLeft.setPower(0);
             intakeRight.setPower(0);
             intakeMotor.setPower(0);
+        }
+        if (myOpMode.gamepad2.right_trigger > 0.2) {
+            state = IntakeMode.INTAKE;
+
+        } else if (myOpMode.gamepad2.left_trigger > 0.2) {
+            state = IntakeMode.OUTTAKE;
+            timer.reset();
+        } else if(myOpMode.gamepad2.dpad_left){
+            state = IntakeMode.OFF;
         }
         // }
     }

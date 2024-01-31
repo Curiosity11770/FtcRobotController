@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.classes.SimpleCamera;
-
 public class Robot {
+
+    public boolean passed, notPassed;
     private LinearOpMode myOpMode = null;
 
     public Drivetrain drivetrain;
@@ -17,7 +17,7 @@ public class Robot {
 
     public Drone drone;
 
-    public SimpleCamera camera;
+    public DualPortalCameras camera;
 
     public Robot(LinearOpMode opMode) {
         myOpMode = opMode;
@@ -29,7 +29,7 @@ public class Robot {
         intake = new Intake(myOpMode);
         scoring = new Scoring(myOpMode);
         drone = new Drone(myOpMode);
-        camera = new SimpleCamera(myOpMode);
+        camera = new DualPortalCameras(myOpMode);
 
         myOpMode.telemetry.addData("IsWorking", drone);
 
@@ -45,8 +45,25 @@ public class Robot {
         drivetrain.teleOp();
         lift.teleOp();
         intake.teleOp();
-        scoring.teleOp(intake.passed1, intake.passed2);
+        scoring.teleOp(passed, notPassed);
         drone.teleOp();
+
+        if(intake.frontPixel && intake.backPixel){
+           scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
+           scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
+        }
+
+        if(myOpMode.gamepad2.dpad_right){
+            lift.liftMode = Lift.LiftMode.LOW;
+            scoring.leftArmServo.setPosition(scoring.ARM_UP_LEFT);
+            scoring.rightArmServo.setPosition(scoring.ARM_UP_RIGHT);
+            scoring.isUp = true;
+            scoring.timer.reset();
+            if(scoring.timer.seconds() > 1){
+                scoring.boxServo.setPosition(scoring.BOX_OUT);
+            }
+
+        }
     }
     /*public void touchSense(){
         if(!lift.getTouch()){

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Lift {
     private LinearOpMode myOpMode = null;
@@ -9,20 +10,39 @@ public class Lift {
     public DcMotor liftLeft = null;
     public DcMotor liftRight = null;
 
-    //public TouchSensor touch = null;
+    public TouchSensor touch = null;
 
     public enum LiftMode {
-        MANUAL
+        MANUAL,
+        LOW,
+        MIDDLE,
+        HIGH,
+        INTAKE
     }
     public LiftMode liftMode = LiftMode.MANUAL;
+
+    PIDController liftLeftPID;
+    PIDController liftRightPID;
+
+    public static final double LIFT_KP = 0.01;
+    public static final double LIFT_KI = 0;
+    public static final double LIFT_KD = 0;
+
     public Lift(LinearOpMode opMode){
         myOpMode = opMode;
     }
     public void init(){
+
+        liftLeftPID = new PIDController(LIFT_KP, LIFT_KI, LIFT_KD);
+        liftRightPID = new PIDController(LIFT_KP, LIFT_KI, LIFT_KD);
+        liftLeftPID.maxOut = 0.9;
+        liftRightPID.maxOut = 0.9;
+
+
         liftLeft = myOpMode.hardwareMap.get(DcMotor.class, "liftLeft");
         liftRight = myOpMode.hardwareMap.get(DcMotor.class, "liftRight");
 
-        //touch = myOpMode.hardwareMap.get(TouchSensor.class, "touch");
+        touch = myOpMode.hardwareMap.get(TouchSensor.class, "touch");
 
         liftLeft.setDirection(DcMotor.Direction.FORWARD);
         liftRight.setDirection(DcMotor.Direction.REVERSE);
@@ -32,8 +52,8 @@ public class Lift {
 
         liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -56,7 +76,7 @@ public class Lift {
         myOpMode.telemetry.addData("working", liftLeft.getCurrentPosition());
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        if(liftMode == LiftMode.MANUAL) {
             if (myOpMode.gamepad2.left_stick_y > 0.1) {
                 liftLeft.setPower(-0.9);
                 liftRight.setPower(-0.9);
@@ -67,16 +87,44 @@ public class Lift {
                 liftLeft.setPower(0);
                 liftRight.setPower(0);
             }
-        if(myOpMode.gamepad2.dpad_right){
-            //.setTargetPosition(-98);
-            //liftLeft.setTargetPosition(-98);
-            //liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else if (liftMode == LiftMode.HIGH) {
+            liftToPositionPIDClass(300);
+        } else if (liftMode == LiftMode.MIDDLE) {
+            liftToPositionPIDClass(200);
+        } else if (liftMode == LiftMode.LOW) {
+            liftToPositionPIDClass(100);
+        } else if (liftMode == LiftMode.INTAKE) {
+            liftToPositionPIDClass(0);
+        }
 
+        if(touch.isPressed()){
+            liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
+    }
+    public void liftToPositionPIDClass(double targetPosition) {
+        double outLeft = liftLeftPID.calculate(targetPosition, liftLeft.getCurrentPosition());
+        double outRight = liftRightPID.calculate(targetPosition, liftRight.getCurrentPosition());
+
+        liftLeft.setPower(outLeft);
+        liftRight.setPower(outRight);
+
+        myOpMode.telemetry.addData("LiftLeftPower: ", outLeft);
+        myOpMode.telemetry.addData("LiftRightPower: ", outRight);
+    }
+
+    public void resetLift(double speed){
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if(touch.isPressed() == false){
+           liftLeft.setPower(speed);
+           liftRight.setPower(speed);
+        } else {
+            liftLeft.setPower(speed);
+            liftRight.setPower(speed);
         }
     }
-    //public boolean getTouch() {
-        //return touch.isPressed();
-    //}
 }

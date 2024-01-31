@@ -27,6 +27,13 @@ public class Drivetrain {
     PIDController yPID;
     PIDController headingPID;
 
+    public DriveMode state = DriveMode.MANUAL;
+
+    public enum DriveMode{
+        MANUAL,
+        APRILTAGS
+    }
+
     public Drivetrain(LinearOpMode opmode){
         myOpMode = opmode;
     }
@@ -45,6 +52,11 @@ public class Drivetrain {
         driveFrontRight = myOpMode.hardwareMap.get(DcMotor.class, "driveFrontRight");
         driveBackLeft = myOpMode.hardwareMap.get(DcMotor.class, "driveBackLeft");
         driveBackRight = myOpMode.hardwareMap.get(DcMotor.class, "driveBackRight");
+
+        driveFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -73,26 +85,29 @@ public class Drivetrain {
     }
 
     public void teleOp() {
-        double frontLeftPower;
-        double frontRightPower;
-        double backLeftPower;
-        double backRightPower;
 
-        double drive = -myOpMode.gamepad1.left_stick_y;
-        double turn = myOpMode.gamepad1.right_stick_x;
-        double strafe = -myOpMode.gamepad1.left_stick_x;
+        if(state == DriveMode.MANUAL) {
+            double frontLeftPower;
+            double frontRightPower;
+            double backLeftPower;
+            double backRightPower;
 
-        double denominator = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 2);
+            double drive = -myOpMode.gamepad1.left_stick_y;
+            double turn = myOpMode.gamepad1.right_stick_x;
+            double strafe = -myOpMode.gamepad1.left_stick_x;
 
-        frontLeftPower = (drive + turn - strafe) / denominator;
-        frontRightPower = (drive - turn + strafe) / denominator;
-        backLeftPower = (drive + turn + strafe) / denominator;
-        backRightPower = (drive - turn - strafe) / denominator;
+            double denominator = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 2);
 
-        driveFrontLeft.setPower(frontLeftPower);
-        driveFrontRight.setPower(frontRightPower);
-        driveBackLeft.setPower(backLeftPower);
-        driveBackRight.setPower(backRightPower);
+            frontLeftPower = (drive + turn - strafe) / denominator;
+            frontRightPower = (drive - turn + strafe) / denominator;
+            backLeftPower = (drive + turn + strafe) / denominator;
+            backRightPower = (drive - turn - strafe) / denominator;
+
+            driveFrontLeft.setPower(frontLeftPower);
+            driveFrontRight.setPower(frontRightPower);
+            driveBackLeft.setPower(backLeftPower);
+            driveBackRight.setPower(backRightPower);
+        }
 
        myOpMode.telemetry.addData("Counts", localizer.leftEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
         myOpMode.telemetry.addData("Counts", localizer.rightEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
@@ -101,10 +116,38 @@ public class Drivetrain {
     }
 
     public void driveToPose(double xTarget, double yTarget, double thetaTarget){
+        while(myOpMode.opModeIsActive() && ((Math.abs(localizer.x - xTarget) > 1 || Math.abs(localizer.y - yTarget) > 1||
+                Math.abs(angleWrap(localizer.heading - thetaTarget)) > Math.PI/8))){
+            //Use PIDs to calculate motor powers based on error to targets
+            double xPower = xPID.calculate(xTarget, localizer.x);
+            double yPower = yPID.calculate(yTarget, localizer.y);
+
+            double wrappedAngle = angleWrap(thetaTarget - localizer.heading);
+            double tPower = headingPID.calculate(wrappedAngle);
+
+            //rotate the motor powers based on robot heading
+            double xPower_rotated = xPower * Math.cos(-localizer.heading) - yPower * Math.sin(-localizer.heading);
+            double yPower_rotated = xPower * Math.sin(-localizer.heading) + yPower * Math.cos(-localizer.heading);
+
+            // x, y, theta input mixing
+            driveFrontLeft.setPower(-xPower_rotated + yPower_rotated + tPower);
+            driveBackLeft.setPower(-xPower_rotated - yPower_rotated + tPower);
+            driveFrontRight.setPower(-xPower_rotated - yPower_rotated - tPower);
+            driveBackRight.setPower(-xPower_rotated + yPower_rotated - tPower);
+
+            localizer.update();
+            //localizer.updateDashboard();
+            localizer.telemetry();
+            myOpMode.telemetry.update();
+        }
+        stopMotors();
+    }
+
+    /*public void driveToPose(double xTarget, double yTarget, double thetaTarget){
 
         //localizer.update();
         while(myOpMode.opModeIsActive() && ((Math.abs(localizer.x - xTarget) > 1 || Math.abs(localizer.y - yTarget) > 1
-        /*Math.abs(localizer.heading - thetaTarget) < Math.PI/10*/))) {
+        Math.abs(localizer.heading - thetaTarget) < Math.PI/10))) {
             //Use PIDs to calculate motor powers based on error to targets
             double xPower = xPID.calculate(xTarget, localizer.x);
             double yPower = yPID.calculate(yTarget, localizer.y);
@@ -127,7 +170,7 @@ public class Drivetrain {
             myOpMode.telemetry.update();
         }
         stopMotors();
-    }
+    }*/
 
     // This function normalizes the angle so it returns a value between -180° and 180° instead of 0° to 360°.
     public double angleWrap(double radians) {

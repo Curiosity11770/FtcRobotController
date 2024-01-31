@@ -9,6 +9,9 @@ public class Drone {
     public CRServo droneServo = null;
     public Servo droneServo2 = null;
 
+    public final double DRONE_ANGLE = 0.6;
+    public final double START_DRONE = 1;
+
     public Drone(LinearOpMode opmode){
         myOpMode = opmode;
     }
@@ -19,7 +22,7 @@ public class Drone {
         droneServo2 = myOpMode.hardwareMap.get(Servo.class, "droneServo2");
 
         droneServo.setPower(0);
-        droneServo2.setPosition(1);
+        droneServo2.setPosition(START_DRONE);
     }
 
     public void teleOp(){
@@ -28,7 +31,7 @@ public class Drone {
         }
 
         if(myOpMode.gamepad1.y) {
-            droneServo2.setPosition(0.8);
+            droneServo2.setPosition(DRONE_ANGLE);
         }
     }
 }

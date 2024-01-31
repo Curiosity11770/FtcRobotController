@@ -30,8 +30,8 @@ public class SimpleCamera {
     }
 
     public void init(){
-        webcam1 = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 1");
-        webcam2 = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 2");
+        webcam1 = myOpMode.hardwareMap.get(WebcamName.class, "frontCamera");
+        webcam2 = myOpMode.hardwareMap.get(WebcamName.class, "backCamera");
         CameraName switchableCamera = ClassFactory.getInstance()
                 .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
 
@@ -43,9 +43,9 @@ public class SimpleCamera {
         // Create the vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
                 .setCamera(switchableCamera)
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(1280, 720))
                 //.setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .addProcessors(aprilTagProcessor, colorVisionProcessor)
+                .addProcessors(colorVisionProcessor)
                 .build();
 
         targetFound     = false;    // Set to true when an AprilTag target is detected

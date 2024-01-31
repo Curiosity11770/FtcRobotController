@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.classes.SimpleVisionProcessor;
-
 @Autonomous public class SimpleVisionTest extends LinearOpMode {
 
     Robot robot = new Robot(this);
@@ -17,12 +15,12 @@ import org.firstinspires.ftc.teamcode.classes.SimpleVisionProcessor;
         }
         waitForStart();
 
-        robot.camera.stopColorStreaming();
+        //robot.camera.stopColorProcessor();
 
         if (opModeIsActive()) {
 
             //now you can move your robot based on the value of the 'selection' stored in the vision processor
-            if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
+           /*if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
                 //strafe left
                 //drive straight
             }else if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.RIGHT){
@@ -31,7 +29,7 @@ import org.firstinspires.ftc.teamcode.classes.SimpleVisionProcessor;
             }else{
                 //drive straight ex;
                 //robot.encoderDrive(0.5,24,5);
-            }
+            }*/
 
             //You could also do other stuff afterwards...
             //turn right 90

@@ -19,10 +19,10 @@ public class CameraScanningBlueLeft extends LinearOpMode {
         //waitForStart();
         runtime.reset();
         telemetry.addData("DIRECTION", position);
-        if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.MIDDLE || robot.camera.returnSelection() == SimpleVisionProcessor.Selected.RIGHT || robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT) {
+        /*if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.MIDDLE || robot.camera.returnSelection() == SimpleVisionProcessor.Selected.RIGHT || robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT) {
             position = robot.camera.returnSelection();
             //robot.camera.stopColorStreaming();
-        }
+        }*/
         while (!isStarted()) {
             telemetry.addData("DIRECTION", position);
             telemetry.addData("Position: ", robot.camera.returnSelection());
@@ -34,7 +34,7 @@ public class CameraScanningBlueLeft extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.MIDDLE){
+            /*if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.MIDDLE){
                 robot.drivetrain.driveToPose(24, 0, 0);
                 while(runtime.seconds() < 3) {
                     robot.intake.outtake(-0.7);
@@ -44,10 +44,11 @@ public class CameraScanningBlueLeft extends LinearOpMode {
             } else if (robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
                 robot.drivetrain.driveToPose(2, 0, 0);
                 robot.drivetrain.driveToPose(2, 40, 0);
+
             } else {
                 robot.drivetrain.driveToPose(2, 0, 0);
                 robot.drivetrain.driveToPose(2, 40, 0);
-            }
+            }*/
             //telemetry.addData("POSITION", robot.drivetrain.driveFrontRight.getCurrentPosition());
 
             robot.drivetrain.stopMotors();

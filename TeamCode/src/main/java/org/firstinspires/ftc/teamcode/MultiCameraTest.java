@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
@@ -18,18 +17,17 @@ public class MultiCameraTest extends LinearOpMode {
 
     public void runOpMode() {
         robot.init();
+        robot.camera.aprilTagProcessor.setDecimation(2);
         while (!isStarted()) {
+            robot.camera.scanAprilTag(3);
             telemetry.addData("Position: ", robot.camera.returnSelection());
             telemetry.update();
         }
         waitForStart();
 
-        robot.camera.stopColorProcessor();
         //robot.camera.setActiveCamera(robot.camera.webcam2);
         while (opModeIsActive()) {
             telemetryAprilTag();
-            doCameraSwitching();
-            telemetryCameraSwitching();
             /*//now you can move your robot based on the value of the 'selection' stored in the vision processor
             if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
 
@@ -45,7 +43,6 @@ public class MultiCameraTest extends LinearOpMode {
             //turn right 90
             //robot.turnCW(0.5,90);*/
             telemetry.update();
-
         }
     }
     private void telemetryAprilTag() {
@@ -66,30 +63,4 @@ public class MultiCameraTest extends LinearOpMode {
             }
         }
     }
-    private void doCameraSwitching() {
-        if (robot.camera.visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING) {
-            // If the left bumper is pressed, use Webcam 1.
-            // If the right bumper is pressed, use Webcam 2.
-            boolean newLeftBumper = gamepad1.left_bumper;
-            boolean newRightBumper = gamepad1.right_bumper;
-            if (gamepad1.a) {
-                robot.camera.visionPortal.setActiveCamera(robot.camera.webcam1);
-            } else if (gamepad1.b) {
-                robot.camera.visionPortal.setActiveCamera(robot.camera.webcam2);
-            }
-        }
-
-    }
-
-    private void telemetryCameraSwitching() {
-
-        if (robot.camera.visionPortal.getActiveCamera().equals(robot.camera.webcam1)) {
-            telemetry.addData("activeCamera", "Webcam 1");
-            telemetry.addData("Press RightBumper", "to switch to Webcam 2");
-        } else {
-            telemetry.addData("activeCamera", "Webcam 2");
-            telemetry.addData("Press LeftBumper", "to switch to Webcam 1");
-        }
-
-    }   // end method t
 }
