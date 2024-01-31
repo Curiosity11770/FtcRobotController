@@ -37,8 +37,6 @@ public class Scoring {
 
     public ElapsedTime timer = new ElapsedTime();
 
-
-
     public enum ScoringMode {
         SCORING,
         INTAKE
@@ -66,8 +64,6 @@ public class Scoring {
         is_open_left = false;
         is_open_right = false;
         isUp = false;
-
-
     }
 
     public void teleOp(boolean firstBreak, boolean secondBreak) {

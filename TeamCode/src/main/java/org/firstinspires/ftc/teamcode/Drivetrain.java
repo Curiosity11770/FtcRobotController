@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Drivetrain {
     private LinearOpMode myOpMode = null;
@@ -19,9 +20,11 @@ public class Drivetrain {
     public static double DRIVE_KP = 0.07;
     public static double DRIVE_KI = 0.0;
     public static double DRIVE_KD = 0;//0.0003;g
-    public static double DRIVE_MAX_ACC = 2000;
-    public static double DRIVE_MAX_VEL = 3500;
+    public static double DRIVE_MAX_ACC = 200;
+    public static double DRIVE_MAX_VEL = 350;
     public static double DRIVE_MAX_OUT = 0.4;
+
+    public int AprilTagTarget = 1;
 
     PIDController xPID;
     PIDController yPID;
@@ -86,6 +89,23 @@ public class Drivetrain {
 
     public void teleOp() {
 
+        if(Math.abs(myOpMode.gamepad1.left_stick_y) > 0.2||
+                Math.abs(myOpMode.gamepad1.right_stick_x) > 0.2 ||
+                Math.abs(myOpMode.gamepad1.left_stick_x) > 0.2||
+                Math.abs(myOpMode.gamepad1.right_stick_y) > 0.2) {
+            state = DriveMode.MANUAL;
+        }else if(myOpMode.gamepad1.dpad_left){
+            state = DriveMode.APRILTAGS;
+            AprilTagTarget = 1;
+        }else if(myOpMode.gamepad1.dpad_up){
+            state = DriveMode.APRILTAGS;
+            AprilTagTarget = 2;
+        } else if(myOpMode.gamepad1.dpad_right){
+            state = DriveMode.APRILTAGS;
+            AprilTagTarget = 3;
+        }
+
+
         if(state == DriveMode.MANUAL) {
             double frontLeftPower;
             double frontRightPower;
@@ -107,6 +127,8 @@ public class Drivetrain {
             driveFrontRight.setPower(frontRightPower);
             driveBackLeft.setPower(backLeftPower);
             driveBackRight.setPower(backRightPower);
+        } else if(state == DriveMode.APRILTAGS){
+
         }
 
        myOpMode.telemetry.addData("Counts", localizer.leftEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
@@ -141,6 +163,90 @@ public class Drivetrain {
             myOpMode.telemetry.update();
         }
         stopMotors();
+    }
+
+    public void driveStraightProfiledPID(float distance) {
+        double targetCounts = distance * localizer.COUNTS_PER_INCH;
+        double leftInitial = localizer.leftEncoder.getCurrentPosition();
+        double rightInitial = localizer.rightEncoder.getCurrentPosition();
+        float direction = -1;
+        if (distance < 0) {
+            direction = 1;
+        }
+
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+
+        while (myOpMode.opModeIsActive() &&
+                time.seconds() < 0.5 + MotionProfile.motionProfileTime(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds())) {
+            double flPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double frPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double blPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double brPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.rightEncoder.getCurrentPosition()-rightInitial);
+
+            driveFrontLeft.setPower(-flPower);
+            driveFrontRight.setPower(-frPower);
+            driveBackLeft.setPower(-blPower);
+            driveBackRight.setPower(-brPower);
+
+            myOpMode.telemetry.addData("flPower", flPower);
+            myOpMode.telemetry.addData("instantTarget", MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()));
+            myOpMode.telemetry.addData("profileTime", MotionProfile.motionProfileTime(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()));
+            myOpMode.telemetry.addData("left", localizer.leftEncoder.getCurrentPosition());
+            myOpMode.telemetry.addData("right", localizer.rightEncoder.getCurrentPosition());
+            myOpMode.telemetry.update();
+            localizer.update();
+            localizer.updateDashboard();
+        }
+
+        driveFrontLeft.setPower(0);
+        driveFrontRight.setPower(0);
+        driveBackLeft.setPower(0);
+        driveBackRight.setPower(0);
+    }
+
+    public void driveStraightPID(float distance, float timeOutSeconds) {
+        double targetCounts = distance * localizer.COUNTS_PER_INCH;
+        double leftInitial = localizer.leftEncoder.getCurrentPosition();
+        double rightInitial = localizer.rightEncoder.getCurrentPosition();
+        double leftError = targetCounts - leftInitial;
+        double rightError = targetCounts - rightInitial;
+        float direction = -1;
+        if (distance < 0) {
+            direction = 1;
+        }
+
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+
+        while (myOpMode.opModeIsActive() && (Math.abs(leftError) > 10 || Math.abs(rightError) > 10) && time.seconds() < timeOutSeconds) {
+            //update error
+            leftError = targetCounts - localizer.leftEncoder.getCurrentPosition()-leftInitial;
+            rightError = targetCounts - localizer.rightEncoder.getCurrentPosition()-rightInitial;
+
+            double flPower = xPID.calculate(targetCounts, localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double frPower = xPID.calculate(targetCounts, localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double blPower = xPID.calculate(targetCounts, localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double brPower = xPID.calculate(targetCounts, localizer.rightEncoder.getCurrentPosition()-rightInitial);
+
+            driveFrontLeft.setPower(flPower);
+            driveFrontRight.setPower(frPower);
+            driveBackLeft.setPower(blPower);
+            driveBackRight.setPower(brPower);
+
+            myOpMode.telemetry.addData("flPower", flPower);
+            myOpMode.telemetry.addData("targetCounts", targetCounts);
+            myOpMode.telemetry.addData("left", localizer.leftEncoder.getCurrentPosition());
+            myOpMode.telemetry.addData("right", localizer.rightEncoder.getCurrentPosition());
+            myOpMode.telemetry.update();
+            localizer.update();
+            localizer.updateDashboard();
+        }
+
+        driveFrontLeft.setPower(0);
+        driveFrontRight.setPower(0);
+        driveBackLeft.setPower(0);
+        driveBackRight.setPower(0);
     }
 
     /*public void driveToPose(double xTarget, double yTarget, double thetaTarget){

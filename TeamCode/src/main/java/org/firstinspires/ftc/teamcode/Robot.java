@@ -58,6 +58,10 @@ public class Robot {
         scoring.teleOp(passed, notPassed);
         drone.teleOp();
 
+        if(drivetrain.state == Drivetrain.DriveMode.APRILTAGS){
+            driveToAprilTagTeleOp(drivetrain.AprilTagTarget, 8);
+        }
+
         if(intake.frontPixel && intake.backPixel){
            scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
            scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
@@ -95,9 +99,9 @@ public class Robot {
                 double yawError = camera.desiredTag.ftcPose.yaw;
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) *-1;
-                strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE)*-1;
+                drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED)*-1;
+                turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
                 // Calculate wheel powers.
                 double leftFrontPower = drive - strafe - turn;
@@ -132,6 +136,58 @@ public class Robot {
 
         drivetrain.stopMotors();
     }
+
+    void driveToAprilTagTeleOp(int targetTag, double targetDistance) {
+        double rangeError = 0;
+        double drive = 0;
+        double turn = 0;
+        double strafe = 0;
+
+            camera.scanAprilTag(targetTag);
+            if (camera.targetFound) {
+                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                rangeError = (camera.desiredTag.ftcPose.range - targetDistance);
+                double headingError = camera.desiredTag.ftcPose.bearing;
+                double yawError = camera.desiredTag.ftcPose.yaw;
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move.
+                drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED)*-1;
+                turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                // Calculate wheel powers.
+                double leftFrontPower = drive - strafe - turn;
+                double rightFrontPower = drive + strafe + turn;
+                double leftBackPower = drive + strafe - turn;
+                double rightBackPower = drive - strafe + turn;
+
+                // Normalize wheel powers to be less than 1.0
+                double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+                max = Math.max(max, Math.abs(leftBackPower));
+                max = Math.max(max, Math.abs(rightBackPower));
+
+                if (max > 1.0) {
+                    leftFrontPower /= max;
+                    rightFrontPower /= max;
+                    leftBackPower /= max;
+                    rightBackPower /= max;
+                }
+
+                // Send powers to the wheels.
+                drivetrain.driveFrontLeft.setPower(leftFrontPower);
+                drivetrain.driveFrontRight.setPower(rightFrontPower);
+                drivetrain.driveBackLeft.setPower(leftBackPower);
+                drivetrain.driveBackRight.setPower(rightBackPower);
+            }else{
+                drivetrain.stopMotors();
+            }
+            drivetrain.localizer.update();
+            drivetrain.localizer.updateDashboard();
+            myOpMode.telemetry.update();
+
+       // drivetrain.stopMotors();
+    }
+
     /*public void touchSense(){
         if(!lift.getTouch()){
             intake.intakeLeft.setPower(0);

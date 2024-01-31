@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Config
-@Autonomous (name="AprilTagTest", group = "Concept")
-public class AprilTagTest extends LinearOpMode {
+@Autonomous (name="Drive Function Test", group = "Concept")
+public class DriveFunctionTest extends LinearOpMode {
     private Robot robot;
 
     enum State{
@@ -18,8 +18,6 @@ public class AprilTagTest extends LinearOpMode {
     @Override public void runOpMode() {
         robot = new Robot(this);
         robot.init();
-
-
 
         robot.drivetrain.localizer.setCoordinates(0, 0, 0);
 
@@ -33,7 +31,7 @@ public class AprilTagTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.driveToAprilTag(5,8);
+        robot.drivetrain.driveStraightPID(24, 5);
         //try drive to pose
         //try drive to april tag
     }

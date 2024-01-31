@@ -99,7 +99,7 @@ public class DualPortalCameras {
             // Look to see if we have size info on this tag.
             if (detection.metadata != null) {
                 //  Check to see if we want to track towards this tag.
-                if (detection.id == targetTag) {
+                if (detection.id == targetTag || detection.id == targetTag+3) {
                     // Yes, we want to use this tag.
                     targetFound = true;
                     desiredTag = detection;
