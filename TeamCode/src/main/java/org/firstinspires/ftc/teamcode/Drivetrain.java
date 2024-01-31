@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Config
 public class Drivetrain {
     private LinearOpMode myOpMode = null;
 
@@ -17,12 +19,12 @@ public class Drivetrain {
     public static double HEADING_KP = 0.7;
     public static double HEADING_KI = 0.0;
     public static double HEADING_KD = 0.0;
-    public static double DRIVE_KP = 0.07;
+    public static double DRIVE_KP = 0.001;
     public static double DRIVE_KI = 0.0;
     public static double DRIVE_KD = 0;//0.0003;g
     public static double DRIVE_MAX_ACC = 200;
     public static double DRIVE_MAX_VEL = 350;
-    public static double DRIVE_MAX_OUT = 0.4;
+    public static double DRIVE_MAX_OUT = 0.5;
 
     public int AprilTagTarget = 1;
 
@@ -179,15 +181,15 @@ public class Drivetrain {
 
         while (myOpMode.opModeIsActive() &&
                 time.seconds() < 0.5 + MotionProfile.motionProfileTime(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds())) {
-            double flPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double frPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.rightEncoder.getCurrentPosition()-rightInitial);
-            double blPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double brPower = xPID.calculate(direction * MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double flPower = xPID.calculate(MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), direction * localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double frPower = xPID.calculate(MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), direction * localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double blPower = xPID.calculate(MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), direction * localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double brPower = xPID.calculate(MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()), direction * localizer.rightEncoder.getCurrentPosition()-rightInitial);
 
-            driveFrontLeft.setPower(-flPower);
-            driveFrontRight.setPower(-frPower);
-            driveBackLeft.setPower(-blPower);
-            driveBackRight.setPower(-brPower);
+            driveFrontLeft.setPower(flPower);
+            driveFrontRight.setPower(frPower);
+            driveBackLeft.setPower(blPower);
+            driveBackRight.setPower(brPower);
 
             myOpMode.telemetry.addData("flPower", flPower);
             myOpMode.telemetry.addData("instantTarget", MotionProfile.motionProfile(DRIVE_MAX_ACC, DRIVE_MAX_VEL, targetCounts, time.seconds()));
@@ -197,6 +199,7 @@ public class Drivetrain {
             myOpMode.telemetry.update();
             localizer.update();
             localizer.updateDashboard();
+
         }
 
         driveFrontLeft.setPower(0);
@@ -224,10 +227,10 @@ public class Drivetrain {
             leftError = targetCounts - localizer.leftEncoder.getCurrentPosition()-leftInitial;
             rightError = targetCounts - localizer.rightEncoder.getCurrentPosition()-rightInitial;
 
-            double flPower = xPID.calculate(targetCounts, localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double frPower = xPID.calculate(targetCounts, localizer.rightEncoder.getCurrentPosition()-rightInitial);
-            double blPower = xPID.calculate(targetCounts, localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double brPower = xPID.calculate(targetCounts, localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double flPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double frPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double blPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double brPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
 
             driveFrontLeft.setPower(flPower);
             driveFrontRight.setPower(frPower);
@@ -238,6 +241,54 @@ public class Drivetrain {
             myOpMode.telemetry.addData("targetCounts", targetCounts);
             myOpMode.telemetry.addData("left", localizer.leftEncoder.getCurrentPosition());
             myOpMode.telemetry.addData("right", localizer.rightEncoder.getCurrentPosition());
+            myOpMode.telemetry.addData("leftError", leftError);
+            myOpMode.telemetry.addData("rightError", leftError);
+            myOpMode.telemetry.update();
+            localizer.update();
+            localizer.updateDashboard();
+        }
+
+        driveFrontLeft.setPower(0);
+        driveFrontRight.setPower(0);
+        driveBackLeft.setPower(0);
+        driveBackRight.setPower(0);
+    }
+
+    public void driveSidePID(float distance, float timeOutSeconds) {
+        double targetCounts = distance * localizer.COUNTS_PER_INCH;
+        double leftInitial = localizer.leftEncoder.getCurrentPosition();
+        double rightInitial = localizer.rightEncoder.getCurrentPosition();
+        double leftError = targetCounts - leftInitial;
+        double rightError = targetCounts - rightInitial;
+        float direction = -1;
+        if (distance < 0) {
+            direction = 1;
+        }
+
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+
+        while (myOpMode.opModeIsActive() && (Math.abs(leftError) > 10 || Math.abs(rightError) > 10) && time.seconds() < timeOutSeconds) {
+            //update error
+            leftError = targetCounts - localizer.leftEncoder.getCurrentPosition()-leftInitial;
+            rightError = targetCounts - localizer.rightEncoder.getCurrentPosition()-rightInitial;
+
+            double flPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double frPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double blPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
+            double brPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
+
+            driveFrontLeft.setPower(flPower);
+            driveFrontRight.setPower(frPower);
+            driveBackLeft.setPower(blPower);
+            driveBackRight.setPower(brPower);
+
+            myOpMode.telemetry.addData("flPower", flPower);
+            myOpMode.telemetry.addData("targetCounts", targetCounts);
+            myOpMode.telemetry.addData("left", localizer.leftEncoder.getCurrentPosition());
+            myOpMode.telemetry.addData("right", localizer.rightEncoder.getCurrentPosition());
+            myOpMode.telemetry.addData("leftError", leftError);
+            myOpMode.telemetry.addData("rightError", leftError);
             myOpMode.telemetry.update();
             localizer.update();
             localizer.updateDashboard();
