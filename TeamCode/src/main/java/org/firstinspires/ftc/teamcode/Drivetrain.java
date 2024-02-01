@@ -256,39 +256,41 @@ public class Drivetrain {
 
     public void driveSidePID(float distance, float timeOutSeconds) {
         double targetCounts = distance * localizer.COUNTS_PER_INCH;
-        double leftInitial = localizer.leftEncoder.getCurrentPosition();
-        double rightInitial = localizer.rightEncoder.getCurrentPosition();
-        double leftError = targetCounts - leftInitial;
-        double rightError = targetCounts - rightInitial;
+        //double leftInitial = localizer.leftEncoder.getCurrentPosition();
+        //double rightInitial = localizer.rightEncoder.getCurrentPosition();
+        double centerInitial = localizer.centerEncoder.getCurrentPosition();
+        //double leftError = targetCounts - leftInitial;
+        //double rightError = targetCounts - rightInitial;
+        double centerError = targetCounts - centerInitial;
+
+        double currentHeading = localizer.heading;
+
         float direction = -1;
         if (distance < 0) {
-            direction = 1;
+            //direction = 1;
         }
 
         ElapsedTime time = new ElapsedTime();
         time.reset();
 
-        while (myOpMode.opModeIsActive() && (Math.abs(leftError) > 10 || Math.abs(rightError) > 10) && time.seconds() < timeOutSeconds) {
+        while (myOpMode.opModeIsActive() && (Math.abs(centerError) > 10) && time.seconds() < timeOutSeconds) {
             //update error
-            leftError = targetCounts - localizer.leftEncoder.getCurrentPosition()-leftInitial;
-            rightError = targetCounts - localizer.rightEncoder.getCurrentPosition()-rightInitial;
+            centerError = targetCounts - localizer.centerEncoder.getCurrentPosition()-centerInitial;
+            double strafePower = xPID.calculate(targetCounts, direction*localizer.centerEncoder.getCurrentPosition()-centerInitial);
 
-            double flPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double frPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
-            double blPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double brPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double turnPower = headingPID.calculate(currentHeading, localizer.heading)*-1;
+            driveFrontLeft.setPower(-strafePower + turnPower);
+            driveFrontRight.setPower(strafePower - turnPower);
+            driveBackLeft.setPower(strafePower + turnPower);
+            driveBackRight.setPower(-strafePower - turnPower);
 
-            driveFrontLeft.setPower(flPower);
-            driveFrontRight.setPower(frPower);
-            driveBackLeft.setPower(blPower);
-            driveBackRight.setPower(brPower);
-
-            myOpMode.telemetry.addData("flPower", flPower);
+            myOpMode.telemetry.addData("strafePower", strafePower);
+            myOpMode.telemetry.addData("turnPower", turnPower);
+            myOpMode.telemetry.addData("CurrentHeading", currentHeading);
+            myOpMode.telemetry.addData("Heading",localizer.heading);
             myOpMode.telemetry.addData("targetCounts", targetCounts);
-            myOpMode.telemetry.addData("left", localizer.leftEncoder.getCurrentPosition());
-            myOpMode.telemetry.addData("right", localizer.rightEncoder.getCurrentPosition());
-            myOpMode.telemetry.addData("leftError", leftError);
-            myOpMode.telemetry.addData("rightError", leftError);
+            myOpMode.telemetry.addData("center", localizer.centerEncoder.getCurrentPosition());
+            myOpMode.telemetry.addData("centerError", centerError);
             myOpMode.telemetry.update();
             localizer.update();
             localizer.updateDashboard();
@@ -298,6 +300,35 @@ public class Drivetrain {
         driveFrontRight.setPower(0);
         driveBackLeft.setPower(0);
         driveBackRight.setPower(0);
+    }
+
+    public void encoderTurn(float counts, float timeOutSeconds) {
+        double ORIGINAL_LEFT = localizer.leftEncoder.getCurrentPosition();
+        double TARGET_COUNTS = ORIGINAL_LEFT + counts;
+        double turnError = TARGET_COUNTS - ORIGINAL_LEFT;
+
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+        //final double WHEEL_DIAMETER = 4;
+        //final double COUNTS_PER_INCH = 537.6 / (Math.PI * WHEEL_DIAMETER);
+        //final int STRAIGHT_COUNTS = (int) (COUNTS_PER_INCH * inches * -1);
+        while (Math.abs(turnError) > 10 && myOpMode.opModeIsActive() && time.seconds() < timeOutSeconds) {
+            turnError = TARGET_COUNTS - localizer.leftEncoder.getCurrentPosition();
+            double turnPower = xPID.calculate(TARGET_COUNTS, localizer.leftEncoder.getCurrentPosition()) *-1 ;
+            driveFrontLeft.setPower(turnPower);
+            driveFrontRight.setPower(- turnPower);
+            driveBackLeft.setPower(turnPower);
+            driveBackRight.setPower(- turnPower);
+
+            myOpMode.telemetry.addData("turnPower", turnPower);
+            myOpMode.telemetry.addData("left", localizer.leftEncoder.getCurrentPosition());
+            myOpMode.telemetry.addData("TARGET Counts", TARGET_COUNTS);
+
+            myOpMode.telemetry.update();
+        }
+        stopMotors();
+
+        return;
     }
 
     /*public void driveToPose(double xTarget, double yTarget, double thetaTarget){

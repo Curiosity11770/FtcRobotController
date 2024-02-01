@@ -31,7 +31,8 @@ public class DriveFunctionTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.drivetrain.driveStraightProfiledPID(24);
+        robot.drivetrain.encoderTurn(-5000, 5);
+
         //try drive to pose
         //try drive to april tag
     }
