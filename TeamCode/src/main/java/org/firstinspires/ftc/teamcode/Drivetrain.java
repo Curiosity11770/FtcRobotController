@@ -325,10 +325,13 @@ public class Drivetrain {
             myOpMode.telemetry.addData("TARGET Counts", TARGET_COUNTS);
 
             myOpMode.telemetry.update();
+            localizer.update();
+            localizer.updateDashboard();
         }
         stopMotors();
 
         return;
+
     }
 
     /*public void driveToPose(double xTarget, double yTarget, double thetaTarget){
