@@ -19,7 +19,7 @@ public class Drivetrain {
     public static double HEADING_KP = 0.7;
     public static double HEADING_KI = 0.0;
     public static double HEADING_KD = 0.0;
-    public static double DRIVE_KP = 0.001;
+    public static double DRIVE_KP = 0.0005;
     public static double DRIVE_KI = 0.0;
     public static double DRIVE_KD = 0;//0.0003;g
     public static double DRIVE_MAX_ACC = 200;
