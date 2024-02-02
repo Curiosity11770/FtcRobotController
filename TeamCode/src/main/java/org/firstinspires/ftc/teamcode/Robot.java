@@ -63,8 +63,9 @@ public class Robot {
         }
 
         if(intake.frontPixel && intake.backPixel){
-           scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
-           scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
+           //scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
+           //
+            // scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
         }
 
         if(myOpMode.gamepad2.dpad_right){

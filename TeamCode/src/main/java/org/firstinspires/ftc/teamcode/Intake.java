@@ -61,13 +61,15 @@ public class Intake {
         myOpMode.telemetry.addData("Distance Left (cm)", "%.3f", ((DistanceSensor) colorFront).getDistance(DistanceUnit.CM));
         myOpMode.telemetry.addData("Distance Right (cm)", "%.3f", ((DistanceSensor) colorBack).getDistance(DistanceUnit.CM));
 
-        if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 3){
+        if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 2.8){
+            myOpMode.gamepad2.rumble(0.5,0,500);
             frontPixel = true;
         }else{
             frontPixel = false;
 
         }
-        if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 3){
+        if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 2.8){
+            myOpMode.gamepad2.rumble(0,0.5,500);
             backPixel = true;
         }else{
             backPixel = false;
@@ -78,15 +80,15 @@ public class Intake {
             intakeMotor.setPower(-0.7);
 
             if(frontPixel && backPixel){
-                state = IntakeMode.OUTTAKE;
-                timer.reset();
+                //state = IntakeMode.OUTTAKE;
+               // timer.reset();
             }
         } else if (state == IntakeMode.OUTTAKE){
             intakeLeft.setPower(-0.7);
             intakeRight.setPower(0.7);
             intakeMotor.setPower(0.7);
             if(timer.seconds() > 2){
-                state = IntakeMode.OFF;
+                //state = IntakeMode.OFF;
             }
 
         } else if(state == IntakeMode.OFF){
@@ -94,13 +96,15 @@ public class Intake {
             intakeRight.setPower(0);
             intakeMotor.setPower(0);
         }
-        if (myOpMode.gamepad2.right_trigger > 0.2) {
+        if (myOpMode.gamepad2.left_trigger > 0.2) {
             state = IntakeMode.INTAKE;
 
-        } else if (myOpMode.gamepad2.left_trigger > 0.2) {
+        } else if (myOpMode.gamepad2.right_trigger > 0.2) {
             state = IntakeMode.OUTTAKE;
             timer.reset();
         } else if(myOpMode.gamepad2.dpad_left){
+            state = IntakeMode.OFF;
+        } else{
             state = IntakeMode.OFF;
         }
         // }

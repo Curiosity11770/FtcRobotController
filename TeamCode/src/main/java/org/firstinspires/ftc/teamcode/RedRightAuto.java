@@ -42,10 +42,10 @@ public class RedRightAuto extends LinearOpMode {
             while(runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(500);
                 robot.lift.liftToPositionPIDClass(500);
-                robot.drivetrain.driveFrontLeft.setPower(-0.1);
-                robot.drivetrain.driveFrontRight.setPower(-0.1);
-                robot.drivetrain.driveBackLeft.setPower(-0.1);
-                robot.drivetrain.driveBackRight.setPower(-0.1);
+                robot.drivetrain.driveFrontLeft.setPower(-0.2);
+                robot.drivetrain.driveFrontRight.setPower(-0.2);
+                robot.drivetrain.driveBackLeft.setPower(-0.2);
+                robot.drivetrain.driveBackRight.setPower(-0.2);
             }
 
             robot.lift.liftLeft.setPower(0.15);
@@ -60,22 +60,31 @@ public class RedRightAuto extends LinearOpMode {
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
             sleep(1000);
-            robot.drivetrain.driveStraightPID(-10,5);
+            runtime.reset();
+            while(runtime.seconds() < 1){
+                robot.drivetrain.driveFrontLeft.setPower(0.2);
+                robot.drivetrain.driveFrontRight.setPower(0.2);
+                robot.drivetrain.driveBackLeft.setPower(0.2);
+                robot.drivetrain.driveBackRight.setPower(0.2);
+            }
+            robot.drivetrain.stopMotors();
             sleep(1000);
             robot.scoring.boxServo.setPosition(robot.scoring.BOX_IN);
             sleep(1000);
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_DOWN_LEFT);
             robot.scoring.rightArmServo.setPosition(robot.scoring.ARM_DOWN_RIGHT);
             sleep(1000);
+            runtime.reset();
             while(runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(0);
                 robot.lift.liftToPositionPIDClass(0);
             }
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
-            robot.drivetrain.stopMotors();
 
-            robot.drivetrain.driveSidePID(10,5);
+            robot.drivetrain.driveSidePID(35,5);
+
+            robot.drivetrain.stopMotors();
             //robot.lift.liftToPositionPIDClass(100);
             //robot.scoring.(100);
 
@@ -83,22 +92,38 @@ public class RedRightAuto extends LinearOpMode {
 
         } else if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT) {
             robot.drivetrain.driveStraightPID(35, 3);
+            robot.drivetrain.driveSidePID(15, 3);
+            runtime.reset();
+
             runtime.reset();
             while(runtime.seconds() < 3){
                 robot.intake.outtake(0.8);
             }
+            runtime.reset();
+            while(runtime.seconds() < 2){
+                robot.drivetrain.driveFrontLeft.setPower(0.2);
+                robot.drivetrain.driveFrontRight.setPower(0.2);
+                robot.drivetrain.driveBackLeft.setPower(0.2);
+                robot.drivetrain.driveBackRight.setPower(0.2);
+            }
+            robot.drivetrain.stopMotors();
             robot.intake.intakeLeft.setPower(0);
             robot.intake.intakeRight.setPower(0);
             robot.drivetrain.encoderTurn(3400, 3);
-            robot.driveToAprilTag(6, 4);
+            robot.driveToAprilTag(1, 6);
             runtime.reset();
             while(runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(500);
                 robot.lift.liftToPositionPIDClass(500);
+                robot.drivetrain.driveFrontLeft.setPower(-0.2);
+                robot.drivetrain.driveFrontRight.setPower(-0.2);
+                robot.drivetrain.driveBackLeft.setPower(-0.2);
+                robot.drivetrain.driveBackRight.setPower(-0.2);
             }
 
             robot.lift.liftLeft.setPower(0.15);
             robot.lift.liftRight.setPower(0.15);
+            robot.drivetrain.stopMotors();
 
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);
             robot.scoring.rightArmServo.setPosition(robot.scoring.ARM_UP_RIGHT);
@@ -108,18 +133,31 @@ public class RedRightAuto extends LinearOpMode {
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
             sleep(1000);
+            runtime.reset();
+            while(runtime.seconds() < 2){
+                robot.drivetrain.driveFrontLeft.setPower(0.2);
+                robot.drivetrain.driveFrontRight.setPower(0.2);
+                robot.drivetrain.driveBackLeft.setPower(0.2);
+                robot.drivetrain.driveBackRight.setPower(0.2);
+            }
+            robot.drivetrain.stopMotors();
+            sleep(1000);
             robot.scoring.boxServo.setPosition(robot.scoring.BOX_IN);
             sleep(1000);
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_DOWN_LEFT);
             robot.scoring.rightArmServo.setPosition(robot.scoring.ARM_DOWN_RIGHT);
             sleep(1000);
+            runtime.reset();
             while(runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(0);
                 robot.lift.liftToPositionPIDClass(0);
             }
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
-            robot.drivetrain.driveSidePID(10,5);
+
+            robot.drivetrain.driveSidePID(100,5);
+
+            robot.drivetrain.stopMotors();
 
         }
 
