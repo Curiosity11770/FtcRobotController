@@ -397,4 +397,23 @@ public class Drivetrain {
             driveBackLeft.setPower(power);
             driveBackRight.setPower(-power);
         }
+
+        public void driveStraightTime(double power, double time){
+            ElapsedTime t = new ElapsedTime();
+            driveFrontLeft.setPower(-power);
+            driveFrontRight.setPower(-power);
+            driveBackLeft.setPower(-power);
+            driveBackRight.setPower(-power);
+            while(myOpMode.opModeIsActive() && t.seconds() < time){
+                localizer.update();
+                localizer.updateDashboard();
+                myOpMode.telemetry.addData("Motor Power", power);
+                myOpMode.telemetry.addData("Time Target", time);
+                myOpMode.telemetry.addData("Time Elapsed", t.seconds());
+            }
+            driveFrontLeft.setPower(0);
+            driveFrontRight.setPower(0);
+            driveBackLeft.setPower(0);
+            driveBackRight.setPower(0);
+        }
     }
