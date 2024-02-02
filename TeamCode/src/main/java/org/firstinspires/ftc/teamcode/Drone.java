@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Drone {
     private LinearOpMode myOpMode = null;
+
     public CRServo droneServo = null;
     public Servo droneServo2 = null;
 
@@ -32,6 +33,8 @@ public class Drone {
 
         if(myOpMode.gamepad1.y) {
             droneServo2.setPosition(DRONE_ANGLE);
+        }else if(myOpMode.gamepad1.x){
+            droneServo2.setPosition(START_DRONE);
         }
     }
 }

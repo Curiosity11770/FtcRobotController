@@ -92,7 +92,7 @@ public class Lift {
         } else if (liftMode == LiftMode.MIDDLE) {
             liftToPositionPIDClass(200);
         } else if (liftMode == LiftMode.LOW) {
-            liftToPositionPIDClass(500);
+            liftToPositionPIDClass(700);
         } else if (liftMode == LiftMode.INTAKE) {
             liftToPositionPIDClass(0);
         }

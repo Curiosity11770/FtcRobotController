@@ -29,8 +29,8 @@ public class Scoring {
 
     public final double ARM_UP_LEFT = 0.29;
     public final double ARM_UP_RIGHT = 0.71;
-    public final double ARM_DOWN_LEFT = 0.0;
-    public final double ARM_DOWN_RIGHT = 1.0;
+    public final double ARM_DOWN_LEFT = 0.1;
+    public final double ARM_DOWN_RIGHT = 0.9;
 
     public final double BOX_OUT = 0.4;
     public final double BOX_IN = 0.74;
