@@ -212,11 +212,13 @@ public class Drivetrain {
         double targetCounts = distance * localizer.COUNTS_PER_INCH;
         double leftInitial = localizer.leftEncoder.getCurrentPosition();
         double rightInitial = localizer.rightEncoder.getCurrentPosition();
-        double leftError = targetCounts - leftInitial;
-        double rightError = targetCounts - rightInitial;
+        double leftTrueTarget = leftInitial + targetCounts;
+        double rightTrueTarget = rightInitial+targetCounts;
+        double leftError = leftTrueTarget - leftInitial;
+        double rightError = rightTrueTarget- rightInitial;
         float direction = -1;
         if (distance < 0) {
-            direction = 1;
+            //direction = 1;
         }
 
         ElapsedTime time = new ElapsedTime();
@@ -224,13 +226,13 @@ public class Drivetrain {
 
         while (myOpMode.opModeIsActive() && (Math.abs(leftError) > 10 || Math.abs(rightError) > 10) && time.seconds() < timeOutSeconds) {
             //update error
-            leftError = targetCounts - localizer.leftEncoder.getCurrentPosition()-leftInitial;
-            rightError = targetCounts - localizer.rightEncoder.getCurrentPosition()-rightInitial;
+            leftError = leftTrueTarget - localizer.leftEncoder.getCurrentPosition();
+            rightError = rightTrueTarget - localizer.rightEncoder.getCurrentPosition();
 
-            double flPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double frPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
-            double blPower = xPID.calculate(targetCounts, direction*localizer.leftEncoder.getCurrentPosition()-leftInitial);
-            double brPower = xPID.calculate(targetCounts, direction*localizer.rightEncoder.getCurrentPosition()-rightInitial);
+            double flPower = xPID.calculate(leftTrueTarget, direction*localizer.leftEncoder.getCurrentPosition());
+            double frPower = xPID.calculate(rightTrueTarget, direction*localizer.rightEncoder.getCurrentPosition());
+            double blPower = xPID.calculate(leftTrueTarget, direction*localizer.leftEncoder.getCurrentPosition());
+            double brPower = xPID.calculate(rightTrueTarget, direction*localizer.rightEncoder.getCurrentPosition());
 
             driveFrontLeft.setPower(flPower);
             driveFrontRight.setPower(frPower);
@@ -261,7 +263,8 @@ public class Drivetrain {
         double centerInitial = localizer.centerEncoder.getCurrentPosition();
         //double leftError = targetCounts - leftInitial;
         //double rightError = targetCounts - rightInitial;
-        double centerError = targetCounts - centerInitial;
+        double trueTarget = centerInitial + targetCounts;
+        double centerError = trueTarget - centerInitial;
 
         double currentHeading = localizer.heading;
 
@@ -275,8 +278,8 @@ public class Drivetrain {
 
         while (myOpMode.opModeIsActive() && (Math.abs(centerError) > 10) && time.seconds() < timeOutSeconds) {
             //update error
-            centerError = targetCounts - localizer.centerEncoder.getCurrentPosition()-centerInitial;
-            double strafePower = xPID.calculate(targetCounts, direction*localizer.centerEncoder.getCurrentPosition()-centerInitial);
+            centerError = trueTarget - localizer.centerEncoder.getCurrentPosition();
+            double strafePower = xPID.calculate(trueTarget, direction*localizer.centerEncoder.getCurrentPosition());
 
             double turnPower = headingPID.calculate(currentHeading, localizer.heading)*-1;
             driveFrontLeft.setPower(-strafePower + turnPower);
