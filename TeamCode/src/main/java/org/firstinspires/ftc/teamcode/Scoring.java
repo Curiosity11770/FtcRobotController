@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,10 +28,10 @@ public class Scoring {
     public final double GATE_UP_RIGHT = 0;
     public final double GATE_DOWN_RIGHT = 0.5;
 
-    public final double ARM_UP_LEFT = 0.29;
-    public final double ARM_UP_RIGHT = 0.71;
-    public final double ARM_DOWN_LEFT = 0.1;
-    public final double ARM_DOWN_RIGHT = 0.9;
+    public final double ARM_UP_LEFT = 0.39;
+    public final double ARM_UP_RIGHT = 0.61;
+    public final double ARM_DOWN_LEFT = 0.1275;
+    public final double ARM_DOWN_RIGHT = 0.8725;
 
     public final double BOX_OUT = 0.4;
     public final double BOX_IN = 0.74;
@@ -67,7 +68,33 @@ public class Scoring {
     }
 
     public void teleOp(boolean firstBreak, boolean secondBreak) {
+        if(state == ScoringMode.INTAKE) {
 
+            boxServo.setPosition(BOX_IN);
+            timer.reset();
+            if(timer.seconds() > 0.8) {
+                leftArmServo.setPosition(ARM_DOWN_LEFT);
+                rightArmServo.setPosition(ARM_DOWN_RIGHT);
+            }
+
+        } else if (state == ScoringMode.SCORING){
+
+            leftArmServo.setPosition(ARM_UP_LEFT);
+            rightArmServo.setPosition(ARM_UP_RIGHT);
+
+            if(myOpMode.gamepad2.right_bumper) {
+                boxServo.setPosition(BOX_OUT);
+            } else if (myOpMode.gamepad2.left_bumper){
+                boxServo.setPosition(BOX_IN);
+            }
+
+        }
+
+        if(myOpMode.gamepad2.dpad_up){
+            state = ScoringMode.SCORING;
+        } else if(myOpMode.gamepad2.dpad_down){
+            state = ScoringMode.INTAKE;
+        }
         if (myOpMode.gamepad2.y) {
             rightGateServo.setPosition(GATE_DOWN_RIGHT);
             is_open_left = true;
@@ -85,24 +112,6 @@ public class Scoring {
         /*} else if (secondBreak){
             rightGateServo.setPosition(0);
             is_open_right = true;*/
-        if(myOpMode.gamepad2.dpad_up) {
-            leftArmServo.setPosition(ARM_UP_LEFT);
-            rightArmServo.setPosition(ARM_UP_RIGHT);
-            isUp = true;
-        }
-        if(myOpMode.gamepad2.dpad_down) {
-            leftArmServo.setPosition(ARM_DOWN_LEFT);
-            rightArmServo.setPosition(ARM_DOWN_RIGHT);
-            isUp = false;
-        }
-
-        if(myOpMode.gamepad2.right_bumper) {
-            boxServo.setPosition(BOX_OUT);
-        } else if(myOpMode.gamepad2.left_bumper) {
-            if(isUp = true) {
-                boxServo.setPosition(BOX_IN);
-            }
-        }
     }
 
 

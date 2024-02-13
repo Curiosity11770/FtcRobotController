@@ -63,18 +63,15 @@ public class Robot {
         }
 
         if(intake.frontPixel && intake.backPixel){
-           //scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
-           //
-            // scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
+           scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
+            scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
         }
 
         if(myOpMode.gamepad2.dpad_right){
             lift.liftMode = Lift.LiftMode.LOW;
-            scoring.leftArmServo.setPosition(scoring.ARM_UP_LEFT);
-            scoring.rightArmServo.setPosition(scoring.ARM_UP_RIGHT);
-            scoring.isUp = true;
+            scoring.state = Scoring.ScoringMode.SCORING;
             scoring.timer.reset();
-            if(scoring.timer.seconds() > 1){
+            if(scoring.timer.seconds() > 1 && scoring.state == Scoring.ScoringMode.SCORING){
                 scoring.boxServo.setPosition(scoring.BOX_OUT);
             }
 
