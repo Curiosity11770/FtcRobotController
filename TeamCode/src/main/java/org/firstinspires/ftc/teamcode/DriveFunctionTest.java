@@ -9,6 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class DriveFunctionTest extends LinearOpMode {
     private Robot robot;
 
+    public static double xTarget = 24;
+    public static double yTarget = 0;
+    public static double thetaTarget = 0;
+
+    public static double oX = 0;
+    public static double oY = 0;
+    public static double oT = 0;
+
     enum State{
         TARGET,
         ORIGIN,
@@ -19,9 +27,11 @@ public class DriveFunctionTest extends LinearOpMode {
         robot = new Robot(this);
         robot.init();
 
-        robot.drivetrain.localizer.setCoordinates(0, 0, 0);
+        robot.drivetrain.localizer.setCoordinates(oX, oY, oT);
 
         while (!isStarted()) {
+            robot.drivetrain.localizer.update();
+            robot.drivetrain.localizer.updateDashboard();
             robot.camera.scanAprilTag(5);
             telemetry.addData("Position: ", robot.camera.returnSelection());
             telemetry.update();
@@ -31,7 +41,13 @@ public class DriveFunctionTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.drivetrain.driveStraightTime(0.7,2);
+        while(opModeIsActive()) {
+            robot.drivetrain.driveToPose(xTarget, yTarget, thetaTarget);
+            sleep(500);
+            robot.drivetrain.driveToPose(0,0,0);
+            sleep(500);
+
+        }
 
         //try drive to pose
         //try drive to april tag

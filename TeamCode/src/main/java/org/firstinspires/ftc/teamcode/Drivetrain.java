@@ -200,13 +200,13 @@ public class Drivetrain {
             double yPower_rotated = xPower * Math.sin(-localizer.heading) + yPower * Math.cos(-localizer.heading);
 
             // x, y, theta input mixing
-            driveFrontLeft.setPower(-xPower_rotated + yPower_rotated + tPower);
-            driveBackLeft.setPower(-xPower_rotated - yPower_rotated + tPower);
-            driveFrontRight.setPower(-xPower_rotated - yPower_rotated - tPower);
-            driveBackRight.setPower(-xPower_rotated + yPower_rotated - tPower);
+            driveFrontLeft.setPower(xPower_rotated + yPower_rotated + tPower);
+            driveBackLeft.setPower(xPower_rotated - yPower_rotated + tPower);
+            driveFrontRight.setPower(xPower_rotated - yPower_rotated - tPower);
+            driveBackRight.setPower(xPower_rotated + yPower_rotated - tPower);
 
             localizer.update();
-            //localizer.updateDashboard();
+            localizer.updateDashboard();
             localizer.telemetry();
             myOpMode.telemetry.update();
         }

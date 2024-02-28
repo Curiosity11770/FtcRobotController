@@ -96,10 +96,10 @@ public class Intake {
             intakeRight.setPower(0);
             intakeMotor.setPower(0);
         }
-        if (myOpMode.gamepad2.left_trigger > 0.2) {
+        if (myOpMode.gamepad2.right_trigger > 0.2) {
             state = IntakeMode.INTAKE;
 
-        } else if (myOpMode.gamepad2.right_trigger > 0.2) {
+        } else if (myOpMode.gamepad2.left_trigger > 0.2) {
             state = IntakeMode.OUTTAKE;
             timer.reset();
         } else if(myOpMode.gamepad2.dpad_left){

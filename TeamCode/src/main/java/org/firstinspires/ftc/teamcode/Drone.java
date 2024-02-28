@@ -10,8 +10,8 @@ public class Drone {
     public CRServo droneServo = null;
     public Servo droneServo2 = null;
 
-    public final double DRONE_ANGLE = 0.7;
-    public final double START_DRONE = 0.9;
+    public final double DRONE_ANGLE = 0.83;
+    public final double START_DRONE = 0.93;
 
     public Drone(LinearOpMode opmode){
         myOpMode = opmode;
@@ -22,7 +22,7 @@ public class Drone {
         droneServo = myOpMode.hardwareMap.get(CRServo.class, "droneServo");
         droneServo2 = myOpMode.hardwareMap.get(Servo.class, "droneServo2");
 
-        droneServo.setPower(0);
+        //droneServo.setPower(0);
         droneServo2.setPosition(START_DRONE);
     }
 

@@ -80,6 +80,7 @@ public class Robot {
         if(myOpMode.gamepad2.dpad_down){
             lift.liftMode = Lift.LiftMode.INTAKE;
         }
+
     }
 
     void driveToAprilTag(int targetTag, double targetDistance) {

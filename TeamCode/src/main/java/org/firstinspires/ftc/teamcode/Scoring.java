@@ -30,9 +30,8 @@ public class Scoring {
 
     public final double ARM_UP_LEFT = 0.39;
     public final double ARM_UP_RIGHT = 0.61;
-    public final double ARM_DOWN_LEFT = 0.1275;
-    public final double ARM_DOWN_RIGHT = 0.8725;
-
+    public final double ARM_DOWN_LEFT = 0.12;
+    public final double ARM_DOWN_RIGHT = 0.88;
     public final double BOX_OUT = 0.4;
     public final double BOX_IN = 0.74;
 
@@ -70,12 +69,12 @@ public class Scoring {
     public void teleOp(boolean firstBreak, boolean secondBreak) {
         if(state == ScoringMode.INTAKE) {
 
-            boxServo.setPosition(BOX_IN);
-            timer.reset();
-            if(timer.seconds() > 0.8) {
+            //boxServo.setPosition(BOX_IN);
+            //timer.reset();
+            //if(timer.seconds() > 0.8) {
                 leftArmServo.setPosition(ARM_DOWN_LEFT);
                 rightArmServo.setPosition(ARM_DOWN_RIGHT);
-            }
+            //}
 
         } else if (state == ScoringMode.SCORING){
 
