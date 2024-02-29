@@ -157,13 +157,14 @@ public class Robot {
 
     public void driveStraightTime(double power, double time){
         ElapsedTime t = new ElapsedTime();
+        intake.intakeRight.setPower(-0.7);
+        intake.intakeLeft.setPower(0.7);
+        myOpMode.sleep(500);
         drivetrain.driveFrontLeft.setPower(power);
         drivetrain.driveFrontRight.setPower(power);
         drivetrain.driveBackLeft.setPower(power);
         drivetrain.driveBackRight.setPower(power);
         t.reset();
-        intake.intakeRight.setPower(0.7);
-        intake.intakeLeft.setPower(-0.7);
         while(myOpMode.opModeIsActive() && t.seconds() < time){
             drivetrain.localizer.update();
             drivetrain.localizer.updateDashboard();
@@ -173,6 +174,49 @@ public class Robot {
         }
         intake.intakeRight.setPower(0);
         intake.intakeLeft.setPower(0);
+        drivetrain.driveFrontLeft.setPower(0);
+        drivetrain.driveFrontRight.setPower(0);
+        drivetrain.driveBackLeft.setPower(0);
+        drivetrain.driveBackRight.setPower(0);
+    }
+    public void driveStraightIntake(double power, double time){
+        ElapsedTime t = new ElapsedTime();
+        intake.intakeRight.setPower(0.7);
+        intake.intakeLeft.setPower(-0.7);
+        intake.intakeMotor.setPower(0.7);
+        myOpMode.sleep(500);
+        drivetrain.driveFrontLeft.setPower(power);
+        drivetrain.driveFrontRight.setPower(power);
+        drivetrain.driveBackLeft.setPower(power);
+        drivetrain.driveBackRight.setPower(power);
+        t.reset();
+        scoring.leftGateServo.setPosition(scoring.GATE_UP_LEFT);
+        scoring.rightGateServo.setPosition(scoring.GATE_UP_RIGHT);
+        while(myOpMode.opModeIsActive() && t.seconds() < time && (!intake.frontPixel || !intake.backPixel)){
+            drivetrain.localizer.update();
+            drivetrain.localizer.updateDashboard();
+            myOpMode.telemetry.addData("Motor Power", power);
+            myOpMode.telemetry.addData("Time Target", time);
+            myOpMode.telemetry.addData("Time Elapsed", t.seconds());
+        }
+        t.reset();
+        intake.intakeRight.setPower(-0.7);
+        intake.intakeLeft.setPower(0.7);
+        intake.intakeMotor.setPower(-0.7);
+        drivetrain.driveFrontLeft.setPower(-power);
+        drivetrain.driveFrontRight.setPower(-power);
+        drivetrain.driveBackLeft.setPower(-power);
+        drivetrain.driveBackRight.setPower(-power);
+        while(myOpMode.opModeIsActive() && t.seconds() < time){
+            drivetrain.localizer.update();
+            drivetrain.localizer.updateDashboard();
+            myOpMode.telemetry.addData("Motor Power", power);
+            myOpMode.telemetry.addData("Time Target", time);
+            myOpMode.telemetry.addData("Time Elapsed", t.seconds());
+        }
+        intake.intakeRight.setPower(0);
+        intake.intakeLeft.setPower(0);
+        intake.intakeMotor.setPower(0);
         drivetrain.driveFrontLeft.setPower(0);
         drivetrain.driveFrontRight.setPower(0);
         drivetrain.driveBackLeft.setPower(0);

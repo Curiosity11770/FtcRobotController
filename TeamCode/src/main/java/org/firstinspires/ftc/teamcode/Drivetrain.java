@@ -16,7 +16,7 @@ public class Drivetrain {
     public DcMotor driveBackLeft = null;
     public DcMotor driveBackRight = null;
 
-    public static double HEADING_KP = 0.7;
+    public static double HEADING_KP = 0.9;
     public static double HEADING_KI = 0.0;
     public static double HEADING_KD = 0.0;
     public static double DRIVE_KP = 0.07;

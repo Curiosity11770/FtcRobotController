@@ -129,4 +129,17 @@ public class Intake {
         intakeMotor.setPower(0);
 
     }
+    public void outtake2(double motorPower, double timeOut) {
+        timer.reset();
+        while(timer.seconds() < timeOut) {
+        intakeLeft.setPower(-motorPower);
+        intakeRight.setPower(motorPower);
+        intakeMotor.setPower(motorPower);
+
+         }
+        intakeLeft.setPower(0);
+        intakeRight.setPower(0);
+        intakeMotor.setPower(0);
+
+    }
 }
