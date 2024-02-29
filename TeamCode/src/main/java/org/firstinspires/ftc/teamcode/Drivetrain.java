@@ -19,9 +19,9 @@ public class Drivetrain {
     public static double HEADING_KP = 0.7;
     public static double HEADING_KI = 0.0;
     public static double HEADING_KD = 0.0;
-    public static double DRIVE_KP = 0.0005;
+    public static double DRIVE_KP = 0.07;
     public static double DRIVE_KI = 0.0;
-    public static double DRIVE_KD = 0;//0.0003;g
+    public static double DRIVE_KD = 0.01;//0.0003;g
     public static double DRIVE_MAX_ACC = 200;
     public static double DRIVE_MAX_VEL = 350;
     public static double DRIVE_MAX_OUT = 0.5;
@@ -185,9 +185,13 @@ public class Drivetrain {
         }
     }
 
-    public void driveToPose(double xTarget, double yTarget, double thetaTarget){
-        while(myOpMode.opModeIsActive() && ((Math.abs(localizer.x - xTarget) > 1 || Math.abs(localizer.y - yTarget) > 1||
-                Math.abs(angleWrap(localizer.heading - thetaTarget)) > Math.PI/8))){
+    public void driveToPose(double xTarget, double yTarget, double degreeTarget, double timeOutSeconds){
+        double thetaTarget = Math.toRadians(degreeTarget);
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(myOpMode.opModeIsActive() && timer.seconds() < timeOutSeconds &&
+                ((Math.abs(localizer.x - xTarget) > 1 || Math.abs(localizer.y - yTarget) > 1||
+                Math.abs(angleWrap(localizer.heading - thetaTarget)) > Math.toRadians(2)))){
             //Use PIDs to calculate motor powers based on error to targets
             double xPower = xPID.calculate(xTarget, localizer.x);
             double yPower = yPID.calculate(yTarget, localizer.y);
@@ -200,10 +204,10 @@ public class Drivetrain {
             double yPower_rotated = xPower * Math.sin(-localizer.heading) + yPower * Math.cos(-localizer.heading);
 
             // x, y, theta input mixing
-            driveFrontLeft.setPower(xPower_rotated + yPower_rotated + tPower);
-            driveBackLeft.setPower(xPower_rotated - yPower_rotated + tPower);
-            driveFrontRight.setPower(xPower_rotated - yPower_rotated - tPower);
-            driveBackRight.setPower(xPower_rotated + yPower_rotated - tPower);
+            driveFrontLeft.setPower(xPower_rotated - yPower_rotated - tPower);
+            driveBackLeft.setPower(xPower_rotated + yPower_rotated - tPower);
+            driveFrontRight.setPower(xPower_rotated + yPower_rotated + tPower);
+            driveBackRight.setPower(xPower_rotated - yPower_rotated + tPower);
 
             localizer.update();
             localizer.updateDashboard();
@@ -212,6 +216,8 @@ public class Drivetrain {
         }
         stopMotors();
     }
+
+
 
     public void driveStraightProfiledPID(float distance) {
         double targetCounts = distance * localizer.COUNTS_PER_INCH;
@@ -427,6 +433,8 @@ public class Drivetrain {
     }
 
 
+
+
     public void stopMotors(){
             driveFrontLeft.setPower(0);
             driveFrontRight.setPower(0);
@@ -446,10 +454,10 @@ public class Drivetrain {
 
         public void driveStraightTime(double power, double time){
             ElapsedTime t = new ElapsedTime();
-            driveFrontLeft.setPower(-power);
-            driveFrontRight.setPower(-power);
-            driveBackLeft.setPower(-power);
-            driveBackRight.setPower(-power);
+            driveFrontLeft.setPower(power);
+            driveFrontRight.setPower(power);
+            driveBackLeft.setPower(power);
+            driveBackRight.setPower(power);
             t.reset();
             while(myOpMode.opModeIsActive() && t.seconds() < time){
                 localizer.update();

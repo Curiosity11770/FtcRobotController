@@ -61,14 +61,21 @@ public class Intake {
         myOpMode.telemetry.addData("Distance Left (cm)", "%.3f", ((DistanceSensor) colorFront).getDistance(DistanceUnit.CM));
         myOpMode.telemetry.addData("Distance Right (cm)", "%.3f", ((DistanceSensor) colorBack).getDistance(DistanceUnit.CM));
 
-        if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 2.8){
+        if(myOpMode.gamepad2.a || myOpMode.gamepad2.x) {
+
+            backPixel = false;
+        }
+            else if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 4){
             myOpMode.gamepad2.rumble(0.5,0,500);
             frontPixel = true;
         }else{
             frontPixel = false;
 
         }
-        if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 2.8){
+        if(myOpMode.gamepad2.a || myOpMode.gamepad2.x){
+            backPixel = false;
+        }
+        else if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 2){
             myOpMode.gamepad2.rumble(0,0.5,500);
             backPixel = true;
         }else{
@@ -80,8 +87,7 @@ public class Intake {
             intakeMotor.setPower(-0.7);
 
             if(frontPixel && backPixel){
-                //state = IntakeMode.OUTTAKE;
-               // timer.reset();
+
             }
         } else if (state == IntakeMode.OUTTAKE){
             intakeLeft.setPower(-0.7);
@@ -111,8 +117,16 @@ public class Intake {
     }
 
     public void outtake(double motorPower) {
-        intakeLeft.setPower(-motorPower);
-        intakeRight.setPower(motorPower);
-        intakeMotor.setPower(motorPower);
+        timer.reset();
+        //while(timer.seconds()) {
+            intakeLeft.setPower(-motorPower);
+            intakeRight.setPower(motorPower);
+            intakeMotor.setPower(motorPower);
+        //
+        // }
+        intakeLeft.setPower(0);
+        intakeRight.setPower(0);
+        intakeMotor.setPower(0);
+
     }
 }

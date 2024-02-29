@@ -28,12 +28,12 @@ public class Scoring {
     public final double GATE_UP_RIGHT = 0;
     public final double GATE_DOWN_RIGHT = 0.5;
 
-    public final double ARM_UP_LEFT = 0.39;
+    public final double ARM_UP_LEFT = 0.59;
     public final double ARM_UP_RIGHT = 0.61;
-    public final double ARM_DOWN_LEFT = 0.12;
-    public final double ARM_DOWN_RIGHT = 0.88;
+    public final double ARM_DOWN_LEFT = 0.11;
+    public final double ARM_DOWN_RIGHT = 0.91;
     public final double BOX_OUT = 0.4;
-    public final double BOX_IN = 0.74;
+    public final double BOX_IN = 0.75;
 
     public ElapsedTime timer = new ElapsedTime();
 

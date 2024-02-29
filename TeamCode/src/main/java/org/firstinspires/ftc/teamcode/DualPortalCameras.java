@@ -77,6 +77,44 @@ public class DualPortalCameras {
         //setActiveCamera(webcam1);
     }
 
+    public void initTeleOp() {
+        //frontCamera = myOpMode.hardwareMap.get(WebcamName.class, "frontCamera");
+        backCamera = myOpMode.hardwareMap.get(WebcamName.class, "backCamera");
+
+        //colorVisionProcessor = new SimpleVisionProcessor();
+        aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
+
+        //set decimation of AprilTag processor?
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        aprilTagProcessor.setDecimation(2);
+
+        int[] portalList = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
+        int portalOneID = portalList[0];
+        int portalTwoID = portalList[1];
+
+        // Create the vision portal by using a builder.
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(backCamera)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .setCameraResolution(new Size(640, 480))
+                .addProcessor(aprilTagProcessor)
+                .setLiveViewContainerId(portalOneID)
+                .build();
+
+
+        setManualExposure(4, 255);
+        targetFound = false;    // Set to true when an AprilTag target is detected
+        //setActiveCamera(webcam1);
+    }
+
+
+
 
     public SimpleVisionProcessor.Selected returnSelection() {
         return colorVisionProcessor.getSelection();

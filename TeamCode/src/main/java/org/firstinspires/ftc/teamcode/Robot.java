@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 public class Robot {
@@ -49,6 +50,24 @@ public class Robot {
         scoring.init();
         drone.init();
         camera.init();
+    }
+    public void initTeleOp(){
+        drivetrain = new Drivetrain(myOpMode);
+        lift = new Lift(myOpMode);
+        intake = new Intake(myOpMode);
+        scoring = new Scoring(myOpMode);
+        drone = new Drone(myOpMode);
+        camera = new DualPortalCameras(myOpMode);
+
+        myOpMode.telemetry.addData("IsWorking", drone);
+
+        drivetrain.init();
+        lift.init();
+        intake.init();
+        scoring.init();
+        drone.init();
+        camera.initTeleOp();
+
     }
 
     public void teleOp(){
@@ -134,6 +153,30 @@ public class Robot {
         }
 
         drivetrain.stopMotors();
+    }
+
+    public void driveStraightTime(double power, double time){
+        ElapsedTime t = new ElapsedTime();
+        drivetrain.driveFrontLeft.setPower(power);
+        drivetrain.driveFrontRight.setPower(power);
+        drivetrain.driveBackLeft.setPower(power);
+        drivetrain.driveBackRight.setPower(power);
+        t.reset();
+        intake.intakeRight.setPower(0.7);
+        intake.intakeLeft.setPower(-0.7);
+        while(myOpMode.opModeIsActive() && t.seconds() < time){
+            drivetrain.localizer.update();
+            drivetrain.localizer.updateDashboard();
+            myOpMode.telemetry.addData("Motor Power", power);
+            myOpMode.telemetry.addData("Time Target", time);
+            myOpMode.telemetry.addData("Time Elapsed", t.seconds());
+        }
+        intake.intakeRight.setPower(0);
+        intake.intakeLeft.setPower(0);
+        drivetrain.driveFrontLeft.setPower(0);
+        drivetrain.driveFrontRight.setPower(0);
+        drivetrain.driveBackLeft.setPower(0);
+        drivetrain.driveBackRight.setPower(0);
     }
 
     void driveToAprilTagTeleOp(int targetTag, double targetDistance) {

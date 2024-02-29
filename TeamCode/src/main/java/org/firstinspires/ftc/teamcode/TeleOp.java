@@ -11,7 +11,7 @@ public class TeleOp extends LinearOpMode {
     //private ElapsedTime = new ElapsedTime();
 
     public void runOpMode(){
-        robot.init();
+        robot.initTeleOp();
         robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
         robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
         telemetry.addData("Status", "Intialized");

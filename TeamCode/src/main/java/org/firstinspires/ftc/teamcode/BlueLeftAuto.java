@@ -32,7 +32,7 @@ public class BlueLeftAuto extends LinearOpMode {
             robot.drivetrain.driveStraightPID(35, 3);
             runtime.reset();
             while(opModeIsActive()&& runtime.seconds() < 3){
-                robot.intake.outtake(0.8);
+                //robot.intake.outtake(0.8);
             }
             robot.intake.intakeLeft.setPower(0);
             robot.intake.intakeRight.setPower(0);
@@ -102,7 +102,7 @@ public class BlueLeftAuto extends LinearOpMode {
 
             runtime.reset();
             while(runtime.seconds() < 3){
-                robot.intake.outtake(0.8);
+                //robot.intake.outtake(0.8);
             }
             runtime.reset();
             robot.drivetrain.driveStraightTime(0.2,1);

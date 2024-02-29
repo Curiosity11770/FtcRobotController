@@ -63,9 +63,9 @@ public class LocalizerTest extends LinearOpMode {
             }
 
             if(state == State.TARGET) {
-                robot.drivetrain.driveToPose(tX, tY, tHeading);
+                robot.drivetrain.driveToPose(tX, tY, tHeading, 3);
             }else if(state == State.ORIGIN) {
-                robot.drivetrain.driveToPose(oX,oY,oHeading);
+                robot.drivetrain.driveToPose(oX,oY,oHeading,3);
             }else if(state == State.MANUAL){
                 robot.drivetrain.teleOp();
             }

@@ -40,14 +40,18 @@ public class DriveFunctionTest extends LinearOpMode {
         // robot.camera.stopColorProcessor();
 
         waitForStart();
-
+        robot.drivetrain.driveToPose(xTarget, yTarget, thetaTarget, 3);
+        robot.drivetrain.driveStraightTime(-0.3, 2);
+        /*
         while(opModeIsActive()) {
-            robot.drivetrain.driveToPose(xTarget, yTarget, thetaTarget);
+            robot.drivetrain.driveToPose(xTarget, yTarget, thetaTarget, 3);
             sleep(500);
-            robot.drivetrain.driveToPose(0,0,0);
+            robot.drivetrain.driveToPose(0,0,0, 3);
             sleep(500);
 
         }
+        */
+
 
         //try drive to pose
         //try drive to april tag
