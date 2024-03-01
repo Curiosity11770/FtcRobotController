@@ -69,7 +69,8 @@ public class Scoring {
     public void teleOp(boolean firstBreak, boolean secondBreak) {
         if(state == ScoringMode.INTAKE) {
 
-            //boxServo.setPosition(BOX_IN);
+            boxServo.setPosition(BOX_IN);
+            myOpMode.sleep(200);
             //timer.reset();
             //if(timer.seconds() > 0.8) {
                 leftArmServo.setPosition(ARM_DOWN_LEFT);

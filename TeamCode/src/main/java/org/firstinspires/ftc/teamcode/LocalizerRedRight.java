@@ -40,7 +40,7 @@ public class LocalizerRedRight extends LinearOpMode {
             //Outtake and go to pixel stack
             robot.driveStraightTime(-0.2, 1.5);
             robot.drivetrain.driveToPose(53, 15, 90, 3);
-            robot.driveStraightIntake(0.2, 3);
+            robot.driveStraightIntake(-0.2, 3);
             //Intake Pixels
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
@@ -56,6 +56,7 @@ public class LocalizerRedRight extends LinearOpMode {
 
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);
             sleep(200);
+            robot.driveToAprilTag(5, 3);
             robot.scoring.boxServo.setPosition(robot.scoring.BOX_OUT);
             sleep(200);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
