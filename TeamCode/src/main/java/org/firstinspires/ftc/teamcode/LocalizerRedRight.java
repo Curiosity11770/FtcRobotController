@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 public class LocalizerRedRight extends LinearOpMode {
@@ -10,6 +11,8 @@ public class LocalizerRedRight extends LinearOpMode {
     public static double oX = 0;
     public static double oY = 0;
     public static double oT = 0;
+
+    private ElapsedTime runtime = new ElapsedTime();
 
 
     @Override public void runOpMode() {
@@ -42,14 +45,49 @@ public class LocalizerRedRight extends LinearOpMode {
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            //robot.drivetrain.driveToPose(55, 15, -90, 3);
-            //Forward
-            //robot.drivetrain.driveToPose(55, 15, -90, 3);
-            //robot.drivetrain.driveToPose(55, -45, -90, 3);
-            //ToAprilTags
-            //robot.drivetrain.driveToPose(40, 45, -90, 3);
-            //robot.driveToAprilTag(5, 5);
-            //
+            robot.drivetrain.driveToPose(53, -65, 90, 3);
+            robot.drivetrain.driveToPose(18, -65, 90, 3);
+
+            robot.driveToAprilTag(5, 5);
+
+            robot.lift.liftLeft.setPower(0.15);
+            robot.lift.liftRight.setPower(0.15);
+            robot.drivetrain.stopMotors();
+
+            robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);
+            sleep(200);
+            robot.scoring.boxServo.setPosition(robot.scoring.BOX_OUT);
+            sleep(200);
+            robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
+            robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
+            sleep(200);
+            runtime.reset();
+            robot.drivetrain.driveStraightTime(0.2,1);
+            /*
+            while(runtime.seconds() < 1){
+                robot.drivetrain.driveFrontLeft.setPower(0.2);
+                robot.drivetrain.driveFrontRight.setPower(0.2);
+                robot.drivetrain.driveBackLeft.setPower(0.2);
+                robot.drivetrain.driveBackRight.setPower(0.2);
+            }
+            robot.drivetrain.stopMotors();
+            */
+            sleep(200);
+            robot.scoring.boxServo.setPosition(robot.scoring.BOX_IN);
+            sleep(200);
+            robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_DOWN_LEFT);
+            sleep(200);
+            runtime.reset();
+            while(opModeIsActive()&& runtime.seconds() < 2) {
+                robot.lift.liftToPositionPIDClass(0);
+                robot.lift.liftToPositionPIDClass(0);
+            }
+            robot.lift.liftLeft.setPower(0);
+            robot.lift.liftRight.setPower(0);
+
+            robot.drivetrain.driveToPose(6, 72, 90, 5);
+
+            robot.drivetrain.stopMotors();
         }
 
         //robot.drivetrain.driveStraightTime(-0.3, 2);

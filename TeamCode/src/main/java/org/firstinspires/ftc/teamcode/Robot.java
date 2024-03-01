@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Robot {
 
@@ -180,6 +183,18 @@ public class Robot {
         drivetrain.driveBackRight.setPower(0);
     }
     public void driveStraightIntake(double power, double time){
+        if(((DistanceSensor) intake.colorFront).getDistance(DistanceUnit.CM) <= 4){
+            intake.frontPixel = true;
+        }else{
+            intake.frontPixel = false;
+
+        }
+        if(((DistanceSensor) intake.colorBack).getDistance(DistanceUnit.CM) <= 2){
+            intake.backPixel = true;
+        }else{
+            intake.backPixel = false;
+        }
+
         ElapsedTime t = new ElapsedTime();
         intake.intakeRight.setPower(0.7);
         intake.intakeLeft.setPower(-0.7);
@@ -198,6 +213,26 @@ public class Robot {
             myOpMode.telemetry.addData("Motor Power", power);
             myOpMode.telemetry.addData("Time Target", time);
             myOpMode.telemetry.addData("Time Elapsed", t.seconds());
+
+            myOpMode.telemetry.addData("frontPixel", intake.frontPixel);
+            myOpMode.telemetry.addData("frontPixel", intake.backPixel);
+            myOpMode.telemetry.addData("colorFront", ((DistanceSensor) intake.colorFront).getDistance(DistanceUnit.CM));
+            myOpMode.telemetry.addData("colorBack", ((DistanceSensor) intake.colorBack).getDistance(DistanceUnit.CM));
+            if(((DistanceSensor) intake.colorFront).getDistance(DistanceUnit.CM) <= 4){
+                intake.frontPixel = true;
+            }else{
+                intake.frontPixel = false;
+
+            }
+            if(((DistanceSensor) intake.colorBack).getDistance(DistanceUnit.CM) <= 2){
+                intake.backPixel = true;
+            }else{
+                intake.backPixel = false;
+            }
+            if(intake.frontPixel && intake.backPixel){
+                scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
+                scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
+            }
         }
         t.reset();
         intake.intakeRight.setPower(-0.7);
