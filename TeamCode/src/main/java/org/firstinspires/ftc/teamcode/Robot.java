@@ -158,11 +158,11 @@ public class Robot {
         drivetrain.stopMotors();
     }
 
-    public void driveStraightTime(double power, double time){
+    public void driveStraightOuttake(double power, double time){
         ElapsedTime t = new ElapsedTime();
         intake.intakeRight.setPower(-0.7);
         intake.intakeLeft.setPower(0.7);
-        myOpMode.sleep(500);
+        //myOpMode.sleep(500);
         drivetrain.driveFrontLeft.setPower(power);
         drivetrain.driveFrontRight.setPower(power);
         drivetrain.driveBackLeft.setPower(power);
@@ -182,6 +182,49 @@ public class Robot {
         drivetrain.driveBackLeft.setPower(0);
         drivetrain.driveBackRight.setPower(0);
     }
+    public void driveStraightTime(double power, double time){
+        ElapsedTime t = new ElapsedTime();
+        drivetrain.driveFrontLeft.setPower(power);
+        drivetrain.driveFrontRight.setPower(power);
+        drivetrain.driveBackLeft.setPower(power);
+        drivetrain.driveBackRight.setPower(power);
+        t.reset();
+        while(myOpMode.opModeIsActive() && t.seconds() < time){
+            drivetrain.localizer.update();
+            drivetrain.localizer.updateDashboard();
+            myOpMode.telemetry.addData("Motor Power", power);
+            myOpMode.telemetry.addData("Time Target", time);
+            myOpMode.telemetry.addData("Time Elapsed", t.seconds());
+        }
+        intake.intakeRight.setPower(0);
+        intake.intakeLeft.setPower(0);
+        drivetrain.driveFrontLeft.setPower(0);
+        drivetrain.driveFrontRight.setPower(0);
+        drivetrain.driveBackLeft.setPower(0);
+        drivetrain.driveBackRight.setPower(0);
+    }
+
+    public void driveStraightStrafe(double power, double time){
+        ElapsedTime t = new ElapsedTime();
+        //myOpMode.sleep(500);
+        drivetrain.driveFrontLeft.setPower(-power);
+        drivetrain.driveFrontRight.setPower(power);
+        drivetrain.driveBackLeft.setPower(power);
+        drivetrain.driveBackRight.setPower(-power);
+        t.reset();
+        while(myOpMode.opModeIsActive() && t.seconds() < time){
+            drivetrain.localizer.update();
+            drivetrain.localizer.updateDashboard();
+            myOpMode.telemetry.addData("Motor Power", power);
+            myOpMode.telemetry.addData("Time Target", time);
+            myOpMode.telemetry.addData("Time Elapsed", t.seconds());
+        }
+        drivetrain.driveFrontLeft.setPower(0);
+        drivetrain.driveFrontRight.setPower(0);
+        drivetrain.driveBackLeft.setPower(0);
+        drivetrain.driveBackRight.setPower(0);
+    }
+
     public void driveStraightIntake(double power, double time){
 
         ElapsedTime t = new ElapsedTime();

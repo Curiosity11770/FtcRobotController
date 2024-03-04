@@ -28,6 +28,8 @@ public class Lift {
     public static final double LIFT_KI = 0;
     public static final double LIFT_KD = 0.0;
 
+    public boolean isTrue = false;
+
     public Lift(LinearOpMode opMode){
         myOpMode = opMode;
     }
@@ -65,6 +67,22 @@ public class Lift {
 
         myOpMode.telemetry.addData("TelemetryLeft", liftLeft.getCurrentPosition());
         myOpMode.telemetry.addData("TelemetryRight", liftRight.getCurrentPosition());
+
+        if(myOpMode.gamepad2.right_stick_y > 0.1){
+            isTrue = true;
+        }
+        else if (myOpMode.gamepad2.right_stick_y < -0.1) {
+            isTrue = false;
+        }
+
+        /*if(isTrue = true)
+            {
+                liftLeft.setPower(-0.9);
+                liftRight.setPower(-0.9);
+            } else {
+            liftLeft.setPower(0);
+            liftRight.setPower(0);
+        }*/
 
         /*if(touch.isPressed()){
             liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

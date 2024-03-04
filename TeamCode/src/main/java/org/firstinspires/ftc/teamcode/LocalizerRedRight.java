@@ -38,14 +38,14 @@ public class LocalizerRedRight extends LinearOpMode {
             //Drive to Spike Mark
             robot.drivetrain.driveToPose(41, 6, -90, 3);
             //Outtake and go to pixel stack
-            robot.driveStraightTime(-0.2, 1.5);
-            robot.drivetrain.driveToPose(53, 10, 90, 3);
+            robot.driveStraightOuttake(-0.2, 1.5);
+            robot.drivetrain.driveToPose(52, 10, 90, 3);
             robot.driveStraightIntake(0.2, 3);
             //Intake Pixels
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            robot.drivetrain.driveToPose(47, -65, 90, 3);
+            robot.drivetrain.driveToPose(49, -65, 90, 3);
             robot.drivetrain.driveToPose(18, -65, 90, 3);
 
             robot.driveToAprilTag(5, 5);
@@ -62,7 +62,7 @@ public class LocalizerRedRight extends LinearOpMode {
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);
             sleep(200);
             robot.driveStraightTime(-0.2, 1);
-            robot.drivetrain.driveToPose(22, -84, 90, 5);
+            robot.driveStraightStrafe(0.2, 1);
             robot.scoring.boxServo.setPosition(robot.scoring.BOX_OUT);
             sleep(200);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
@@ -92,7 +92,7 @@ public class LocalizerRedRight extends LinearOpMode {
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
 
-            robot.drivetrain.driveToPose(0, -72, 90, 5);
+            robot.driveStraightStrafe(-0.3, 2);
 
             robot.drivetrain.stopMotors();
         }
