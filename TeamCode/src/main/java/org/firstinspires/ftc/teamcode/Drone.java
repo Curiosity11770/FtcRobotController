@@ -10,7 +10,7 @@ public class Drone {
     public CRServo droneServo = null;
     public Servo droneServo2 = null;
 
-    public final double DRONE_ANGLE = 0.83;
+    public final double DRONE_ANGLE = 0.78;
     public final double START_DRONE = 0.93;
 
     public Drone(LinearOpMode opmode){

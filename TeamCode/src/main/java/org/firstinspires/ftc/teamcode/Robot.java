@@ -183,17 +183,6 @@ public class Robot {
         drivetrain.driveBackRight.setPower(0);
     }
     public void driveStraightIntake(double power, double time){
-        if(((DistanceSensor) intake.colorFront).getDistance(DistanceUnit.CM) <= 4){
-            intake.frontPixel = true;
-        }else{
-            intake.frontPixel = false;
-
-        }
-        if(((DistanceSensor) intake.colorBack).getDistance(DistanceUnit.CM) <= 2){
-            intake.backPixel = true;
-        }else{
-            intake.backPixel = false;
-        }
 
         ElapsedTime t = new ElapsedTime();
         intake.intakeRight.setPower(0.7);

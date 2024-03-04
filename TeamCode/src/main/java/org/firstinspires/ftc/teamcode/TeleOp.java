@@ -16,7 +16,7 @@ public class TeleOp extends LinearOpMode {
         robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
         telemetry.addData("Status", "Intialized");
 
-        robot.drivetrain.localizer.setCoordinates(-36,64, Math.toRadians(270));
+        robot.drivetrain.localizer.setCoordinates(0,0, 0);
         waitForStart();
         //runtime.reset();
 

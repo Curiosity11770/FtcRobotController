@@ -84,8 +84,8 @@ public class Lift {
                 liftLeft.setPower(0.9);
                 liftRight.setPower(0.9);
             } else {
-                liftLeft.setPower(0);
-                liftRight.setPower(0);
+                liftLeft.setPower(0.1);
+                liftRight.setPower(0.1);
             }
         } else if (liftMode == LiftMode.HIGH) {
             liftToPositionPIDClass(300);

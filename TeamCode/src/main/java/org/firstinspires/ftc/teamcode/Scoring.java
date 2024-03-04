@@ -68,14 +68,11 @@ public class Scoring {
 
     public void teleOp(boolean firstBreak, boolean secondBreak) {
         if(state == ScoringMode.INTAKE) {
-
             boxServo.setPosition(BOX_IN);
-            myOpMode.sleep(200);
-            //timer.reset();
-            //if(timer.seconds() > 0.8) {
+            if(timer.seconds() > 0.2) {
                 leftArmServo.setPosition(ARM_DOWN_LEFT);
                 rightArmServo.setPosition(ARM_DOWN_RIGHT);
-            //}
+            }
 
         } else if (state == ScoringMode.SCORING){
 
@@ -93,6 +90,7 @@ public class Scoring {
         if(myOpMode.gamepad2.dpad_up){
             state = ScoringMode.SCORING;
         } else if(myOpMode.gamepad2.dpad_down){
+            timer.reset();
             state = ScoringMode.INTAKE;
         }
         if (myOpMode.gamepad2.y) {

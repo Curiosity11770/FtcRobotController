@@ -114,6 +114,8 @@ public class Drivetrain {
             double backLeftPower;
             double backRightPower;
 
+            double timesFactor;
+
             double drive = -myOpMode.gamepad1.left_stick_y;
             double turn = myOpMode.gamepad1.right_stick_x;
             double strafe = -myOpMode.gamepad1.left_stick_x;
@@ -129,6 +131,22 @@ public class Drivetrain {
             driveFrontRight.setPower(frontRightPower);
             driveBackLeft.setPower(backLeftPower);
             driveBackRight.setPower(backRightPower);
+            if (myOpMode.gamepad1.left_trigger > 0.2) {
+            driveFrontLeft.setPower(frontLeftPower * 1.25);
+            driveFrontRight.setPower(frontRightPower * 1.25);
+            driveBackLeft.setPower(backLeftPower * 1.25);
+            driveBackRight.setPower(backRightPower * 1.25);
+        }
+        else if (myOpMode.gamepad1.right_trigger > 0.2){
+            driveFrontLeft.setPower(frontLeftPower/2);
+            driveFrontRight.setPower(frontRightPower/2);
+            driveBackLeft.setPower(backLeftPower/2);
+            driveBackRight.setPower(backRightPower/2);
+         }
+
+            //if
+            myOpMode.telemetry.addData("power", frontLeftPower);
+            //myOpMode.telemetry.addData(frontLeftPower*1.25);
         } else if(state == DriveMode.APRILTAGS){
 
         }
