@@ -17,7 +17,8 @@ public class Lift {
         LOW,
         MIDDLE,
         HIGH,
-        INTAKE
+        INTAKE,
+        HANG
     }
     public LiftMode liftMode = LiftMode.MANUAL;
 
@@ -68,12 +69,6 @@ public class Lift {
         myOpMode.telemetry.addData("TelemetryLeft", liftLeft.getCurrentPosition());
         myOpMode.telemetry.addData("TelemetryRight", liftRight.getCurrentPosition());
 
-        if(myOpMode.gamepad2.right_stick_y > 0.1){
-            isTrue = true;
-        }
-        else if (myOpMode.gamepad2.right_stick_y < -0.1) {
-            isTrue = false;
-        }
 
         /*if(isTrue = true)
             {
@@ -90,6 +85,9 @@ public class Lift {
             liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }*/
+        if(myOpMode.gamepad2.right_stick_y > 0.1) {
+            liftMode = LiftMode.HANG;
+        }
 
         myOpMode.telemetry.addData("working", liftLeft.getCurrentPosition());
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -113,6 +111,9 @@ public class Lift {
             liftToPositionPIDClass(700);
         } else if (liftMode == LiftMode.INTAKE) {
             liftToPositionPIDClass(0);
+        } else if(liftMode == LiftMode.HANG){
+            liftLeft.setPower(-1);
+            liftRight.setPower(-1);
         }
 
         if(touch.isPressed()){

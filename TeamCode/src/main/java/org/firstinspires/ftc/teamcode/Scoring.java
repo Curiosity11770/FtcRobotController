@@ -92,6 +92,8 @@ public class Scoring {
         } else if(myOpMode.gamepad2.dpad_down){
             timer.reset();
             state = ScoringMode.INTAKE;
+        } else if (myOpMode.gamepad2.dpad_left){
+            state = ScoringMode.INTAKE;
         }
         if (myOpMode.gamepad2.y) {
             rightGateServo.setPosition(GATE_DOWN_RIGHT);

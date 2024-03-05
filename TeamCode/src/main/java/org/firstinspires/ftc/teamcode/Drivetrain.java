@@ -132,10 +132,10 @@ public class Drivetrain {
             driveBackLeft.setPower(backLeftPower);
             driveBackRight.setPower(backRightPower);
             if (myOpMode.gamepad1.left_trigger > 0.2) {
-            driveFrontLeft.setPower(frontLeftPower * 1.25);
-            driveFrontRight.setPower(frontRightPower * 1.25);
-            driveBackLeft.setPower(backLeftPower * 1.25);
-            driveBackRight.setPower(backRightPower * 1.25);
+            driveFrontLeft.setPower(frontLeftPower * 1.75);
+            driveFrontRight.setPower(frontRightPower * 1.75);
+            driveBackLeft.setPower(backLeftPower * 1.75);
+            driveBackRight.setPower(backRightPower * 1.75);
         }
         else if (myOpMode.gamepad1.right_trigger > 0.2){
             driveFrontLeft.setPower(frontLeftPower/2);

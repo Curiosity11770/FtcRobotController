@@ -274,7 +274,7 @@ public class Robot {
         drivetrain.driveFrontRight.setPower(-power);
         drivetrain.driveBackLeft.setPower(-power);
         drivetrain.driveBackRight.setPower(-power);
-        while(myOpMode.opModeIsActive() && t.seconds() < time){
+        while(myOpMode.opModeIsActive() && t.seconds() < time-1){
             drivetrain.localizer.update();
             drivetrain.localizer.updateDashboard();
             myOpMode.telemetry.addData("Motor Power", power);
