@@ -36,6 +36,7 @@ public class Scoring {
     public final double BOX_IN = 0.75;
 
     public ElapsedTime timer = new ElapsedTime();
+    public ElapsedTime timer2 = new ElapsedTime();
 
     public enum ScoringMode {
         SCORING,
@@ -70,8 +71,11 @@ public class Scoring {
         if(state == ScoringMode.INTAKE) {
             boxServo.setPosition(BOX_IN);
             if(timer.seconds() > 0.2) {
-                leftArmServo.setPosition(ARM_DOWN_LEFT);
-                rightArmServo.setPosition(ARM_DOWN_RIGHT);
+                //timer2.reset();
+                //if(timer2.seconds() > 1) {
+                    leftArmServo.setPosition(ARM_DOWN_LEFT);
+                    rightArmServo.setPosition(ARM_DOWN_RIGHT);
+                //}
             }
 
         } else if (state == ScoringMode.SCORING){

@@ -66,7 +66,7 @@ public class Intake {
             backPixel = false;
         }
             else if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 4){
-            myOpMode.gamepad2.rumble(0.5,0,500);
+            myOpMode.gamepad2.rumble(.25,0,500);
             frontPixel = true;
         }else{
             frontPixel = false;
