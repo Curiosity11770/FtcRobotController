@@ -32,6 +32,7 @@ public class Robot {
     final double MAX_AUTO_SPEED = 0.3;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.3;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    public ElapsedTime timer = new ElapsedTime();
 
     public Robot(LinearOpMode opMode) {
         myOpMode = opMode;
@@ -105,13 +106,14 @@ public class Robot {
 
     }
 
-    void driveToAprilTag(int targetTag, double targetDistance) {
+    void driveToAprilTag(int targetTag, double targetDistance, double timeOutSeconds) {
         double rangeError = 100;
         double drive = 0;
         double turn = 0;
         double strafe = 0;
+        timer.reset();
 
-        while (rangeError > 1 && myOpMode.opModeIsActive()) {
+        while (rangeError > 1 && myOpMode.opModeIsActive() && timer.seconds()<timeOutSeconds) {
             camera.scanAprilTag(targetTag);
             if (camera.targetFound) {
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.

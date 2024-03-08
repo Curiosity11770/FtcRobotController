@@ -39,7 +39,7 @@ public class BlueRightAuto extends LinearOpMode {
             //robot.drivetrain.driveStraightTime(0.1, .75);
             robot.drivetrain.encoderTurn(-3400, 3);
             robot.drivetrain.driveStraightTime(0.4, 2);
-            robot.driveToAprilTag(2, 4);
+            robot.driveToAprilTag(2, 4, 3);
             runtime.reset();
             while(opModeIsActive()&& runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(500);
@@ -122,7 +122,7 @@ public class BlueRightAuto extends LinearOpMode {
             robot.drivetrain.encoderTurn(-3400, 3);
             robot.drivetrain.driveStraightTime(0.4, 2.5);
             robot.drivetrain.driveSidePID(-10, 2);
-            robot.driveToAprilTag(1, 3);
+            robot.driveToAprilTag(1, 3, 3);
             runtime.reset();
             while(opModeIsActive()&&runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(500);
@@ -202,7 +202,7 @@ public class BlueRightAuto extends LinearOpMode {
             robot.drivetrain.driveSidePID(15, 2);
             robot.drivetrain.encoderTurn(-3400, 3);
             robot.drivetrain.driveStraightTime(0.4, 3);
-            robot.driveToAprilTag(3, 5);
+            robot.driveToAprilTag(3, 5, 3);
             //robot.drivetrain.driveSidePID(5,1);
             runtime.reset();
             while(opModeIsActive()&&runtime.seconds() < 2) {

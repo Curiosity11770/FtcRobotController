@@ -37,7 +37,7 @@ public class BlueLeftAuto extends LinearOpMode {
             robot.intake.intakeLeft.setPower(0);
             robot.intake.intakeRight.setPower(0);
             robot.drivetrain.encoderTurn(-3400, 3);
-            robot.driveToAprilTag(2, 4.5);
+            robot.driveToAprilTag(2, 4.5, 0);
             runtime.reset();
             while(opModeIsActive()&& runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(500);
@@ -118,7 +118,7 @@ public class BlueLeftAuto extends LinearOpMode {
             robot.intake.intakeLeft.setPower(0);
             robot.intake.intakeRight.setPower(0);
             robot.drivetrain.encoderTurn(3400, 3);
-            robot.driveToAprilTag(1, 6);
+            robot.driveToAprilTag(1, 6, 0);
             runtime.reset();
             while(opModeIsActive()&&runtime.seconds() < 2) {
                 robot.lift.liftToPositionPIDClass(500);

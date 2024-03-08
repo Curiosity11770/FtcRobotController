@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class LocalizerBlueRight extends LinearOpMode {
+public class LocalizerBlueLeft extends LinearOpMode {
     private Robot robot;
 
     public static double oX = 0;
@@ -36,11 +36,10 @@ public class LocalizerBlueRight extends LinearOpMode {
         //Drives to Spike Mark
         if(robot.camera.returnSelection() == SimpleVisionProcessor.Selected.MIDDLE) {
             //Drive to Spike Mark
-            robot.drivetrain.driveToPose(41, -6, 90, 2);
+            robot.drivetrain.driveToPose(41, 6, -90, 2);
             //Outtake and go to pixel stack
             robot.driveStraightOuttake(-0.2, 1.5);
-            robot.drivetrain.driveToPose(51.5, -10, -90, 2);
-            robot.driveStraightIntake(0.2, 3);
+            robot.drivetrain.driveToPose(32, 12, -90, 2);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_DOWN_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_DOWN_RIGHT);
             sleep(200);
@@ -48,8 +47,6 @@ public class LocalizerBlueRight extends LinearOpMode {
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            robot.drivetrain.driveToPose(51, 65, -90, 3);
-            robot.drivetrain.driveToPose(18, 65, -90, 2);
 
             robot.driveToAprilTag(2, 5, 3);
             robot.drivetrain.stopMotors();
@@ -97,14 +94,14 @@ public class LocalizerBlueRight extends LinearOpMode {
 
 
             robot.drivetrain.stopMotors();
+            robot.driveStraightStrafe(0.7, .75);
         } else if (robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
             //Drive to Spike Mark
-            robot.drivetrain.driveToPose(30, -6, 90, 2);
-            robot.drivetrain.driveToPose(32, 4, 90, 1);
+            robot.drivetrain.driveToPose(35, 11, 180, 2);
             //Outtake and go to pixel stack
             robot.driveStraightOuttake(-0.2, 1.5);
-            robot.drivetrain.driveToPose(51, -10, -90, 2);
-            robot.driveStraightIntake(0.2, 3);
+            robot.drivetrain.driveToPose(39, 24, -90, 1);
+            robot.drivetrain.driveToPose(25, 24, -90, 1);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_DOWN_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_DOWN_RIGHT);
             sleep(200);
@@ -112,8 +109,6 @@ public class LocalizerBlueRight extends LinearOpMode {
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            robot.drivetrain.driveToPose(50, 65, -90, 3);
-            robot.drivetrain.driveToPose(15, 65, -90, 2);
 
             robot.driveToAprilTag(1, 5, 3);
             robot.drivetrain.stopMotors();
@@ -130,7 +125,7 @@ public class LocalizerBlueRight extends LinearOpMode {
             robot.driveStraightTime(-0.2, 1);
             robot.scoring.boxServo.setPosition(1);
             sleep(200);
-            robot.driveStraightTime(-0.6, 1);
+            robot.driveStraightTime(-0.7, 1);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
             sleep(200);
@@ -158,26 +153,25 @@ public class LocalizerBlueRight extends LinearOpMode {
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
 
+            robot.driveStraightStrafe(0.7, .75);
             robot.drivetrain.stopMotors();
         }
         else {
             //Drive to Spike Mark
-            robot.drivetrain.driveToPose(35, -12, 180, 2);
+            robot.drivetrain.driveToPose(30, 0, 0, 1);
+            robot.drivetrain.driveToPose(30, 0, -90, 1);
+            robot.drivetrain.driveToPose(30, -7, -90, 1);
             //robot.drivetrain.driveToPose(30, 6, -90, 1);
             //Outtake and go to pixel stack
             robot.driveStraightOuttake(-0.2, 1.5);
             //robot.driveStraightStrafe(0.3, 1.5);
-            robot.drivetrain.driveToPose(48, -10, -90, 2);
-            robot.driveStraightIntake(0.2, 3);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_DOWN_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_DOWN_RIGHT);
             sleep(200);
             //Intake Pixels
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
-            //Stage Door
-            robot.drivetrain.driveToPose(48, 65, -90, 3);
-            robot.drivetrain.driveToPose(25, 65, -90, 2);
+            robot.drivetrain.driveToPose(33, 17, -90, 1);
 
             robot.driveToAprilTag(3, 5, 3);
             robot.drivetrain.stopMotors();
@@ -225,6 +219,9 @@ public class LocalizerBlueRight extends LinearOpMode {
             //robot.driveStraightStrafe(0.5, 2);
             // robot.driveStraightTime(-0.7,2);
 
+            robot.driveStraightStrafe(0.7, .75);
+            robot.driveStraightTime(0.3, 2);
+
             robot.drivetrain.stopMotors();
         }
 
@@ -232,4 +229,5 @@ public class LocalizerBlueRight extends LinearOpMode {
     }
 
 }
+
 

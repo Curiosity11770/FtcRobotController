@@ -57,7 +57,7 @@ public class DualPortalCameras {
         visionPortal = new VisionPortal.Builder()
                 .setCamera(backCamera)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(320, 240))
                 .addProcessor(aprilTagProcessor)
                 .setLiveViewContainerId(portalOneID)
                 .build();
