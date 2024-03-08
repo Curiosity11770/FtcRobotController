@@ -99,7 +99,7 @@ public class LocalizerBlueRight extends LinearOpMode {
             robot.drivetrain.stopMotors();
         } else if (robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
             //Drive to Spike Mark
-            robot.drivetrain.driveToPose(30, -6, 90, 2);
+            robot.drivetrain.driveToPose(30, -7, 90, 2);
             robot.drivetrain.driveToPose(32, 4, 90, 1);
             //Outtake and go to pixel stack
             robot.driveStraightOuttake(-0.2, 1.5);
@@ -112,8 +112,8 @@ public class LocalizerBlueRight extends LinearOpMode {
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            robot.drivetrain.driveToPose(50, 65, -90, 3);
-            robot.drivetrain.driveToPose(15, 65, -90, 2);
+            robot.drivetrain.driveToPose(50, 69, -90, 3);
+            robot.drivetrain.driveToPose(15, 69, -90, 2);
 
             robot.driveToAprilTag(1, 5, 3);
             robot.drivetrain.stopMotors();

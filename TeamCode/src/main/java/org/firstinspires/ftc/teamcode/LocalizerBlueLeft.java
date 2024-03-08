@@ -92,12 +92,12 @@ public class LocalizerBlueLeft extends LinearOpMode {
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
 
-
+            robot.driveStraightStrafe(-0.7, 1);
+            robot.driveStraightTime(-0.3, 2);
             robot.drivetrain.stopMotors();
-            robot.driveStraightStrafe(0.7, .75);
         } else if (robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
             //Drive to Spike Mark
-            robot.drivetrain.driveToPose(35, 11, 180, 2);
+            robot.drivetrain.driveToPose(35, 10.5, 180, 2);
             //Outtake and go to pixel stack
             robot.driveStraightOuttake(-0.2, 1.5);
             robot.drivetrain.driveToPose(39, 24, -90, 1);
@@ -153,7 +153,8 @@ public class LocalizerBlueLeft extends LinearOpMode {
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
 
-            robot.driveStraightStrafe(0.7, .75);
+            robot.driveStraightStrafe(-0.7, 1);
+            robot.driveStraightTime(-0.3, 2);
             robot.drivetrain.stopMotors();
         }
         else {
@@ -185,9 +186,9 @@ public class LocalizerBlueLeft extends LinearOpMode {
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);
             sleep(200);
             robot.driveStraightTime(-0.2, 1);
-            robot.driveStraightStrafe(-0.3, 1.5);
-            robot.scoring.boxServo.setPosition(.5);
-            sleep(200);
+            robot.driveStraightStrafe(-0.3, 1);
+            //robot.scoring.boxServo.setPosition(1);
+            //sleep(200);
             robot.driveStraightTime(-0.65, 1);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
@@ -219,8 +220,8 @@ public class LocalizerBlueLeft extends LinearOpMode {
             //robot.driveStraightStrafe(0.5, 2);
             // robot.driveStraightTime(-0.7,2);
 
-            robot.driveStraightStrafe(0.7, .75);
-            robot.driveStraightTime(0.3, 2);
+            robot.driveStraightStrafe(-0.7, 1);
+            robot.driveStraightTime(-0.3, 2);
 
             robot.drivetrain.stopMotors();
         }

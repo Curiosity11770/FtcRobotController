@@ -111,8 +111,8 @@ public class LocalizerRedLeft extends LinearOpMode {
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            robot.drivetrain.driveToPose(48, -65, 90, 3);
-            robot.drivetrain.driveToPose(15, -65, 90, 2);
+            robot.drivetrain.driveToPose(48, -72, 90, 3);
+            robot.drivetrain.driveToPose(15, -72, 90, 2);
 
             robot.driveToAprilTag(6, 5, 3);
             robot.drivetrain.stopMotors();
@@ -125,7 +125,7 @@ public class LocalizerRedLeft extends LinearOpMode {
             sleep(200);
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);
             sleep(200);
-            robot.driveStraightStrafe(-0.3, 2.5);
+            robot.driveStraightStrafe(-0.3, 1.5);
             robot.driveStraightTime(-0.2, 1);
             robot.scoring.boxServo.setPosition(robot.scoring.BOX_OUT);
             sleep(200);

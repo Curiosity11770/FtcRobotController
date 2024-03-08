@@ -92,11 +92,12 @@ public class LocalizerRedRight extends LinearOpMode {
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
 
-            robot.driveStraightStrafe(-0.7, .75);
+            robot.driveStraightStrafe(0.7, 1.25);
+            robot.driveStraightTime(-0.3, 1.5);
             robot.drivetrain.stopMotors();
         } else if (robot.camera.returnSelection() == SimpleVisionProcessor.Selected.RIGHT){
             //Drive to Spike Mark
-            robot.drivetrain.driveToPose(35, -11, 180, 2);
+            robot.drivetrain.driveToPose(35, -14.5, 90, 2);
             //Outtake and go to pixel stack
             robot.driveStraightOuttake(-0.2, 1.5);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_DOWN_LEFT);
@@ -106,9 +107,9 @@ public class LocalizerRedRight extends LinearOpMode {
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            robot.drivetrain.driveToPose(33, -17, 90, 1);
+            robot.drivetrain.driveToPose(24, -21, 90, 1);
 
-            robot.driveToAprilTag(1, 5, 3);
+            robot.driveToAprilTag(3, 5, 3);
             robot.drivetrain.stopMotors();
             runtime.reset();
             while(opModeIsActive()&& runtime.seconds() < 1) {
@@ -121,8 +122,8 @@ public class LocalizerRedRight extends LinearOpMode {
             sleep(200);
             robot.driveStraightStrafe(-0.3, .5);
             robot.driveStraightTime(-0.2, 1);
-            robot.scoring.boxServo.setPosition(1);
-            sleep(200);
+            /*robot.scoring.boxServo.setPosition(1);
+            sleep(200);*/
             robot.driveStraightTime(-0.7, 1);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
@@ -151,7 +152,8 @@ public class LocalizerRedRight extends LinearOpMode {
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
 
-            robot.driveStraightStrafe(0.7, .75);
+            robot.driveStraightStrafe(0.7, 1.25);
+            robot.driveStraightTime(-0.3, 1.5);
             robot.drivetrain.stopMotors();
         }
         else {
@@ -172,7 +174,7 @@ public class LocalizerRedRight extends LinearOpMode {
             robot.drivetrain.driveToPose(39, -24, 90, 1);
             robot.drivetrain.driveToPose(25, -24, 90, 1);
 
-            robot.driveToAprilTag(3, 5, 3);
+            robot.driveToAprilTag(1, 5, 3);
             robot.drivetrain.stopMotors();
             runtime.reset();
             while(opModeIsActive()&& runtime.seconds() < 1) {
@@ -184,10 +186,17 @@ public class LocalizerRedRight extends LinearOpMode {
             robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);
             sleep(200);
             robot.driveStraightTime(-0.2, 1);
-            robot.driveStraightStrafe(-0.3, 1.5);
-            robot.scoring.boxServo.setPosition(.5);
+            robot.driveStraightStrafe(-0.3, .75);
+            robot.scoring.boxServo.setPosition(1);
             sleep(200);
-            robot.driveStraightTime(-0.65, 1);
+            robot.driveStraightTime(-0.6, .75);
+
+            /*
+            * robot.driveStraightTime(-0.2, 1);
+            robot.driveStraightStrafe(-0.3, .75);
+            robot.scoring.boxServo.setPosition(1);
+            sleep(200);
+            robot.driveStraightTime(-0.6, .75);*/
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
             sleep(200);
@@ -218,8 +227,8 @@ public class LocalizerRedRight extends LinearOpMode {
             //robot.driveStraightStrafe(0.5, 2);
             // robot.driveStraightTime(-0.7,2);
 
-            robot.driveStraightStrafe(0.7, .75);
-            robot.driveStraightTime(0.3, 2);
+            robot.driveStraightStrafe(0.7, 1.25);
+            robot.driveStraightTime(-0.3, 1.5);
 
             robot.drivetrain.stopMotors();
         }

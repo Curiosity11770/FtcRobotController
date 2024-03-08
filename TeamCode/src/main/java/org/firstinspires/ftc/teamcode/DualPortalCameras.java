@@ -57,7 +57,7 @@ public class DualPortalCameras {
         visionPortal = new VisionPortal.Builder()
                 .setCamera(backCamera)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .setCameraResolution(new Size(320, 240))
+                .setCameraResolution(new Size(640, 480))
                 .addProcessor(aprilTagProcessor)
                 .setLiveViewContainerId(portalOneID)
                 .build();
@@ -65,7 +65,7 @@ public class DualPortalCameras {
         // Create the vision portal by using a builder.
         visionPortalFront = new VisionPortal.Builder()
                 .setCamera(frontCamera)
-                //.setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .setCameraResolution(new Size(640, 480))
                 .addProcessor(colorVisionProcessor)
                 .setLiveViewContainerId(portalTwoID)
