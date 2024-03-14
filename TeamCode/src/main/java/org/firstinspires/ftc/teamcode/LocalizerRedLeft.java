@@ -94,6 +94,7 @@ public class LocalizerRedLeft extends LinearOpMode {
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
 
+            robot.driveStraightStrafe(0.3,0.5);
 
             robot.drivetrain.stopMotors();
         } else if (robot.camera.returnSelection() == SimpleVisionProcessor.Selected.RIGHT){
@@ -104,6 +105,7 @@ public class LocalizerRedLeft extends LinearOpMode {
             robot.driveStraightOuttake(-0.2, 1.5);
             robot.drivetrain.driveToPose(51, 10, 90, 2);
             robot.driveStraightIntake(0.2, 3);
+            sleep(2000);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_DOWN_LEFT);
             robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_DOWN_RIGHT);
             sleep(200);
@@ -156,6 +158,7 @@ public class LocalizerRedLeft extends LinearOpMode {
             }
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
+            robot.driveStraightStrafe(0.3,0.5);
 
             robot.drivetrain.stopMotors();
         }
@@ -223,6 +226,8 @@ public class LocalizerRedLeft extends LinearOpMode {
 
             //robot.driveStraightStrafe(0.5, 2);
            // robot.driveStraightTime(-0.7,2);
+
+            robot.driveStraightStrafe(0.3,0.5);
 
             robot.drivetrain.stopMotors();
         }

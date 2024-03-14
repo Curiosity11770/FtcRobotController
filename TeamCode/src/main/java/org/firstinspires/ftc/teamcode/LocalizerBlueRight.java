@@ -65,7 +65,7 @@ public class LocalizerBlueRight extends LinearOpMode {
             sleep(200);
             robot.driveStraightTime(-0.2, 1.25);
             robot.driveStraightStrafe(-0.3, 1);
-            robot.scoring.boxServo.setPosition(robot.scoring.BOX_OUT);
+            robot.scoring.boxServo.setPosition(1);
             sleep(200);
             robot.driveStraightTime(-0.5, .25);
             robot.scoring.leftGateServo.setPosition(robot.scoring.GATE_UP_LEFT);
@@ -94,8 +94,7 @@ public class LocalizerBlueRight extends LinearOpMode {
             }
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
-
-
+            robot.driveStraightStrafe(0.3,0.5);
             robot.drivetrain.stopMotors();
         } else if (robot.camera.returnSelection() == SimpleVisionProcessor.Selected.LEFT){
             //Drive to Spike Mark
@@ -112,8 +111,8 @@ public class LocalizerBlueRight extends LinearOpMode {
             //robot.intake.outtake(-0.7, 3);
             //robot.drivetrain.driveStraightTime(-0.2, 2);
             //Stage Door
-            robot.drivetrain.driveToPose(50, 69, -90, 3);
-            robot.drivetrain.driveToPose(15, 69, -90, 2);
+            robot.drivetrain.driveToPose(50, 72, -90, 3);
+            robot.drivetrain.driveToPose(17, 72, -90, 2);
 
             robot.driveToAprilTag(1, 5, 3);
             robot.drivetrain.stopMotors();
@@ -157,6 +156,8 @@ public class LocalizerBlueRight extends LinearOpMode {
             }
             robot.lift.liftLeft.setPower(0);
             robot.lift.liftRight.setPower(0);
+
+            robot.driveStraightStrafe(0.3,0.5);
 
             robot.drivetrain.stopMotors();
         }
@@ -224,6 +225,8 @@ public class LocalizerBlueRight extends LinearOpMode {
 
             //robot.driveStraightStrafe(0.5, 2);
             // robot.driveStraightTime(-0.7,2);
+
+            robot.driveStraightStrafe(0.3,0.5);
 
             robot.drivetrain.stopMotors();
         }
