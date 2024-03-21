@@ -81,21 +81,19 @@ public class Intake {
         }else{
             backPixel = false;
         }
+
         if(state == IntakeMode.INTAKE) {
             intakeLeft.setPower(0.7);
             intakeRight.setPower(-0.7);
             intakeMotor.setPower(-0.7);
 
             if(frontPixel && backPixel){
-
+                state = IntakeMode.OUTTAKE;
             }
         } else if (state == IntakeMode.OUTTAKE){
             intakeLeft.setPower(-0.7);
             intakeRight.setPower(0.7);
             intakeMotor.setPower(0.7);
-            if(timer.seconds() > 2){
-                //state = IntakeMode.OFF;
-            }
 
         } else if(state == IntakeMode.OFF){
             intakeLeft.setPower(0);
@@ -124,9 +122,6 @@ public class Intake {
             intakeMotor.setPower(motorPower);
         //
         // }
-        intakeLeft.setPower(0);
-        intakeRight.setPower(0);
-        intakeMotor.setPower(0);
 
     }
     public void outtake2(double motorPower, double timeOut) {
@@ -141,5 +136,41 @@ public class Intake {
         intakeRight.setPower(0);
         intakeMotor.setPower(0);
 
+    }
+    public void update(){
+        if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 4){
+            myOpMode.gamepad2.rumble(.25,0,500);
+            frontPixel = true;
+        }else{
+            frontPixel = false;
+        }
+        if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 2){
+            myOpMode.gamepad2.rumble(0,0.5,500);
+            backPixel = true;
+        }else {
+            backPixel = false;
+        }
+
+        if(state == IntakeMode.INTAKE) {
+            intakeLeft.setPower(0.7);
+            intakeRight.setPower(-0.7);
+            intakeMotor.setPower(-0.7);
+
+        } else if (state == IntakeMode.OUTTAKE){
+            intakeLeft.setPower(-0.7);
+            intakeRight.setPower(0.7);
+            intakeMotor.setPower(0.7);
+
+        } else if(state == IntakeMode.OFF){
+            intakeLeft.setPower(0);
+            intakeRight.setPower(0);
+            intakeMotor.setPower(0);
+        }
+
+    }
+    public void reset(){
+        intakeLeft.setPower(0);
+        intakeRight.setPower(0);
+        intakeMotor.setPower(0);
     }
 }

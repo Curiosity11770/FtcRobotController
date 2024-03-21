@@ -135,6 +135,20 @@ public class Lift {
         myOpMode.telemetry.addData("LiftRightPower: ", outRight);
     }
 
+    public void update() {
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (liftMode == LiftMode.HIGH) {
+            liftToPositionPIDClass(300);
+        } else if (liftMode == LiftMode.MIDDLE) {
+            liftToPositionPIDClass(200);
+        } else if (liftMode == LiftMode.LOW) {
+            liftToPositionPIDClass(450);
+        } else if (liftMode == LiftMode.INTAKE) {
+            liftToPositionPIDClass(0);
+        }
+    }
+
     public void resetLift(double speed){
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

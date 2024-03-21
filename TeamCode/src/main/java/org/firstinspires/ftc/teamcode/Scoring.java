@@ -118,7 +118,14 @@ public class Scoring {
             is_open_right = true;*/
     }
 
-
+    public void gatesUp() {
+        leftGateServo.setPosition(GATE_UP_LEFT);
+        rightGateServo.setPosition(GATE_UP_RIGHT);
+    }
+    public void gatesDown() {
+        leftGateServo.setPosition(GATE_DOWN_LEFT);
+        rightGateServo.setPosition(GATE_DOWN_RIGHT);
+    }
     public void deliver(double power, double time) {
         
     }

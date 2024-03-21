@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
 public class Drivetrain {
     private LinearOpMode myOpMode = null;
 
    public Localizer localizer;
+   public SampleMecanumDrive drive;
 
     public DcMotor driveFrontLeft = null;
     public DcMotor driveFrontRight = null;
@@ -36,7 +41,8 @@ public class Drivetrain {
 
     public enum DriveMode{
         MANUAL,
-        APRILTAGS
+        APRILTAGS,
+        FIELD
     }
 
     public Drivetrain(LinearOpMode opmode){
@@ -71,6 +77,8 @@ public class Drivetrain {
 
         localizer = new Localizer(myOpMode);
 
+        drive = new SampleMecanumDrive(myOpMode.hardwareMap);
+
         driveFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         driveFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         driveBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -95,7 +103,8 @@ public class Drivetrain {
                 Math.abs(myOpMode.gamepad1.right_stick_x) > 0.2 ||
                 Math.abs(myOpMode.gamepad1.left_stick_x) > 0.2||
                 Math.abs(myOpMode.gamepad1.right_stick_y) > 0.2) {
-            state = DriveMode.MANUAL;
+            state = DriveMode.FIELD;
+            //FIELD USED TO BE MANUAL
         }else if(myOpMode.gamepad1.dpad_left){
             state = DriveMode.APRILTAGS;
             AprilTagTarget = 1;
@@ -149,6 +158,10 @@ public class Drivetrain {
             //myOpMode.telemetry.addData(frontLeftPower*1.25);
         } else if(state == DriveMode.APRILTAGS){
 
+        } else if (state == DriveMode.FIELD){
+            Vector2d input = new Vector2d(-myOpMode.gamepad1.left_stick_y/2, -myOpMode.gamepad1.left_stick_x/2).rotated(-localizer.heading);
+
+            drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), -myOpMode.gamepad1.right_stick_x/2));
         }
 
        myOpMode.telemetry.addData("Counts", localizer.leftEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
@@ -156,6 +169,8 @@ public class Drivetrain {
         myOpMode.telemetry.addData("Counts", localizer.centerEncoder.getCurrentPosition()/localizer.TRACK_WIDTH);
 
     }
+
+
 
     public void fieldTeleOp(){
         if(Math.abs(myOpMode.gamepad1.left_stick_y) > 0.2||

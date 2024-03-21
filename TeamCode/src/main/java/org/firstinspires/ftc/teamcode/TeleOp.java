@@ -1,8 +1,11 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group = "TeleOp")
 public class TeleOp extends LinearOpMode {
@@ -16,7 +19,9 @@ public class TeleOp extends LinearOpMode {
         robot.scoring.rightGateServo.setPosition(robot.scoring.GATE_UP_RIGHT);
         telemetry.addData("Status", "Intialized");
 
-        robot.drivetrain.localizer.setCoordinates(0,0, 0);
+        robot.drivetrain.localizer.setCoordinates(PoseStorage.currentPose.getX(),
+                PoseStorage.currentPose.getY(), PoseStorage.currentPose.getHeading());
+
         waitForStart();
         //runtime.reset();
 
