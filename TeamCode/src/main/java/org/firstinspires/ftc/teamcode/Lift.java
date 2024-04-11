@@ -141,9 +141,9 @@ public class Lift {
         if (liftMode == LiftMode.HIGH) {
             liftToPositionPIDClass(300);
         } else if (liftMode == LiftMode.MIDDLE) {
-            liftToPositionPIDClass(200);
+            liftToPositionPIDClass(600);
         } else if (liftMode == LiftMode.LOW) {
-            liftToPositionPIDClass(450);
+            liftToPositionPIDClass(500);
         } else if (liftMode == LiftMode.INTAKE) {
             liftToPositionPIDClass(0);
         }

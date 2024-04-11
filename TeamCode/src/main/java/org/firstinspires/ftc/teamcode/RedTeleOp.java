@@ -1,4 +1,16 @@
+//CHECKLIST
 
+/*
+
+AUTO
+- Troubleshoot Intake
+- Other Four Sides
+TELEOP
+- SWITCH STATE MANUAL FIELD
+- TURBO/SLOW
+- RED/BLUE TELEOP
+- TEST TRANSITION BETWEEN AUTO AND TELEOP
+ */
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -7,8 +19,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group = "TeleOp")
-public class TeleOp extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="RedTeleOp", group = "TeleOp")
+public class RedTeleOp extends LinearOpMode {
     Robot robot = new Robot(this);
 
     //private ElapsedTime = new ElapsedTime();
@@ -26,7 +38,7 @@ public class TeleOp extends LinearOpMode {
         //runtime.reset();
 
         while(opModeIsActive()){
-            robot.teleOp();
+            robot.teleOpRed();
             //robot.touchSense();
             robot.drivetrain.localizer.update();
             robot.drivetrain.localizer.telemetry();
@@ -43,3 +55,4 @@ public class TeleOp extends LinearOpMode {
 
 
 }
+

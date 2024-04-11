@@ -139,16 +139,19 @@ public class Intake {
     }
     public void update(){
         if(((DistanceSensor) colorFront).getDistance(DistanceUnit.CM) <= 4){
-            myOpMode.gamepad2.rumble(.25,0,500);
+            //myOpMode.gamepad2.rumble(.25,0,500);
             frontPixel = true;
         }else{
             frontPixel = false;
         }
-        if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 2){
-            myOpMode.gamepad2.rumble(0,0.5,500);
+        if(((DistanceSensor) colorBack).getDistance(DistanceUnit.CM) <= 4){
+            //myOpMode.gamepad2.rumble(0,0.5,500);
             backPixel = true;
         }else {
             backPixel = false;
+        }
+        if(frontPixel && backPixel) {
+            state = IntakeMode.OUTTAKE;
         }
 
         if(state == IntakeMode.INTAKE) {

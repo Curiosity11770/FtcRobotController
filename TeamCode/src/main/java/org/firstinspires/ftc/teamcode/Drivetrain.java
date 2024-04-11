@@ -37,7 +37,7 @@ public class Drivetrain {
     PIDController yPID;
     PIDController headingPID;
 
-    public DriveMode state = DriveMode.MANUAL;
+    public DriveMode state = DriveMode.FIELD;
 
     public enum DriveMode{
         MANUAL,
@@ -97,13 +97,13 @@ public class Drivetrain {
         localizer.rightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void teleOp() {
+    public void teleOpBlue() {
 
-        if(Math.abs(myOpMode.gamepad1.left_stick_y) > 0.2||
+       /* if(Math.abs(myOpMode.gamepad1.left_stick_y) > 0.2||
                 Math.abs(myOpMode.gamepad1.right_stick_x) > 0.2 ||
                 Math.abs(myOpMode.gamepad1.left_stick_x) > 0.2||
                 Math.abs(myOpMode.gamepad1.right_stick_y) > 0.2) {
-            state = DriveMode.FIELD;
+           // state = DriveMode.FIELD;
             //FIELD USED TO BE MANUAL
         }else if(myOpMode.gamepad1.dpad_left){
             state = DriveMode.APRILTAGS;
@@ -114,7 +114,97 @@ public class Drivetrain {
         } else if(myOpMode.gamepad1.dpad_right){
             state = DriveMode.APRILTAGS;
             AprilTagTarget = 3;
+        }*/
+        if (myOpMode.gamepad1.left_bumper) {
+            state = DriveMode.MANUAL;
+        } else if (myOpMode.gamepad1.right_bumper) {
+            state = DriveMode.FIELD;
         }
+
+
+        if (state == DriveMode.MANUAL) {
+            double frontLeftPower;
+            double frontRightPower;
+            double backLeftPower;
+            double backRightPower;
+
+            double timesFactor;
+
+            double drive = -myOpMode.gamepad1.left_stick_y;
+            double turn = myOpMode.gamepad1.right_stick_x;
+            double strafe = -myOpMode.gamepad1.left_stick_x;
+
+            double denominator = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 2);
+
+            frontLeftPower = (drive + turn - strafe) / denominator;
+            frontRightPower = (drive - turn + strafe) / denominator;
+            backLeftPower = (drive + turn + strafe) / denominator;
+            backRightPower = (drive - turn - strafe) / denominator;
+
+            if (myOpMode.gamepad1.left_trigger > 0.2) {
+                driveFrontLeft.setPower(frontLeftPower * 1.75);
+                driveFrontRight.setPower(frontRightPower * 1.75);
+                driveBackLeft.setPower(backLeftPower * 1.75);
+                driveBackRight.setPower(backRightPower * 1.75);
+            } else if (myOpMode.gamepad1.right_trigger > 0.2) {
+                driveFrontLeft.setPower(frontLeftPower / 2);
+                driveFrontRight.setPower(frontRightPower / 2);
+                driveBackLeft.setPower(backLeftPower / 2);
+                driveBackRight.setPower(backRightPower / 2);
+            } else {
+                driveFrontLeft.setPower(frontLeftPower);
+                driveFrontRight.setPower(frontRightPower);
+                driveBackLeft.setPower(backLeftPower);
+                driveBackRight.setPower(backRightPower);
+            }
+
+            //if
+            myOpMode.telemetry.addData("power", frontLeftPower);
+            //myOpMode.telemetry.addData(frontLeftPower*1.25);
+        } else if (state == DriveMode.APRILTAGS) {
+
+        } else if (state == DriveMode.FIELD) {
+            if (myOpMode.gamepad1.left_trigger > 0.2) {
+                Vector2d input = new Vector2d(-myOpMode.gamepad1.left_stick_y*2, -myOpMode.gamepad1.left_stick_x*2).rotated(-localizer.heading);
+
+                drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), -myOpMode.gamepad1.right_stick_x*2));
+            } else if (myOpMode.gamepad1.left_trigger > 0.2) {
+                Vector2d input = new Vector2d(-myOpMode.gamepad1.left_stick_y /8, -myOpMode.gamepad1.left_stick_x / 8).rotated(-localizer.heading);
+
+                drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), -myOpMode.gamepad1.right_stick_x / 8));
+
+            } else {
+                Vector2d input = new Vector2d(-myOpMode.gamepad1.left_stick_y / 2, -myOpMode.gamepad1.left_stick_x / 2).rotated(-localizer.heading);
+
+                drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), -myOpMode.gamepad1.right_stick_x / 2));
+            }
+        }
+    }
+
+    public void teleOpRed() {
+
+       /* if(Math.abs(myOpMode.gamepad1.left_stick_y) > 0.2||
+                Math.abs(myOpMode.gamepad1.right_stick_x) > 0.2 ||
+                Math.abs(myOpMode.gamepad1.left_stick_x) > 0.2||
+                Math.abs(myOpMode.gamepad1.right_stick_y) > 0.2) {
+           // state = DriveMode.FIELD;
+            //FIELD USED TO BE MANUAL
+        }else if(myOpMode.gamepad1.dpad_left){
+            state = DriveMode.APRILTAGS;
+            AprilTagTarget = 1;
+        }else if(myOpMode.gamepad1.dpad_up){
+            state = DriveMode.APRILTAGS;
+            AprilTagTarget = 2;
+        } else if(myOpMode.gamepad1.dpad_right){
+            state = DriveMode.APRILTAGS;
+            AprilTagTarget = 3;
+        }*/
+        if(myOpMode.gamepad1.left_bumper){
+            state = DriveMode.MANUAL;
+        } else if (myOpMode.gamepad1.right_bumper){
+            state = DriveMode.FIELD;
+        }
+
 
 
         if(state == DriveMode.MANUAL) {
@@ -159,12 +249,23 @@ public class Drivetrain {
         } else if(state == DriveMode.APRILTAGS){
 
         } else if (state == DriveMode.FIELD){
-            Vector2d input = new Vector2d(-myOpMode.gamepad1.left_stick_y/2, -myOpMode.gamepad1.left_stick_x/2).rotated(-localizer.heading);
+            if(myOpMode.gamepad1.left_trigger > 0.2){
+                Vector2d input = new Vector2d(myOpMode.gamepad1.left_stick_y*1.75, myOpMode.gamepad1.left_stick_x*1.75).rotated(-localizer.heading);
 
-            drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), -myOpMode.gamepad1.right_stick_x/2));
+                drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), myOpMode.gamepad1.right_stick_x*1.5));
+            } else if (myOpMode.gamepad1.left_trigger > 0.2){
+                Vector2d input = new Vector2d(myOpMode.gamepad1.left_stick_y / 8, myOpMode.gamepad1.left_stick_x / 8).rotated(-localizer.heading);
+
+                drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), myOpMode.gamepad1.right_stick_x / 8));
+
+            } else {
+                Vector2d input = new Vector2d(myOpMode.gamepad1.left_stick_y / 2, myOpMode.gamepad1.left_stick_x / 2).rotated(-localizer.heading);
+
+                drive.setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), myOpMode.gamepad1.right_stick_x / 2));
+            }
         }
 
-       myOpMode.telemetry.addData("Counts", localizer.leftEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
+        myOpMode.telemetry.addData("Counts", localizer.leftEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
         myOpMode.telemetry.addData("Counts", localizer.rightEncoder.getCurrentPosition()/localizer.COUNTS_PER_INCH);
         myOpMode.telemetry.addData("Counts", localizer.centerEncoder.getCurrentPosition()/localizer.TRACK_WIDTH);
 

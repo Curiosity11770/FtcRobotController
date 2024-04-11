@@ -74,8 +74,8 @@ public class Robot {
 
     }
 
-    public void teleOp(){
-        drivetrain.teleOp();
+    public void teleOpBlue(){
+        drivetrain.teleOpBlue();
         lift.teleOp();
         intake.teleOp();
         scoring.teleOp(passed, notPassed);
@@ -87,6 +87,38 @@ public class Robot {
 
         if(intake.frontPixel && intake.backPixel){
            scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
+            scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
+        }
+
+        if(myOpMode.gamepad2.dpad_right){
+            lift.liftMode = Lift.LiftMode.LOW;
+            scoring.state = Scoring.ScoringMode.SCORING;
+            scoring.timer.reset();
+            if(scoring.timer.seconds() > 1 && scoring.state == Scoring.ScoringMode.SCORING){
+                scoring.boxServo.setPosition(scoring.BOX_OUT);
+            }
+
+        }
+
+        if(myOpMode.gamepad2.dpad_down){
+            lift.liftMode = Lift.LiftMode.INTAKE;
+        }
+
+    }
+
+    public void teleOpRed(){
+        drivetrain.teleOpRed();
+        lift.teleOp();
+        intake.teleOp();
+        scoring.teleOp(passed, notPassed);
+        drone.teleOp();
+
+        if(drivetrain.state == Drivetrain.DriveMode.APRILTAGS){
+            driveToAprilTagTeleOp(drivetrain.AprilTagTarget, 8);
+        }
+
+        if(intake.frontPixel && intake.backPixel){
+            scoring.rightGateServo.setPosition(scoring.GATE_DOWN_RIGHT);
             scoring.leftGateServo.setPosition(scoring.GATE_DOWN_LEFT);
         }
 
