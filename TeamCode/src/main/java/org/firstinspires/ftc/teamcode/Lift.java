@@ -96,7 +96,7 @@ public class Lift {
             if (myOpMode.gamepad2.left_stick_y > 0.1) {
                 liftLeft.setPower(-0.9);
                 liftRight.setPower(-0.9);
-            } else if (myOpMode.gamepad2.left_stick_y < -0.1 && liftLeft.getCurrentPosition() > -100) {
+            } else if (myOpMode.gamepad2.left_stick_y < -0.1 /*&& liftLeft.getCurrentPosition() > -10*/) {
                 liftLeft.setPower(0.9);
                 liftRight.setPower(0.9);
             } else {
@@ -139,11 +139,11 @@ public class Lift {
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if (liftMode == LiftMode.HIGH) {
-            liftToPositionPIDClass(300);
+            liftToPositionPIDClass(700);
         } else if (liftMode == LiftMode.MIDDLE) {
             liftToPositionPIDClass(600);
         } else if (liftMode == LiftMode.LOW) {
-            liftToPositionPIDClass(500);
+            liftToPositionPIDClass(600);
         } else if (liftMode == LiftMode.INTAKE) {
             liftToPositionPIDClass(0);
         }

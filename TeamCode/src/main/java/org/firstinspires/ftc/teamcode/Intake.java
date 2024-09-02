@@ -83,27 +83,27 @@ public class Intake {
         }
 
         if(state == IntakeMode.INTAKE) {
-            intakeLeft.setPower(0.7);
-            intakeRight.setPower(-0.7);
-            intakeMotor.setPower(-0.7);
+            intakeLeft.setPower(-0.7);
+            intakeRight.setPower(0.7);
+            intakeMotor.setPower(0.7);
 
             if(frontPixel && backPixel){
                 state = IntakeMode.OUTTAKE;
             }
         } else if (state == IntakeMode.OUTTAKE){
-            intakeLeft.setPower(-0.7);
-            intakeRight.setPower(0.7);
-            intakeMotor.setPower(0.7);
+            intakeLeft.setPower(0.7);
+            intakeRight.setPower(-0.7);
+            intakeMotor.setPower(-0.7);
 
         } else if(state == IntakeMode.OFF){
             intakeLeft.setPower(0);
             intakeRight.setPower(0);
             intakeMotor.setPower(0);
         }
-        if (myOpMode.gamepad2.right_trigger > 0.2) {
+        if (myOpMode.gamepad2.left_trigger > 0.2) {
             state = IntakeMode.INTAKE;
 
-        } else if (myOpMode.gamepad2.left_trigger > 0.2) {
+        } else if (myOpMode.gamepad2.right_trigger > 0.2) {
             state = IntakeMode.OUTTAKE;
             timer.reset();
         } else if(myOpMode.gamepad2.dpad_left){
@@ -154,12 +154,12 @@ public class Intake {
             state = IntakeMode.OUTTAKE;
         }
 
-        if(state == IntakeMode.INTAKE) {
+        if(state == IntakeMode.OUTTAKE) {
             intakeLeft.setPower(0.7);
             intakeRight.setPower(-0.7);
             intakeMotor.setPower(-0.7);
 
-        } else if (state == IntakeMode.OUTTAKE){
+        } else if (state == IntakeMode.INTAKE){
             intakeLeft.setPower(-0.7);
             intakeRight.setPower(0.7);
             intakeMotor.setPower(0.7);

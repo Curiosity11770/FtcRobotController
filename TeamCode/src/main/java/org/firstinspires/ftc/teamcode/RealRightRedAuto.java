@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @Config
 @Autonomous(group = "advanced")
-public class RealLeftBlueAuto extends LinearOpMode {
+public class RealRightRedAuto extends LinearOpMode {
 
     // This enum defines our "state"
     // This is essentially just defines the possible steps our program will take
@@ -53,6 +53,7 @@ public class RealLeftBlueAuto extends LinearOpMode {
         DROP,
         UP,
         PARK,
+        STRAFE,
         IDLE
     }
 
@@ -64,7 +65,7 @@ public class RealLeftBlueAuto extends LinearOpMode {
 
     // Define our start pose
     // This assumes we start at x: 15, y: 10, heading: 180 degrees
-    Pose2d startPose = new Pose2d(12, 63.5, Math.toRadians(270));
+    Pose2d startPose = new Pose2d(12, -63.5, Math.toRadians(90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -84,45 +85,48 @@ public class RealLeftBlueAuto extends LinearOpMode {
 
         // Let's define our trajectories
         Trajectory purplePixelCenter = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(23, 24, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(23, -24, Math.toRadians(180)))
                 .addDisplacementMarker(50, () -> {robot.intake.state = Intake.IntakeMode.OUTTAKE;})
                 .build();
 
         // Second trajectory
         // Ensure that we call trajectory1.end() as the start for this one
         Trajectory yellowPixelCenter = drive.trajectoryBuilder(purplePixelCenter.end())
-                .lineToConstantHeading(new Vector2d(48, 36))
+                .lineToConstantHeading(new Vector2d(48, -36))
                 .addDisplacementMarker(10, () -> {robot.intake.state = Intake.IntakeMode.OFF;})
                 .addDisplacementMarker(10, () -> {robot.lift.liftMode = Lift.LiftMode.LOW;})
                 .addDisplacementMarker(10, () -> {robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);})
                 .build();
 
         // Let's define our trajectories
-        Trajectory purplePixelLeft = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(24, 38, Math.toRadians(270)))
+        Trajectory purplePixelRight = drive.trajectoryBuilder(startPose)
+                .lineToSplineHeading(new Pose2d(24, -38, Math.toRadians(90)))
                 .addDisplacementMarker(50, () -> {robot.intake.state = Intake.IntakeMode.OUTTAKE;})
                 .build();
 
         // Second trajectory
         // Ensure that we call trajectory1.end() as the start for this one
+
+        Trajectory purplePixelLeft = drive.trajectoryBuilder(startPose)
+                .lineToSplineHeading(new Pose2d(9, -28, Math.toRadians(180)))
+                .addDisplacementMarker(40, () -> {robot.intake.state = Intake.IntakeMode.OUTTAKE;})
+                .build();
+
         Trajectory yellowPixelLeft = drive.trajectoryBuilder(purplePixelLeft.end())
-                .lineToSplineHeading(new Pose2d(48, 44, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(48, -28, Math.toRadians(180)))
                 .addDisplacementMarker(10, () -> {robot.intake.state = Intake.IntakeMode.OFF;})
                 .addDisplacementMarker(10, () -> {robot.lift.liftMode = Lift.LiftMode.LOW;})
                 .addDisplacementMarker(10, () -> {robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);})
                 .build();
-        Trajectory purplePixelRight = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(9, 28, Math.toRadians(180)))
-                .addDisplacementMarker(40, () -> {robot.intake.state = Intake.IntakeMode.OUTTAKE;})
-                .build();
+
         Trajectory purplePixelRight2 = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(0, 22, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(0, -22, Math.toRadians(180)))
                 .build();
 
         // Second trajectory
         // Ensure that we call trajectory1.end() as the start for this one
         Trajectory yellowPixelRight = drive.trajectoryBuilder(purplePixelRight.end())
-                .lineToSplineHeading(new Pose2d(48, 28, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(48, -42, Math.toRadians(180)))
                 .addDisplacementMarker(10, () -> {robot.intake.state = Intake.IntakeMode.OFF;})
                 .addDisplacementMarker(10, () -> {robot.lift.liftMode = Lift.LiftMode.LOW;})
                 .addDisplacementMarker(10, () -> {robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);})
@@ -148,24 +152,24 @@ public class RealLeftBlueAuto extends LinearOpMode {
                 .build();
 
         Trajectory toTrussCenter = drive.trajectoryBuilder(scoringTime1.end())
-                .lineToSplineHeading(new Pose2d(32, 59-timesCycled*3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(32, -59+timesCycled*3, Math.toRadians(180)))
                 .addDisplacementMarker(10, () -> {robot.lift.liftMode = org.firstinspires.ftc.teamcode.Lift.LiftMode.INTAKE;})
                 .addDisplacementMarker(10, () -> {robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_DOWN_LEFT);})
                 .build();
 
         Trajectory underTruss = drive.trajectoryBuilder(toTrussCenter.end())
-                .lineToSplineHeading(new Pose2d(-52, 59-timesCycled*3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-52, -59+timesCycled*3, Math.toRadians(180)))
                 .build();
 
         Trajectory toStack = drive.trajectoryBuilder(underTruss.end())
-                .strafeTo(new Vector2d(-55.5, 33))
+                .strafeTo(new Vector2d(-55.5, -34))
                 .build();
 
         Trajectory intakeStack = drive.trajectoryBuilder(toStack.end())
 
                 .forward(12,
-                SampleMecanumDrive.getVelocityConstraint(6, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                        SampleMecanumDrive.getVelocityConstraint(6, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
                 .addDisplacementMarker(0, () -> {robot.intake.state = Intake.IntakeMode.INTAKE;})
                 .addTemporalMarker(1, () -> {sleep(1000);})
@@ -186,15 +190,15 @@ public class RealLeftBlueAuto extends LinearOpMode {
         Trajectory toTrussBack = drive.trajectoryBuilder(backUp.end())
                 .addDisplacementMarker(0, () -> {robot.scoring.gatesDown();})
                 .addDisplacementMarker(5, () -> {robot.intake.state = Intake.IntakeMode.OFF;})
-                .lineToSplineHeading(new Pose2d(-52, 59-timesCycled*3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-52, -59+timesCycled*3, Math.toRadians(180)))
                 .build();
 
         Trajectory underTrussBack= drive.trajectoryBuilder(toTrussBack.end())
-                .lineToSplineHeading(new Pose2d(32, 59-timesCycled*3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(32, -60.5+timesCycled*3, Math.toRadians(180)))
                 .build();
 
         Trajectory toDrop = drive.trajectoryBuilder(underTrussBack.end())
-                .lineToConstantHeading(new Vector2d(48, 36))
+                .lineToConstantHeading(new Vector2d(48, -36))
                 .addDisplacementMarker(10, () -> {robot.intake.state = Intake.IntakeMode.OFF;})
                 .addDisplacementMarker(10, () -> {robot.lift.liftMode = Lift.LiftMode.LOW;})
                 .addDisplacementMarker(10, () -> {robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);})
@@ -208,29 +212,30 @@ public class RealLeftBlueAuto extends LinearOpMode {
                 .addDisplacementMarker(10, () -> {robot.scoring.leftArmServo.setPosition(robot.scoring.ARM_UP_LEFT);})
                 .addDisplacementMarker(10, ()-> {robot.scoring.gatesUp();})
                 .build();
-
-        Trajectory strafe1 = drive.trajectoryBuilder(dropNow.end())
-                .strafeRight(24)
-                .addDisplacementMarker(1, () -> {robot.lift.liftMode = Lift.LiftMode.INTAKE;})
-                .build();
-        Trajectory strafe2 = drive.trajectoryBuilder(yellowPixelCenter.end())
-                .strafeLeft(24)
-                .build();
-        Trajectory strafe3 = drive.trajectoryBuilder(yellowPixelCenter.end())
-                .strafeLeft(24)
-                .build();
-
         Trajectory up = drive.trajectoryBuilder(dropNow.end())
-                .strafeRight(5,
+                .strafeLeft(5,
                         SampleMecanumDrive.getVelocityConstraint(6, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
                 .addDisplacementMarker(1, () -> {robot.lift.liftMode = Lift.LiftMode.HIGH;})
                 .build();
-        Trajectory back =  drive.trajectoryBuilder(strafe1.end())
-                .back(12)
+        Trajectory back =  drive.trajectoryBuilder(up.end())
+                .forward(2)
                 .build();
-                // Define the angle to turn at
+        Trajectory strafe1 = drive.trajectoryBuilder(yellowPixelCenter.end())
+                .strafeRight(30)
+                .build();
+        Trajectory strafe2 = drive.trajectoryBuilder(yellowPixelCenter.end())
+                .strafeLeft(30)
+                .build();
+        Trajectory strafe3 = drive.trajectoryBuilder(yellowPixelCenter.end())
+                .strafeRight(30)
+                .build();
+        Trajectory park = drive.trajectoryBuilder(strafe2.end())
+                .back(15)
+                .build();
+
+        // Define the angle to turn at
         //double turnAngle1 = Math.toRadians(-270);
 
         // Third trajectory
@@ -268,7 +273,7 @@ public class RealLeftBlueAuto extends LinearOpMode {
             placement = 3;
             drive.followTrajectoryAsync(purplePixelRight);
 
-       }
+        }
 
         while (opModeIsActive() && !isStopRequested()) {
             // Our state machine logic
@@ -286,7 +291,7 @@ public class RealLeftBlueAuto extends LinearOpMode {
                     if (!drive.isBusy()) {
                         //robot.intake.outtake(-0.7);
                         currentState = State.YELLOWPIXEL;
-                       if(placement == 2) {
+                        if(placement == 2) {
                             drive.followTrajectoryAsync(yellowPixelCenter);
                         } else if(placement == 1){
                             drive.followTrajectoryAsync(yellowPixelLeft);
@@ -312,8 +317,14 @@ public class RealLeftBlueAuto extends LinearOpMode {
                     if (!drive.isBusy()) {
                         currentState = State.TOTRUSS;
                         drive.followTrajectoryAsync(toTrussCenter);
-                        //currentState = State.UP;
-                        //drive.followTrajectoryAsync(strafe1);
+                        /*currentState = State.STRAFE;
+                        if(placement == 2){
+                            drive.followTrajectoryAsync(strafe1);
+                        } else if (placement == 1){
+                            drive.followTrajectoryAsync(strafe2);
+                        } else {
+                            drive.followTrajectoryAsync(strafe3);
+                        }*/
                     }
                     break;
 
@@ -375,29 +386,28 @@ public class RealLeftBlueAuto extends LinearOpMode {
                 case DROP:
                     if (!drive.isBusy()) {
                         //if(timesCycled == 1) {
-                            currentState = State.UP;
-                        drive.followTrajectoryAsync(strafe1);
+                        currentState = State.STRAFE;
+                        drive.followTrajectoryAsync(strafe2);
                         //} else {
-                            timesCycled = 1;
-                            //currentState = State.TOTRUSS;
-                            //drive.followTrajectoryAsync(toTrussCenter);
-                       // }
+                        timesCycled = 1;
+                        //currentState = State.TOTRUSS;
+                        //drive.followTrajectoryAsync(toTrussCenter);
+                        // }
 
                     }
                     break;
-                case UP:
+                case STRAFE:
                     if (!drive.isBusy()) {
                         //if(timesCycled == 1) {
                         currentState = State.PARK;
-                        drive.followTrajectoryAsync(back);
+                        drive.followTrajectoryAsync(park);
                     }
                 case PARK:
                     if (!drive.isBusy()) {
                         //if(timesCycled == 1) {
                         currentState = State.IDLE;
-                        //drive.followTrajectoryAsync(strafe1);
+                        //drive.followTrajectoryAsync(back);
                     }
-
                 case IDLE :
 
             }

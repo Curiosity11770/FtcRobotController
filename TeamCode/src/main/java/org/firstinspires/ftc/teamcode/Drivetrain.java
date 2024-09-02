@@ -37,7 +37,7 @@ public class Drivetrain {
     PIDController yPID;
     PIDController headingPID;
 
-    public DriveMode state = DriveMode.FIELD;
+    public DriveMode state = DriveMode.MANUAL;
 
     public enum DriveMode{
         MANUAL,
@@ -142,20 +142,20 @@ public class Drivetrain {
             backRightPower = (drive - turn - strafe) / denominator;
 
             if (myOpMode.gamepad1.left_trigger > 0.2) {
-                driveFrontLeft.setPower(frontLeftPower * 1.75);
-                driveFrontRight.setPower(frontRightPower * 1.75);
-                driveBackLeft.setPower(backLeftPower * 1.75);
-                driveBackRight.setPower(backRightPower * 1.75);
+                driveFrontLeft.setPower(frontLeftPower * 2.75);
+                driveFrontRight.setPower(frontRightPower * 2.75);
+                driveBackLeft.setPower(backLeftPower * 2.75);
+                driveBackRight.setPower(backRightPower * 2.75);
             } else if (myOpMode.gamepad1.right_trigger > 0.2) {
-                driveFrontLeft.setPower(frontLeftPower / 2);
-                driveFrontRight.setPower(frontRightPower / 2);
-                driveBackLeft.setPower(backLeftPower / 2);
-                driveBackRight.setPower(backRightPower / 2);
-            } else {
                 driveFrontLeft.setPower(frontLeftPower);
                 driveFrontRight.setPower(frontRightPower);
                 driveBackLeft.setPower(backLeftPower);
                 driveBackRight.setPower(backRightPower);
+            } else {
+                driveFrontLeft.setPower(frontLeftPower*2);
+                driveFrontRight.setPower(frontRightPower*2);
+                driveBackLeft.setPower(backLeftPower*2);
+                driveBackRight.setPower(backRightPower*2);
             }
 
             //if
@@ -227,20 +227,20 @@ public class Drivetrain {
             backRightPower = (drive - turn - strafe) / denominator;
 
             if (myOpMode.gamepad1.left_trigger > 0.2) {
-                driveFrontLeft.setPower(frontLeftPower * 1.75);
-                driveFrontRight.setPower(frontRightPower * 1.75);
-                driveBackLeft.setPower(backLeftPower * 1.75);
-                driveBackRight.setPower(backRightPower * 1.75);
+                driveFrontLeft.setPower(frontLeftPower * 2.75);
+                driveFrontRight.setPower(frontRightPower * 2.75);
+                driveBackLeft.setPower(backLeftPower * 2.75);
+                driveBackRight.setPower(backRightPower * 2.75);
             } else if (myOpMode.gamepad1.right_trigger > 0.2){
-                driveFrontLeft.setPower(frontLeftPower/2);
-                driveFrontRight.setPower(frontRightPower/2);
-                driveBackLeft.setPower(backLeftPower/2);
-                driveBackRight.setPower(backRightPower/2);
-            } else {
                 driveFrontLeft.setPower(frontLeftPower);
                 driveFrontRight.setPower(frontRightPower);
                 driveBackLeft.setPower(backLeftPower);
                 driveBackRight.setPower(backRightPower);
+            } else {
+                driveFrontLeft.setPower(frontLeftPower*2);
+                driveFrontRight.setPower(frontRightPower*2);
+                driveBackLeft.setPower(backLeftPower*2);
+                driveBackRight.setPower(backRightPower*2);
             }
 
             //if
