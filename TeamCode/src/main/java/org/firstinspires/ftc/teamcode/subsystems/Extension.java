@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,9 +10,9 @@ public class Extension {
     public Servo rightLink = null;
 
     public static final double LEFT_LINK_IN = 0;
-    public static final double RIGHT_LINK_IN = 0;
-    public static final double LEFT_LINK_OUT = 0.4;
-    public static final double RIGHT_LINK_OUT = 0.4;
+    public static final double RIGHT_LINK_IN = 1; //used to be at 0
+    public static final double LEFT_LINK_OUT = 1;
+    public static final double RIGHT_LINK_OUT = 0; //used to be 0.4
 
     public double leftLinkPosition;
     public double rightLinkPosition;
@@ -35,10 +35,10 @@ public class Extension {
     public void teleOp() {
         leftLink.setPosition(leftLinkPosition);
         rightLink.setPosition(rightLinkPosition);
-        if(myOpMode.gamepad2.right_bumper){
+        if(myOpMode.gamepad2.dpad_left){
             leftLinkPosition = LEFT_LINK_IN;
             rightLinkPosition = RIGHT_LINK_IN;
-        } else if (myOpMode.gamepad2.right_bumper){
+        } else if (myOpMode.gamepad2.dpad_right){
             leftLinkPosition = LEFT_LINK_OUT;
             rightLinkPosition = RIGHT_LINK_OUT;
         }

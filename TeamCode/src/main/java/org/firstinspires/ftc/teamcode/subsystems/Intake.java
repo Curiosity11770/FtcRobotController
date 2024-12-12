@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -26,17 +26,25 @@ public class Intake {
         flipIntake = myOpMode.hardwareMap.get(Servo.class, "flipIntake");
 
         spinIntake.setPower(0);
-        flipIntake.setPosition(INTAKE_CLOSED);
+        myOpMode.telemetry.addData("intake", flipIntake.getPosition());
+        //flipIntake.setPosition(INTAKE_CLOSED);
 
         flipPosition = INTAKE_CLOSED;
     }
 
     public void teleOp(){
         flipIntake.setPosition(flipPosition);
-        if(myOpMode.gamepad1.left_trigger > 0.7) {
+        if(myOpMode.gamepad2.x) {
             flipPosition = INTAKE_OPEN;
-        } else if (myOpMode.gamepad1.right_trigger > 0.7){
+        } else if (myOpMode.gamepad2.x){
             flipPosition = INTAKE_CLOSED;
+        }
+        if(myOpMode.gamepad2.left_trigger > 0.7) {
+            spinIntake.setPower(0.7);
+        } else if (myOpMode.gamepad2.right_trigger > 0.7){
+            spinIntake.setPower(-0.7);
+        } else {
+            spinIntake.setPower(0);
         }
     }
 

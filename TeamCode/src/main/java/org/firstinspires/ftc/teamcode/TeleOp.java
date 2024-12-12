@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Meet0", group = "Linear Opmode")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "Linear Opmode")
 
 public class TeleOp extends LinearOpMode {
     Robot robot = new Robot(this);
@@ -14,6 +14,7 @@ public class TeleOp extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive()) {
             robot.teleOp();
+            telemetry.update();
         }
     }
 

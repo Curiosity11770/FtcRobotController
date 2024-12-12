@@ -15,9 +15,25 @@ public class Meet0Auto extends LinearOpMode{
 
         waitForStart();
 
-        robot.drivetrain.strafeTime(-0.7, 2);
-        robot.drivetrain.strafeTime(0.7, 2);
-        robot.drivetrain.driveTime(0.7, 2);
+        runtime.reset();
+
+        while(runtime.seconds() < 2){
+            robot.drivetrain.leftFrontDrive.setPower(0.7);
+            robot.drivetrain.rightFrontDrive.setPower(0.7);
+            robot.drivetrain.leftBackDrive.setPower(0.7);
+            robot.drivetrain.rightBackDrive.setPower(0.7);
+        }
+
+        robot.lift.liftToPositionPIDClass(700);
+        robot.scoring.clawServo.setPosition(robot.scoring.CLAW_OPEN);
+        robot.lift.liftToPositionPIDClass(0);
+        runtime.reset();
+        while(runtime.seconds() < 1){
+            robot.drivetrain.leftFrontDrive.setPower(0.2);
+            robot.drivetrain.rightFrontDrive.setPower(0.2);
+            robot.drivetrain.leftBackDrive.setPower(0.2);
+            robot.drivetrain.rightBackDrive.setPower(0.2);
+        }
     }
 
 }
